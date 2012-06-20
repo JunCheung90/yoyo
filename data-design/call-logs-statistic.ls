@@ -2,7 +2,7 @@ user-call-logs-statistic =
   from-user: 'uid-of-zhangsan'
   to-user: 'uid-of-lisi'
 
-  type: 'ROOT'  
+  quantum: 'TOTAL' #  'YEAR' | 'MONTH' | 'DAY' | 'HOUR'
   start-time: '2013-01-01 13:00:00'
   end-time: '2013-01-01 13:00:00'
   statistic:

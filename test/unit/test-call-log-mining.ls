@@ -5,8 +5,10 @@
 
 require! ['should', 'async'
           '../../bin/models/Call-logs'
-          '../../bin/models/Users', '../../bin/db/database']
+          '../../bin/models/Users', '../../bin/db/database'
+          '../../bin/data-mining/interesting-info/interesting-info-mining']
 qh = require '../../bin/db/query-helper'
+_ = require 'underscore'
 
 user-data = null
 user = null
@@ -42,14 +44,6 @@ describe '有趣信息挖掘:', !->
   describe '更新自身与通话对象之间的通话统计', !->
     do
       (done) <-! before
-      <-! database.init-mongo-client
-      <-! database.db.drop-collection 'users'
-      <-! database.db.drop-collection 'call-logs'
-      <-! database.db.drop-collection 'call-log-statistic' 
-      (zhangsan) <-! create-user-zhangsan-with-contacts
-      call-logs = require '../test-data/zhangsan-call-logs-data.json'
-      (call-logs-with-uid) <-! update-user-call-logs zhangsan, call-logs
-      user := zhangsan   
       (contacted-user) <-! get-user-with-phone "12345678"
       lisi := contacted-user
       done!
@@ -82,14 +76,37 @@ describe '有趣信息挖掘:', !->
   describe '有趣信息挖掘', !->
     do
       (done) <-! before
-      <-! database.init-mongo-client
-      <-! database.db.drop-collection 'users'
-      <-! database.db.drop-collection 'call-logs'
-      <-! database.db.drop-collection 'call-log-statistic'
+      <-! interesting-info-mining.mining-user-interesting-info user
       done!
 
-    can "根据联系人列表的通话统计，挖掘出联系人中的有趣信息\n" !(done) ->
+    can "有趣类型：most-call-out，李小四\n" !(done) ->
       done!
+
+    can "有趣类型：most-call-in，李小四\n" !(done) ->
+      done!
+
+    can "有趣类型：never-contact，赵小五\n" !(done) ->      
+      check-iis user.interesting-infos, 'never-contact', '赵小五'
+      done!
+
+    can "有趣类型：most-contact，李小四\n" !(done) ->
+      done!
+
+    can "有趣类型：most-call-out-miss，李小四\n" !(done) ->
+      done!
+
+    can "有趣类型：ost-call-in-miss，李小四\n" !(done) ->
+      done!
+
+    can "有趣类型：most-call-out-time，李小四\n" !(done) ->
+      done!
+
+    can "有趣类型：most-call-in-time，李小四\n" !(done) ->
+      done!
+
+    # can "有趣类型：largest-single-duration，李小四\n" !(done) ->
+    #   done!
+
 
 create-user-zhangsan-with-contacts = !(callback) ->
   user-data = require '../test-data/zhangsan.json'
@@ -147,3 +164,13 @@ query-statistic = !(from-user, to-user, type, start-time, callback) ->
   (db) <-! database.get-db!
   (err, statistic) <-! db.call-log-statistic.find-one query-statement
   callback statistic
+
+
+check-iis = !(iis, type, name) ->
+  property = {
+    type: type 
+  }
+  result = _.where iis, property
+  result.length.should.eql 1
+  never-contacted-contact = result[0]
+  never-contacted-contact.data.related-contact.name.should.eql name

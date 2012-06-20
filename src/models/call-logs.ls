@@ -15,7 +15,6 @@ Call-logs =
       (call-logs-with-uid) <-! add-uid-to-each-call-log user, call-logs    
       <-! update-user-call-logs-with-uid user-call-logs, call-logs-with-uid, last-call-log-time  
       <-! call-log-statistic.update-user-call-log-statistic user, call-logs-with-uid
-      <-! interesting-info-mining.mining-user-interesting-info user
       callback call-logs-with-uid
 
 add-uid-to-each-call-log = !(user, call-logs, callback)->

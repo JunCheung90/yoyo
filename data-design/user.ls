@@ -36,7 +36,7 @@ user = # yoyo server端数据
   addresses:
     '广州 大学城 中山大学 至善园 307'
     ...
-  tags: ['程序员'] # 用户给自己的标签，或者系统发掘出用户的特征。
+  tags: ['程序员'] # 用户给自己的标签，或者统发掘出用户的特征。
   #----------- status ----------#
   is-updated: false # 用户的数据是否发生了更新，如果为true，需要重新评估mergences。
   is-registered: true
