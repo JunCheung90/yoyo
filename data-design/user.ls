@@ -89,17 +89,18 @@ user = # yoyo server端数据
       # info这部分的内容，可以不存在user里面，单独存储type和其对应的info，这里仅仅存type和data就可以了。但是，
       info: '#{data.related-contact.name}坑电话费啊, #{data.time-frame}我竟然打了#{calling-out-times}电话给他，\
             说了#{data.calling-out-amount-time}，至少花了我#{data.fee}。这笔帐不能不算！<a href=#{data.related-contact.cid}>#{data.related-contact.name}</a>\
-            还我小钱钱来！'
-      data: # 有关ii的数据，不同type可能不同。
-        related-contact
+            还我小钱钱来！'    
+      data: 
+        related-contact:
           name: '张三'
           cid: 'cid-of-zhangsan'
         time-frame:
-          start-time: '2012-12-01 08-10-11'
-          end-time: '2013-01-01 23-10-11'
-        calling-out-times: 210 # 210次
-        calling-out-amount-time: '310 m' # 310分钟
-        fee
+          start-time: 0
+          end-time: 0
+        calling-out-times: 0 
+        calling-out-amount-time: 0 
+        calling-in-times: 0
+        calling-in-amount-time: 0
       created-time: '2013-01-01 23-10-11'
 
 require! fs
