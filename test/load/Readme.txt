@@ -1,0 +1,1 @@
+使用JMeter http://jmeter.apache.org/ 进行负载（压力）测试。
