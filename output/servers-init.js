@@ -1,0 +1,12 @@
+var restify, sequelize, mysql, config, couch, orm, mysqlConnection, ref$;
+restify = require('restify');
+sequelize = require('sequelize');
+mysql = require('mysql');
+config = require('../config/config');
+couch = restify.createJsonClient(config.couch);
+orm = new sequelize('test_sequelize', 'yoyo', 'yoyo');
+mysqlConnection = mysql.createConnection(config.mysql);
+ref$ = typeof exports != 'undefined' && exports !== null ? exports : this;
+ref$.couch = couch;
+ref$.orm = orm;
+ref$.mysqlConnection = mysqlConnection;

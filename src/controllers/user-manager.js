@@ -31,7 +31,6 @@
  *============== Registration JSON Example End================
  */
 
-
 var async = require('async')
 	, config = require('../../config/config')
 	,	mysqlConnection = require('../servers-init').mysqlConnection
@@ -52,9 +51,6 @@ function registerUser(registerData, done){
 	getOrCreateUserWithPhoneNumberInMySQL(phoneNumber, true, function(userId){ // userId is not id, but uid
 		storeOrUpdateUserContactBookInCouchDB(userId, registerData, function(){
 			async.forEach(contacts, function(contact, next){
-				// console.log('contacts length: %d', contacts.length);
-				// contact = contacts[loop.iteration()];
-					// console.log('contact: %j', contact);	
 					getOrCreateUserWithPhoneNumberInMySQL(contact.CurrentPhone, false, function(contactUserId){
 						bindContactWithUser(userId, contactUserId, contact, function(){
 							next();
@@ -64,7 +60,6 @@ function registerUser(registerData, done){
 					if(err) throw err;
 					storeOrUpdateUserContactBookInCouchDB(userId, registerData, function(){
 						var result = {"userId" : userId};
-						// mysqlConnection.end();
 						done(result);
 					});
 			});
