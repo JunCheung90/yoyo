@@ -1,6 +1,8 @@
-var restify, should, yoyoConfig, client, can;
+var restify, should, orm, dropCreateOrm, yoyoConfig, client, can;
 restify = require('restify');
 should = require('should');
+orm = require('../../src/servers-init').orm;
+dropCreateOrm = require('../../src/orm-sync').dropCreateOrm;
 yoyoConfig = {
   url: 'http://localhost:8888',
   version: '~1.0'
@@ -8,6 +10,11 @@ yoyoConfig = {
 client = restify.createJsonClient(yoyoConfig);
 can = it;
 describe('测试YoYo REST API', function(){
+  before(function(done){
+    dropCreateOrm(function(){
+      done();
+    });
+  });
   can('查询联系人：GET /contact/10879 应当返回200', function(done){
     client.get('/contact/10879', function(err, req, res, data){
       should.not.exist(err);

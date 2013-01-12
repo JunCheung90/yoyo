@@ -2,7 +2,7 @@ var restify, sequelize, mysql, config, couch, orm, mysqlConnection, S, ref$;
 restify = require('restify');
 sequelize = require('sequelize');
 mysql = require('mysql');
-config = require('../config/config');
+config = require('./config/config');
 couch = restify.createJsonClient(config.couch);
 orm = (function(func, args, ctor) {
   ctor.prototype = func.prototype;

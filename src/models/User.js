@@ -18,10 +18,12 @@ Contact = require('./contact').Contact;
 Phone = require('./phone').Phone;
 SocialNetwork = require('./social-network').SocialNetwork;
 User.hasMany(Contact, {
-  as: 'contactsHas'
+  as: 'hasContacts',
+  foreignKey: 'own_by_user_id'
 });
 User.hasMany(Contact, {
-  as: 'contactsAs'
+  as: 'asContacts',
+  foreignKey: 'act_by_user_id'
 });
 User.hasMany(Phone, {
   as: 'phones'

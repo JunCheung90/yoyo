@@ -13,8 +13,12 @@ User = orm.define 'User',
 
 require! ['./contact'.Contact, './phone'.Phone, './social-network'.SocialNetwork]
 
-User.hasMany Contact, {as: 'contactsHas'}
-User.hasMany Contact, {as: 'contactsAs'}
+User.hasMany Contact, 
+	as: 'hasContacts'
+	foreign-key: 'own_by_user_id'
+User.hasMany Contact, 
+	as: 'asContacts'
+	foreign-key: 'act_by_user_id'
 User.hasMany Phone, {as: 'phones'}
 User.hasMany SocialNetwork, {as: 'socials'}
 

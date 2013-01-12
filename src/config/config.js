@@ -12,7 +12,7 @@ ref$.couch = {
   db: 'test_db'
 };
 ref$.sequelize = [
-  'test_sequelize', 'yoyo', 'yoyo', {
+  'spike_yoyo', 'yoyo', 'yoyo', {
     logging: false
   }
 ];

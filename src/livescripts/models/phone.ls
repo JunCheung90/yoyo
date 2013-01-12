@@ -8,3 +8,6 @@ Phone = orm.define 'Phone',
 		instanceMethods: {}
 
 (exports ? this) <<< {Phone}	
+
+require! ['./user'.User]
+Phone.belongsTo User, {as: 'ownBy'}

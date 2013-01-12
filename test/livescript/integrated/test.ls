@@ -1,4 +1,6 @@
-require! [restify, should]
+require! [restify, should,
+					'../../src/servers-init'.orm,
+					'../../src/orm-sync'.drop-create-orm]
 
 yoyo-config =
 	url: 'http://localhost:8888'
@@ -9,6 +11,11 @@ client = restify.createJsonClient yoyo-config
 can = it
 
 describe '测试YoYo REST API' !->
+	do
+		(done) <-! before
+		<-! drop-create-orm
+		done!
+
 	can '查询联系人：GET /contact/10879 应当返回200' !(done) ->
 		do 
 			(err, req, res, data) <-! client.get '/contact/10879'

@@ -1,4 +1,4 @@
-var orm, S, Phone;
+var orm, S, Phone, User;
 orm = require('../servers-init').orm;
 S = require('../servers-init').S;
 Phone = orm.define('Phone', {
@@ -9,3 +9,7 @@ Phone = orm.define('Phone', {
   instanceMethods: {}
 });
 (typeof exports != 'undefined' && exports !== null ? exports : this).Phone = Phone;
+User = require('./user').User;
+Phone.belongsTo(User, {
+  as: 'ownBy'
+});

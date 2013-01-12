@@ -32,64 +32,98 @@
 '''
 
 require! [async, '../config/config', 
-					'../servers-init'.mysql-connection,
+					'../servers-init'.orm, 
+					'../models/user'.User,
+					'../models/phone'.Phone,
+					'../models/contact'.Contact,
 					'../servers-init'.couch]
-
-mysql-connection.connect!
 
 register-user = !(register-data, callback) ->
 	throw new Error("Can't register a user with exist id") if register-data.User.id
-	[user, contacts, phone-number] = [register-data.User, register-data.Contacts, register-data.User.CurrentPhone]
+	[user-data, contacts-data, phone-number] = [register-data.User, register-data.Contacts, register-data.User.CurrentPhone]
 
-	(user-id) <-! get-or-create-user-with-phone-number phone-number, true
-	<-! store-or-update-user-contact-book user-id, register-data
-	<-! create-and-bind-user-contacts contacts
-	<-! store-or-update-user-contact-book user-id, register-data	
-	callback {user-id: user-id}
+	(user) <-! get-or-create-user-with-phone-number phone-number, user-data, true
+	<-! store-or-update-user-contact-book user, register-data
+	<-! create-and-bind-user-contacts user, contacts-data
+	<-! store-or-update-user-contact-book user, register-data	
+	callback {user: user}
 
-
-!function create-and-bind-user-contacts contacts, callback
-	(err) <-! async.for-each contacts, !(contact, next) ->
-		(contact-user-id) <-! get-or-create-user-with-phone-number contact.CurrentPhone, false
-		<-! bind-contact-with-user user-id, contact-user-id, contact
+!function create-and-bind-user-contacts user, contacts-data, callback
+	(err) <-! async.for-each contacts-data, !(contact-data, next) ->
+		(contact) <-! create-contact-as-user contact-data
+		# (contact) <-! get-or-create-user-with-phone-number contact.CurrentPhone, {name:null}, false
+		<-! bind-user-has-contact user, contact
 		next!
 	throw new Error err if err
 	callback!
 
+!function create-contact-as-user contact-data, callback
+	# 如果找不到Contact对应的User，则需要新建一个无名的User。
+	# TODO：注意：此时User并不应该设置Phone，Contact才应当设置。现在是直接将Phone建立在了User上，需要改进。
+	(user) <-! get-or-create-user-with-phone-number contact-data.CurrentPhone, {name:null}, false
+	(contact) <-! bind-user-as-contact user, contact-data
+	user.save!.success !->
+		contact.save!.success !->
+			callback contact
 
-SQL_SELECT_USER_BY_PHONE_NUMBER = 'SELECT p.number, u.uid, u.name FROM user u, phone p WHERE u.id = p.owner_id AND p.number = ?'
-SQL_INSERT_NEW_USER = 'INSERT INTO user SET uid = ?, is_registered = ?, last_modified_time = ?'
-SQL_INSERT_NEW_PHONE = 'INSERT INTO phone SET number = ?, owner_id = ?'
-SQL_SELECT_USR_BY_ID = 'SELECT uid FROM user WHERE id = ?'
+!function bind-user-as-contact user, contact-data, callback
+	Contact.create get-contact-register-data(contact-data) .success !(contact) ->
+		debugger;
+		user.add-as-contact contact .success !->
+			contact.set-act-by user .success !->
+				callback contact
 
-!function get-or-create-user-with-phone-number phone-number, is-registered, callback
-	debugger;
-	(err, rows, fields) <-! mysql-connection.query SQL_SELECT_USER_BY_PHONE_NUMBER, [phoneNumber]
-	throw new Error err if err
-	if rows?.length > 0
-		user-id = rows.0.id
-		callback user-id
-	else
-		user-id = get-UUid!
-		(err, inserted-user) <-! mysql-connection.query SQL_INSERT_NEW_USER, [user-id, is-registered, new Date!]
-		throw new Error err if err
-		(err, inserted-phone) <-! mysql-connection.query SQL_INSERT_NEW_PHONE, [phone-number, inserted-user.insert-id]
-		throw new Error err if err
-		callback user-id
+function get-contact-register-data contact-data
+	cid: get-UUid!
+	name: contact-data.Name
+	is-merged: false
+
+!function bind-user-has-contact user, contact, callback
+	user.add-has-contact contact .success !->
+		contact.set-own-by user .success !->
+			user.save!.success !->
+				contact.save!.success !->
+					callback!
+
+!function get-or-create-user-with-phone-number phone-number, user-data, is-registered, callback
+	Phone.find {where: {number: phone-number}} .success !(phone) ->
+		if phone
+			phone.get-own-by! .success !(owner) ->
+				# TODO: check user against owner
+				callback owner
+		else
+			create-user-with-phone get-user-register-data(user-data, is-registered), get-phone-register-data(phone-number), callback
+	.error !(err) ->
+		throw new Erro err if err
+
+function get-user-register-data user, is-registered
+	uid: get-UUid!
+	name: user.Name
+	is-registered: is-registered
+	is-merged: false
+
+function get-phone-register-data phone-number
+	number: phone-number
+	is-active: true
 
 
-!function store-or-update-user-contact-book user-id, contact-book, callback
-	contact-book.User.uid = user-id
-	doc-id = get-contact-doc-id user-id
+!function create-user-with-phone user-data, phone-data, callback
+	Phone.create phone-data .success !(phone) ->
+		User.create user-data .success !(user) ->
+			user.addPhone phone .success !->
+				user.save!.success !->
+					callback user
+				.error !(err) ->
+					throw new Error err if err
+
+!function store-or-update-user-contact-book user, contact-book, callback
+	contact-book.User.uid = user.uid
+	doc-id = get-contact-doc-id user.uid
 	url = "/#{config.couch.db}/#{doc-id}"
 	(err, req, res, doc) <-! couch.get url
 	doc.User = contact-book
 	(err, req, res, new-doc-result) <-! couch.put url, doc
 	console.log "Couch Error: %j" err if err
-	callback!
-
-!function bind-contact-with-user owner-id, contact-user-id, contact, callback
-	console.log "#{&.callee.name} is NOT IMPLEMENTED YET!"
 	callback!
 
 function get-UUid

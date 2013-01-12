@@ -1,4 +1,4 @@
-require! [restify, sequelize, mysql, '../config/config']
+require! [restify, sequelize, mysql, './config/config']
 
 couch = restify.create-json-client config.couch
 orm = new sequelize ...config.sequelize

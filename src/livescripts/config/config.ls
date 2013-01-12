@@ -9,6 +9,7 @@
 		version: \*
 		db: \test_db
 	sequelize:
-		'test_sequelize' 
-		'yoyo' 'yoyo' 
+		\spike_yoyo 
+		\yoyo
+		\yoyo 
 		logging: false
