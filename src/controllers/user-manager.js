@@ -12,18 +12,9 @@ registerUser = function(registerData, callback){
   }
   ref$ = [registerData.User, registerData.Contacts, registerData.User.CurrentPhone], user = ref$[0], contacts = ref$[1], phoneNumber = ref$[2];
   getOrCreateUserWithPhoneNumber(phoneNumber, true, function(userId){
-    storeOrUpdateUserContackBook(userId, registerData, function(){
-      async.forEach(contacts, function(contact, next){
-        getOrCreateUserWithPhoneNumber(contact.CurrentPhone, false, function(contactUserId){
-          bindContactWithUser(userId, contactUserId, contact, function(){
-            next();
-          });
-        });
-      }, function(err){
-        if (err) {
-          throw new Error(err);
-        }
-        storeOrUpdateUserContackBook(userId, registerData, function(){
+    storeOrUpdateUserContactBook(userId, registerData, function(){
+      createAndBindUserContacts(contacts, function(){
+        storeOrUpdateUserContactBook(userId, registerData, function(){
           callback({
             userId: userId
           });
@@ -32,16 +23,28 @@ registerUser = function(registerData, callback){
     });
   });
 };
+function createAndBindUserContacts(contacts, callback){
+  async.forEach(contacts, function(contact, next){
+    getOrCreateUserWithPhoneNumber(contact.CurrentPhone, false, function(contactUserId){
+      bindContactWithUser(userId, contactUserId, contact, function(){
+        next();
+      });
+    });
+  }, function(err){
+    if (err) {
+      throw new Error(err);
+    }
+    callback();
+  });
+}
 SQL_SELECT_USER_BY_PHONE_NUMBER = 'SELECT p.number, u.uid, u.name FROM user u, phone p WHERE u.id = p.owner_id AND p.number = ?';
 SQL_INSERT_NEW_USER = 'INSERT INTO user SET uid = ?, is_registered = ?, last_modified_time = ?';
 SQL_INSERT_NEW_PHONE = 'INSERT INTO phone SET number = ?, owner_id = ?';
 SQL_SELECT_USR_BY_ID = 'SELECT uid FROM user WHERE id = ?';
 function getOrCreateUserWithPhoneNumber(phoneNumber, isRegistered, callback){
-  var userId;
-  userId = null;
   debugger;
   mysqlConnection.query(SQL_SELECT_USER_BY_PHONE_NUMBER, [phoneNumber], function(err, rows, fields){
-    var userId, u;
+    var userId;
     if (err) {
       throw new Error(err);
     }
@@ -49,8 +52,8 @@ function getOrCreateUserWithPhoneNumber(phoneNumber, isRegistered, callback){
       userId = rows[0].id;
       callback(userId);
     } else {
-      u = getUUid();
-      mysqlConnection.query(SQL_INSERT_NEW_USER, [uid, isRegistered, new Date()], function(err, insertedUser){
+      userId = getUUid();
+      mysqlConnection.query(SQL_INSERT_NEW_USER, [userId, isRegistered, new Date()], function(err, insertedUser){
         if (err) {
           throw new Error(err);
         }
@@ -58,13 +61,13 @@ function getOrCreateUserWithPhoneNumber(phoneNumber, isRegistered, callback){
           if (err) {
             throw new Error(err);
           }
-          callback(uid);
+          callback(userId);
         });
       });
     }
   });
 }
-function storeOrUpdateUserContackBook(userId, contactBook, callback){
+function storeOrUpdateUserContactBook(userId, contactBook, callback){
   var docId, url;
   contactBook.User.uid = userId;
   docId = getContactDocId(userId);

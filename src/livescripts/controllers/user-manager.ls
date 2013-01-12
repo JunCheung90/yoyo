@@ -42,15 +42,20 @@ register-user = !(register-data, callback) ->
 	[user, contacts, phone-number] = [register-data.User, register-data.Contacts, register-data.User.CurrentPhone]
 
 	(user-id) <-! get-or-create-user-with-phone-number phone-number, true
-	do
-		<-! store-or-update-user-contack-book user-id, register-data
-		(err) <-! async.for-each contacts, !(contact, next) ->
-			(contact-user-id) <-! get-or-create-user-with-phone-number contact.CurrentPhone, false
-			<-! bind-contact-with-user user-id, contact-user-id, contact
-			next!
-		throw new Error err if err
-		<-! store-or-update-user-contack-book user-id, register-data	
-		callback {user-id: user-id}
+	<-! store-or-update-user-contact-book user-id, register-data
+	<-! create-and-bind-user-contacts contacts
+	<-! store-or-update-user-contact-book user-id, register-data	
+	callback {user-id: user-id}
+
+
+!function create-and-bind-user-contacts contacts, callback
+	(err) <-! async.for-each contacts, !(contact, next) ->
+		(contact-user-id) <-! get-or-create-user-with-phone-number contact.CurrentPhone, false
+		<-! bind-contact-with-user user-id, contact-user-id, contact
+		next!
+	throw new Error err if err
+	callback!
+
 
 SQL_SELECT_USER_BY_PHONE_NUMBER = 'SELECT p.number, u.uid, u.name FROM user u, phone p WHERE u.id = p.owner_id AND p.number = ?'
 SQL_INSERT_NEW_USER = 'INSERT INTO user SET uid = ?, is_registered = ?, last_modified_time = ?'
@@ -58,7 +63,6 @@ SQL_INSERT_NEW_PHONE = 'INSERT INTO phone SET number = ?, owner_id = ?'
 SQL_SELECT_USR_BY_ID = 'SELECT uid FROM user WHERE id = ?'
 
 !function get-or-create-user-with-phone-number phone-number, is-registered, callback
-	user-id = null
 	debugger;
 	(err, rows, fields) <-! mysql-connection.query SQL_SELECT_USER_BY_PHONE_NUMBER, [phoneNumber]
 	throw new Error err if err
@@ -66,15 +70,15 @@ SQL_SELECT_USR_BY_ID = 'SELECT uid FROM user WHERE id = ?'
 		user-id = rows.0.id
 		callback user-id
 	else
-		u = get-UUid!
-		(err, inserted-user) <-! mysql-connection.query SQL_INSERT_NEW_USER, [uid, is-registered, new Date!]
+		user-id = get-UUid!
+		(err, inserted-user) <-! mysql-connection.query SQL_INSERT_NEW_USER, [user-id, is-registered, new Date!]
 		throw new Error err if err
 		(err, inserted-phone) <-! mysql-connection.query SQL_INSERT_NEW_PHONE, [phone-number, inserted-user.insert-id]
 		throw new Error err if err
-		callback uid
+		callback user-id
 
 
-!function store-or-update-user-contack-book user-id, contact-book, callback
+!function store-or-update-user-contact-book user-id, contact-book, callback
 	contact-book.User.uid = user-id
 	doc-id = get-contact-doc-id user-id
 	url = "/#{config.couch.db}/#{doc-id}"
