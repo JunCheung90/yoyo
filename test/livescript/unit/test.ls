@@ -1,7 +1,7 @@
 require! ['should'
-					'../../output/servers-init'.orm, 
-					'../../output/models/user'.User,
-					'../../output/models/phone'.Phone]
+					'../../src/servers-init'.orm, 
+					'../../src/models/user'.User,
+					'../../src/models/phone'.Phone]
 
 can = it # it在LiveScript中被作为缺省的参数，因此我们先置换为can
 

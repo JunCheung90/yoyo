@@ -1,19 +1,18 @@
-var config = require('../config/config');
-
-var restify = require('restify')
-	, couch = restify.createJsonClient(config.couch);
-
-
-var sequelize = require('sequelize')
-	, orm = new sequelize('test_sequelize', 'yoyo', 'yoyo');
-
-
-var mysql = require('mysql')
-	, mysqlConnection = mysql.createConnection(config.mysql);
-
-
-exports.couch = couch;
-exports.sequelize = sequelize;
-exports.orm = orm;
-exports.mysqlConnection = mysqlConnection;
-
+var restify, sequelize, mysql, config, couch, orm, mysqlConnection, S, ref$;
+restify = require('restify');
+sequelize = require('sequelize');
+mysql = require('mysql');
+config = require('../config/config');
+couch = restify.createJsonClient(config.couch);
+orm = (function(func, args, ctor) {
+  ctor.prototype = func.prototype;
+  var child = new ctor, result = func.apply(child, args), t;
+  return (t = typeof result)  == "object" || t == "function" ? result || child : child;
+  })(sequelize, config.sequelize, function(){});
+mysqlConnection = mysql.createConnection(config.mysql);
+S = sequelize;
+ref$ = typeof exports != 'undefined' && exports !== null ? exports : this;
+ref$.couch = couch;
+ref$.orm = orm;
+ref$.mysqlConnection = mysqlConnection;
+ref$.S = S;

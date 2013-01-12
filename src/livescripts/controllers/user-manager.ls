@@ -31,7 +31,7 @@
 ============== Registration JSON Example End=================
 '''
 
-require! [async, '../../config/config', 
+require! [async, '../config/config', 
 					'../servers-init'.mysql-connection,
 					'../servers-init'.couch]
 

@@ -1,36 +1,35 @@
-var couch = require('../servers-init').couch;
-
-var getContactById = function(contactId, callback){
-	couch.get('/test_db/my_contacts', 
-		function(err, req, res, data){
-			if(err) throw new Error(err);
-			var contact = null;
-			for(var i = 0; i <= data.Contacts.length; i++){
-				if(data.Contacts[i].id == contactId) {
-					contact = data.Contacts[i];
-					break;
-				}
-			}
-			callback(contact);
-	});
-}
-
-var storeContacts = function(contacts, callback){
-	console.log('storeContacts is NOT IMPLEMENTED');
-	callback();
-}
-
-var mergeContacts = function(contacts, result, callback){
-	console.log('mergeContacts is NOT IMPLEMENTED');
-	callback();
-}
-
-var updateContactDoc = function(contacts, callback){
-	console.log('updateContactDoc is NOT IMPLEMENTED');
-	callback();
-}
-
-exports.getContactById = getContactById;
-exports.storeContacts = storeContacts;
-exports.mergeContacts = mergeContacts;
-exports.updateContactDoc = updateContactDoc;
+var couch, getContactById, storeContacts, mergeContacts, updateContactDoc, ref$;
+couch = require('../servers-init').couch;
+getContactById = function(contactId, callback){
+  couch.get('/test_db/my_contacts', function(err, req, res, data){
+    var i$, ref$, len$, i, contact, result;
+    if (err) {
+      throw new Error(err);
+    }
+    for (i$ = 0, len$ = (ref$ = data.Contacts).length; i$ < len$; ++i$) {
+      i = i$;
+      contact = ref$[i$];
+      if (contact.id === contactId) {
+        result = contact;
+      }
+    }
+    callback(contact);
+  });
+};
+storeContacts = function(contacts, callback){
+  console.log(arguments.callee.name + " is NOT IMPLEMENTED YET!");
+  callback();
+};
+mergeContacts = function(contacts, callback){
+  console.log(arguments.callee.name + " is NOT IMPLEMENTED YET!");
+  callback();
+};
+updateContactDoc = function(contacts, callback){
+  console.log(arguments.callee.name + " is NOT IMPLEMENTED YET!");
+  callback();
+};
+ref$ = typeof exports != 'undefined' && exports !== null ? exports : this;
+ref$.getContactById = getContactById;
+ref$.storeContacts = storeContacts;
+ref$.mergeContacts = mergeContacts;
+ref$.updateContactDoc = updateContactDoc;
