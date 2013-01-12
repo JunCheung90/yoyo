@@ -1,5 +1,4 @@
-require! ['../servers-init'.orm, 
-					'../servers-init'.S]
+require! ['../servers-init'.orm, '../servers-init'.S]
 
 Phone = orm.define 'Phone', 
 	number: S.STRING
@@ -7,3 +6,5 @@ Phone = orm.define 'Phone',
 	* 
 		classMethods: {}
 		instanceMethods: {}
+
+(exports ? this) <<< {Phone}	

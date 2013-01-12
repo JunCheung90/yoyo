@@ -8,3 +8,7 @@
 		url: 'http://localhost:5984'
 		version: \*
 		db: \test_db
+	sequelize:
+		'test_sequelize' 
+		'yoyo' 'yoyo' 
+		logging: false

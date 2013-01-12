@@ -1,7 +1,7 @@
 require! [restify, sequelize, mysql, '../config/config']
 
 couch = restify.create-json-client config.couch
-orm = new sequelize 'test_sequelize' 'yoyo' 'yoyo'
+orm = new sequelize ...config.sequelize
 mysql-connection = mysql.create-connection config.mysql
 S = sequelize
 

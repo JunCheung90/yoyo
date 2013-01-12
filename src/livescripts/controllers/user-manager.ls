@@ -78,9 +78,10 @@ SQL_SELECT_USR_BY_ID = 'SELECT uid FROM user WHERE id = ?'
 	contact-book.User.uid = user-id
 	doc-id = get-contact-doc-id user-id
 	url = "/#{config.couch.db}/#{doc-id}"
-	(err, req, res, data) <-! couch.put url, contact-book
-	throw new Error err if err.body.error is not 'conflict' # TODO: pls fix the conflict error!
-	console.log "Couch Error: #{err.body.reason}"
+	(err, req, res, doc) <-! couch.get url
+	doc.User = contact-book
+	(err, req, res, new-doc-result) <-! couch.put url, doc
+	console.log "Couch Error: %j" err if err
 	callback!
 
 !function bind-contact-with-user owner-id, contact-user-id, contact, callback

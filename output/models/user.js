@@ -1,9 +1,6 @@
-var orm, S, contact, phone, socialNetwork, User;
+var orm, S, User, Contact, Phone, SocialNetwork;
 orm = require('../servers-init').orm;
 S = require('../servers-init').S;
-contact = require('./contact');
-phone = require('./phone');
-socialNetwork = require('./social-network');
 User = orm.define('User', {
   uid: {
     type: S.STRING,
@@ -16,6 +13,10 @@ User = orm.define('User', {
   classMethods: {},
   instanceMethods: {}
 });
+(typeof exports != 'undefined' && exports !== null ? exports : this).User = User;
+Contact = require('./contact').Contact;
+Phone = require('./phone').Phone;
+SocialNetwork = require('./social-network').SocialNetwork;
 User.hasMany(Contact, {
   as: 'contactsHas'
 });
@@ -28,4 +29,3 @@ User.hasMany(Phone, {
 User.hasMany(SocialNetwork, {
   as: 'socials'
 });
-(typeof exports != 'undefined' && exports !== null ? exports : this).User = User;

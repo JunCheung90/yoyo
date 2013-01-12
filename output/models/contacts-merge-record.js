@@ -1,7 +1,6 @@
-var orm, S, contact, ContactsMergeRecord;
+var orm, S, ContactsMergeRecord, Contact;
 orm = require('../servers-init').orm;
 S = require('../servers-init').S;
-contact = require('./contact');
 ContactsMergeRecord = orm.define('ContactsMergeRecord', {
   reason: S.STRING,
   effectiveTime: S.DATE,
@@ -10,7 +9,8 @@ ContactsMergeRecord = orm.define('ContactsMergeRecord', {
   classMethods: {},
   instanceMethods: {}
 });
+(typeof exports != 'undefined' && exports !== null ? exports : this).ContactsMergeRecord = ContactsMergeRecord;
+Contact = require('./contact').Contact;
 ContactsMergeRecord.hasMany(Contact, {
   as: 'toBeMergedContacts'
 });
-(typeof exports != 'undefined' && exports !== null ? exports : this).ContactsMergeRecord = ContactsMergeRecord;

@@ -1,6 +1,4 @@
-require! ['../servers-init'.orm, 
-					'../servers-init'.S,
-					'./contact']
+require! ['../servers-init'.orm, '../servers-init'.S]
 
 ContactsMergeRecord = orm.define 'ContactsMergeRecord', 
 	reason: S.STRING
@@ -10,6 +8,8 @@ ContactsMergeRecord = orm.define 'ContactsMergeRecord',
 		classMethods: {}
 		instanceMethods: {}
 
-ContactsMergeRecord.hasMany Contact, {as:'toBeMergedContacts'}
-
 (exports ? this) <<< {ContactsMergeRecord}
+
+require! ['./contact'.Contact]
+
+ContactsMergeRecord.hasMany Contact, {as:'toBeMergedContacts'}

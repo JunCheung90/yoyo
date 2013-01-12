@@ -69,12 +69,14 @@ function storeOrUpdateUserContackBook(userId, contactBook, callback){
   contactBook.User.uid = userId;
   docId = getContactDocId(userId);
   url = "/" + config.couch.db + "/" + docId;
-  couch.put(url, contactBook, function(err, req, res, data){
-    if (err.body.error !== 'conflict') {
-      throw new Error(err);
-    }
-    console.log("Couch Error: " + err.body.reason);
-    callback();
+  couch.get(url, function(err, req, res, doc){
+    doc.User = contactBook;
+    couch.put(url, doc, function(err, req, res, newDocResult){
+      if (err) {
+        console.log("Couch Error: %j", err);
+      }
+      callback();
+    });
   });
 }
 function bindContactWithUser(ownerId, contactUserId, contact, callback){

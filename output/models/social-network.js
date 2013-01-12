@@ -9,3 +9,4 @@ SocialNetwork = orm.define('SocialNetwork', {
   classMethods: {},
   instanceMethods: {}
 });
+(typeof exports != 'undefined' && exports !== null ? exports : this).SocialNetwork = SocialNetwork;

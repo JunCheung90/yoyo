@@ -4,7 +4,11 @@ sequelize = require('sequelize');
 mysql = require('mysql');
 config = require('../config/config');
 couch = restify.createJsonClient(config.couch);
-orm = new sequelize('test_sequelize', 'yoyo', 'yoyo');
+orm = (function(func, args, ctor) {
+  ctor.prototype = func.prototype;
+  var child = new ctor, result = func.apply(child, args), t;
+  return (t = typeof result)  == "object" || t == "function" ? result || child : child;
+  })(sequelize, config.sequelize, function(){});
 mysqlConnection = mysql.createConnection(config.mysql);
 S = sequelize;
 ref$ = typeof exports != 'undefined' && exports !== null ? exports : this;

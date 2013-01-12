@@ -8,3 +8,4 @@ Phone = orm.define('Phone', {
   classMethods: {},
   instanceMethods: {}
 });
+(typeof exports != 'undefined' && exports !== null ? exports : this).Phone = Phone;

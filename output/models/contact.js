@@ -1,9 +1,6 @@
-var orm, S, phone, socialNetwork, contactsMergeRecord, Contact;
+var orm, S, Contact, Phone, SocialNetwork, ContactsMergeRecord;
 orm = require('../servers-init').orm;
 S = require('../servers-init').S;
-phone = require('./phone');
-socialNetwork = require('social-network');
-contactsMergeRecord = require('contacts-merge-record');
 Contact = orm.define('Contact', {
   uid: {
     type: S.STRING,
@@ -14,13 +11,17 @@ Contact = orm.define('Contact', {
   classMethods: {},
   instanceMethods: {}
 });
+(typeof exports != 'undefined' && exports !== null ? exports : this).Contact = Contact;
+Phone = require('./phone').Phone;
+SocialNetwork = require('./social-network').SocialNetwork;
+ContactsMergeRecord = require('./contacts-merge-record').ContactsMergeRecord;
 Contact.hasMany(Phone, {
   as: 'phones'
 });
+debugger;
 Contact.hasMany(SocialNetwork, {
   as: 'socials'
 });
 Contact.hasOne(ContactsMergeRecord, {
   as: 'mergedToContact'
 });
-(typeof exports != 'undefined' && exports !== null ? exports : this).Contact = Contact;

@@ -1,5 +1,4 @@
-require! ['../servers-init'.orm, 
-					'../servers-init'.S]
+require! ['../servers-init'.orm, '../servers-init'.S]
 
 SocialNetwork = orm.define 'SocialNetwork', 
 	account: S.STRING
@@ -8,3 +7,5 @@ SocialNetwork = orm.define 'SocialNetwork',
 	* 
 		classMethods: {}
 		instanceMethods: {}
+
+(exports ? this) <<< {SocialNetwork}	

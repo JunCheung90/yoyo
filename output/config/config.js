@@ -11,3 +11,8 @@ ref$.couch = {
   version: '*',
   db: 'test_db'
 };
+ref$.sequelize = [
+  'test_sequelize', 'yoyo', 'yoyo', {
+    logging: false
+  }
+];
