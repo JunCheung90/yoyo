@@ -10,8 +10,71 @@ User = orm.define('User', {
   isRegistered: S.BOOLEAN,
   isMerged: S.BOOLEAN
 }, {
-  classMethods: {},
-  instanceMethods: {}
+  classMethods: {
+    createUserWithPhone: function(userData, phoneData, callback){
+      Phone.create(phoneData).success(function(phone){
+        User.create(userData).success(function(user){
+          user.addPhone(phone).success(function(){
+            user.save().success(function(){
+              callback(user);
+            }).error(function(err){
+              if (err) {
+                throw new Error(err);
+              }
+            });
+          });
+        });
+      });
+    },
+    getOrCreateUserWithPhone: function(userData, phoneData, callback){
+      Phone.find({
+        where: {
+          number: phoneData.number
+        }
+      }).success(function(phone){
+        if (phone) {
+          phone.getOwnBy().success(function(owner){
+            callback(owner);
+          });
+        } else {
+          debugger;
+          User.createUserWithPhone(userData, phoneData, callback);
+        }
+      }).error(function(err){
+        if (err) {
+          throw new Erro(err);
+        }
+      });
+    }
+  },
+  instanceMethods: {
+    bindHasContact: function(contact, callback){
+      var that;
+      that = this;
+      return that.addHasContact(contact).success(function(){
+        contact.setOwnBy(that).success(function(){
+          that.save().success(function(){
+            contact.save().success(function(){
+              callback();
+            });
+          });
+        });
+      });
+    },
+    bindAsContact: function(contact, callback){
+      var that;
+      that = this;
+      return that.addAsContact(contact).success(function(){
+        contact.setActBy(that).success(function(){
+          that.save().success(function(){
+            contact.save().success(function(){
+              callback();
+            });
+          });
+        });
+      });
+    }
+  }
 });
 (typeof exports != 'undefined' && exports !== null ? exports : this).User = User;
 Contact = require('./contact').Contact;
