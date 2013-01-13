@@ -24,7 +24,7 @@ describe '测试YoYo REST API' !->
 			done!
 
 	can '注册用户：POST /user 应当返回200' !(done) ->
-		post-data = require './zhangsan.json'
+		post-data = require '../test-data/zhangsan.json'
 		do
 			(err, req, res, data) <-! client.post '/user', post-data
 			should.not.exist err 

@@ -24,7 +24,7 @@ describe('测试YoYo REST API', function(){
   });
   can('注册用户：POST /user 应当返回200', function(done){
     var postData;
-    postData = require('./zhangsan.json');
+    postData = require('../test-data/zhangsan.json');
     client.post('/user', postData, function(err, req, res, data){
       should.not.exist(err);
       res.statusCode.should.eql(200);

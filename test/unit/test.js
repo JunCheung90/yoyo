@@ -8,78 +8,109 @@ Contact = require('../../src/models/contact').Contact;
 dropCreateOrm = require('../../src/orm-sync').dropCreateOrm;
 can = it;
 describe('Sequelize 用法', function(){
-  var contactData, contactPhone;
   before(function(done){
     dropCreateOrm(function(){
       done();
     });
   });
-  contactData = {
-    cid: '456',
-    name: '李四',
-    isMerged: false
-  };
-  contactPhone = {
-    number: 34567890,
-    isActive: true
-  };
-  can('创建User', function(done){
-    var userData, phoneData;
-    userData = {
-      uid: '123',
-      name: '张三',
-      isRegistered: false,
-      isMerged: false
-    };
-    phoneData = {
-      number: 1234567,
-      isActive: true
-    };
-    User.createUserWithPhone(userData, phoneData, function(user){
+  can('创建User张三', function(done){
+    var zhangsanData;
+    zhangsanData = require('../test-data/zhangsan.json');
+    User.getOrCreateUserWithRegisterData(zhangsanData, function(user){
       User.find({
         where: {
           name: '张三'
         }
       }).success(function(foundUser){
-        foundUser.uid.should.eql(user.uid);
         foundUser.name.should.eql(user.name);
         console.log("\n\t成功创建了User：" + user.name);
         done();
       });
     });
   });
-  can('添加Contact', function(done){
-    var contactData, contactPhone;
-    contactData = {
-      cid: '456',
-      name: '李四',
-      isMerged: false
-    };
-    contactPhone = {
-      number: 34567890,
-      isActive: true
-    };
+  can('添加张三Contact', function(done){
+    var zhangsanContactsData;
+    zhangsanContactsData = require('../test-data/zhangsan.json').Contacts;
     User.find({
       where: {
         name: '张三'
       }
     }).success(function(user){
-      Contact.createAsUserWithContactPhoneData(contactData, contactPhone, function(contact){
-        user.bindHasContact(contact, function(){
-          User.find({
-            where: {
-              name: '张三'
-            }
-          }).success(function(foundUser){});
-          user.getHasContacts().success(function(contacts){
-            process.stdout.write("\n\t找回的User：" + user.name + "有" + contacts.length + "个联系人：");
-            contacts.length.should.eql(1);
+      user.createAndBindContacts(zhangsanContactsData, function(){
+        User.find({
+          where: {
+            name: '张三'
+          }
+        }).success(function(foundUser){
+          foundUser.getHasContacts().success(function(contacts){
+            console.log("\n\t找回的User：" + user.name + "有" + contacts.length + "个联系人：");
+            contacts.length.should.eql(2);
             async.forEach(contacts, function(contact, next){
-              process.stdout.write(contact.name + "\t");
+              console.log("\t" + contact.name);
               next();
             }, function(err){
-              console.log("\n\t成功添加了Contact：" + contact.name);
+              if (err) {
+                throw new Error(err);
+              }
               done();
+            });
+          });
+        });
+      });
+    });
+  });
+  can('创建User李四', function(done){
+    var lisiData;
+    lisiData = require('../test-data/lisi.json');
+    User.getOrCreateUserWithRegisterData(lisiData, function(user){
+      User.find({
+        where: {
+          name: '李四'
+        }
+      }).success(function(foundUser){
+        foundUser.name.should.eql(user.name);
+        console.log("\n\t成功创建了User：" + user.name);
+        done();
+      });
+    });
+  });
+  can('添加李四Contact', function(done){
+    var lisiContactsData;
+    lisiContactsData = require('../test-data/lisi.json').Contacts;
+    User.find({
+      where: {
+        name: '李四'
+      }
+    }).success(function(user){
+      user.createAndBindContacts(lisiContactsData, function(){
+        User.find({
+          where: {
+            name: '李四'
+          }
+        }).success(function(foundUser){
+          foundUser.getHasContacts().success(function(contacts){
+            console.log("\n\t找回的User：" + user.name + "有" + contacts.length + "个联系人：");
+            contacts.length.should.eql(2);
+            async.forEach(contacts, function(contact, next){
+              console.log("\t" + contact.name);
+              next();
+            }, function(err){
+              if (err) {
+                throw new Error(err);
+              }
+              foundUser.getAsContacts().success(function(contacts){
+                console.log("\n\t找回的User：" + user.name + "充当" + contacts.length + "个联系人：");
+                contacts.length.should.eql(1);
+                async.forEach(contacts, function(contact, next){
+                  console.log("\t" + contact.name);
+                  next();
+                }, function(err){
+                  if (err) {
+                    throw new Error(err);
+                  }
+                  done();
+                });
+              });
             });
           });
         });

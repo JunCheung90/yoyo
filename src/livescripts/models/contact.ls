@@ -1,4 +1,4 @@
-require! ['../servers-init'.orm, '../servers-init'.S, '../util', './user'.User]
+require! ['../servers-init'.orm, '../servers-init'.S, '../util']
 
 Contact = orm.define 'Contact', 
 	cid: {type: S.STRING, unique: true}

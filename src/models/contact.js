@@ -1,8 +1,7 @@
-var orm, S, util, User, Contact, Phone, SocialNetwork, ContactsMergeRecord;
+var orm, S, util, Contact, User, Phone, SocialNetwork, ContactsMergeRecord;
 orm = require('../servers-init').orm;
 S = require('../servers-init').S;
 util = require('../util');
-User = require('./user').User;
 Contact = orm.define('Contact', {
   cid: {
     type: S.STRING,

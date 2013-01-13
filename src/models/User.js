@@ -1,6 +1,8 @@
-var orm, S, User, Contact, Phone, SocialNetwork;
+var async, orm, S, util, User, Contact, Phone, SocialNetwork;
+async = require('async');
 orm = require('../servers-init').orm;
 S = require('../servers-init').S;
+util = require('../util');
 User = orm.define('User', {
   uid: {
     type: S.STRING,
@@ -11,6 +13,22 @@ User = orm.define('User', {
   isMerged: S.BOOLEAN
 }, {
   classMethods: {
+    getOrCreateUserWithRegisterData: function(registerData, callback){
+      var phoneData, userData;
+      phoneData = {
+        number: registerData.User.CurrentPhone,
+        isActive: true
+      };
+      userData = {
+        uid: util.getUUid(),
+        name: registerData.User.Name,
+        isRegistered: true,
+        isMerged: false
+      };
+      User.getOrCreateUserWithPhone(userData, phoneData, function(user){
+        callback(user);
+      });
+    },
     createUserWithPhone: function(userData, phoneData, callback){
       Phone.create(phoneData).success(function(phone){
         User.create(userData).success(function(user){
@@ -33,11 +51,15 @@ User = orm.define('User', {
         }
       }).success(function(phone){
         if (phone) {
-          phone.getOwnBy().success(function(owner){
-            callback(owner);
+          phone.getOwnBy().success(function(user){
+            if (user.isRegistered) {
+              return callback(user);
+            }
+            user.update(userData, function(){
+              callback(user);
+            });
           });
         } else {
-          debugger;
           User.createUserWithPhone(userData, phoneData, callback);
         }
       }).error(function(err){
@@ -51,7 +73,7 @@ User = orm.define('User', {
     bindHasContact: function(contact, callback){
       var that;
       that = this;
-      return that.addHasContact(contact).success(function(){
+      that.addHasContact(contact).success(function(){
         contact.setOwnBy(that).success(function(){
           that.save().success(function(){
             contact.save().success(function(){
@@ -64,7 +86,7 @@ User = orm.define('User', {
     bindAsContact: function(contact, callback){
       var that;
       that = this;
-      return that.addAsContact(contact).success(function(){
+      that.addAsContact(contact).success(function(){
         contact.setActBy(that).success(function(){
           that.save().success(function(){
             contact.save().success(function(){
@@ -72,6 +94,31 @@ User = orm.define('User', {
             });
           });
         });
+      });
+    },
+    update: function(userData, callback){
+      var that;
+      that = this;
+      that.name = userData.name;
+      that.isRegistered = userData.isRegistered;
+      that.save().success(function(){
+        callback();
+      });
+    },
+    createAndBindContacts: function(contactsRegisterData, callback){
+      var that;
+      that = this;
+      async.forEach(contactsRegisterData, function(contactRegisterData, next){
+        Contact.createAsUser(contactRegisterData, function(contact){
+          that.bindHasContact(contact, function(){
+            next();
+          });
+        });
+      }, function(err){
+        if (err) {
+          throw new Error(err);
+        }
+        callback();
       });
     }
   }

@@ -31,7 +31,7 @@
 ============== Registration JSON Example End=================
 '''
 
-require! [async, '../config/config',
+require! ['../config/config',
 					'../util', 
 					'../servers-init'.orm, 
 					'../models/user'.User,
@@ -42,22 +42,11 @@ require! [async, '../config/config',
 register-user = !(register-data, callback) ->
 	throw new Error("Can't register a user with exist id") if register-data.User.id
 
-	phone-data = { number: register-data.User.CurrentPhone, is-active: true }
-	user-data = { uid: util.get-UUid!, name: register-data.User.Name, is-registered: true, is-merged: false }
-
-	(user) <-! User.get-or-create-user-with-phone user-data, phone-data
+	(user) <-! User.get-or-create-user-with-register-data register-data
 	<-! store-or-update-user-contact-book user, register-data
-	<-! create-and-bind-user-contacts user, register-data.Contacts
+	<-! user.create-and-bind-contacts register-data.Contacts
 	<-! store-or-update-user-contact-book user, register-data	
 	callback {user: user}
-
-!function create-and-bind-user-contacts user, contacts-register-data, callback
-	(err) <-! async.for-each contacts-register-data, !(contact-register-data, next) ->
-		(contact) <-! Contact.create-as-user contact-register-data
-		<-!  user.bind-has-contact contact
-		next!
-	throw new Error err if err
-	callback!
 
 # TODO: 
 # ====== The two functions below may be moved to a User Contact Book Manager in future =========
