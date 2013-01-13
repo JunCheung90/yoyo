@@ -1,0 +1,26 @@
+﻿ { 
+ 	"User": {
+ 		"id": null,
+ 		"Name": "李四",
+		"Avatar": null,
+    "CurrentPhone": "12345678",
+ 		"SN": [{
+ 			"SnName": "豆瓣",
+ 			"AccountName": "李四豆"
+ 		}]
+ 	},
+ 	"Contacts":[
+	 	{
+	 		"id": null,
+	 		"Name": "张大三",
+			"Avatar": null,
+	    "CurrentPhone": "34567890"
+	 	},
+	 	{
+	 		"id": null,
+	 		"Name": "赵小五",
+			"Avatar": null,
+	    "CurrentPhone": "23456789"
+	 	}
+ 	]
+}
