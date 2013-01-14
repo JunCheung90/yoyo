@@ -12,7 +12,7 @@ Contact = orm.define('Contact', {
 }, {
   classMethods: {
     createAsUser: function(contactRegisterData, callback){
-      var contactData, phoneData;
+      var contactData, phoneData, socialData;
       contactData = {
         cid: util.getUUid(),
         name: contactRegisterData.Name,
@@ -22,9 +22,10 @@ Contact = orm.define('Contact', {
         number: contactRegisterData.CurrentPhone,
         isActive: true
       };
-      return Contact.createAsUserWithContactPhoneData(contactData, phoneData, callback);
+      socialData = [];
+      Contact.createAsUserWithContactPhoneData(contactData, phoneData, socialData, callback);
     },
-    createAsUserWithContactPhoneData: function(contactData, phoneData, callback){
+    createAsUserWithContactPhoneData: function(contactData, phoneData, socialData, callback){
       var userData;
       userData = {
         uid: util.getUUid(),
@@ -32,7 +33,7 @@ Contact = orm.define('Contact', {
         isRegistered: false,
         isMerged: false
       };
-      return User.getOrCreateUserWithPhone(userData, phoneData, function(user){
+      User.getOrCreateUserWithPhone(userData, phoneData, socialData, function(user){
         Contact.create(contactData).success(function(contact){
           user.bindAsContact(contact, function(){
             callback(contact);

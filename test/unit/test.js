@@ -95,7 +95,15 @@ function checkUserContacts(userName, amountOfHasContacts, amountOfAsContacts, ca
             if (err) {
               throw new Error(err);
             }
-            callback();
+            foundUser.getSocials().success(function(socials){
+              console.log("\n\t找回的User：" + userName + "有" + socials.length + "个SN：");
+              async.forEach(socials, function(social, next){
+                console.log("\t" + social.account);
+                next();
+              }, function(err){
+                callback();
+              });
+            });
           });
         });
       });

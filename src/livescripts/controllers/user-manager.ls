@@ -32,7 +32,6 @@
 '''
 
 require! ['../config/config',
-					'../util', 
 					'../servers-init'.orm, 
 					'../models/user'.User,
 					'../models/phone'.Phone,

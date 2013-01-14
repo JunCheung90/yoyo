@@ -72,5 +72,10 @@ describe 'Sequelize 用法', !->
 					console.log "\t#{contact.name}"
 					next!
 				throw new Error err if err
-				callback!			
+				found-user.get-socials! .success !(socials) ->
+					console.log "\n\t找回的User：#{user-name}有#{socials.length}个SN："
+					(err) <-! async.for-each socials, !(social, next) ->
+						console.log "\t#{social.account}"
+						next!
+					callback!			
 

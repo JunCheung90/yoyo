@@ -5,7 +5,13 @@ SocialNetwork = orm.define 'SocialNetwork',
 	nickname: S.STRING
 	appkey: S.STRING
 	* 
-		classMethods: {}
+		classMethods:
+			create-social-network: !(social-data, callback) ->
+	  		# TODO: Just for US1 in http://my.ss.sysu.edu.cn/wiki/pages/viewpage.action?pageId=111607873
+				social = {account: social-data.AccountName, nickname: null, appkey: null}
+				SocialNetwork.create social .success !(sn)->
+					callback sn
+
 		instanceMethods: {}
 
 (exports ? this) <<< {SocialNetwork}	

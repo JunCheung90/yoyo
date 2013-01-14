@@ -6,7 +6,19 @@ SocialNetwork = orm.define('SocialNetwork', {
   nickname: S.STRING,
   appkey: S.STRING
 }, {
-  classMethods: {},
+  classMethods: {
+    createSocialNetwork: function(socialData, callback){
+      var social;
+      social = {
+        account: socialData.AccountName,
+        nickname: null,
+        appkey: null
+      };
+      SocialNetwork.create(social).success(function(sn){
+        callback(sn);
+      });
+    }
+  },
   instanceMethods: {}
 });
 (typeof exports != 'undefined' && exports !== null ? exports : this).SocialNetwork = SocialNetwork;

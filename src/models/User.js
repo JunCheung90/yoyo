@@ -14,7 +14,7 @@ User = orm.define('User', {
 }, {
   classMethods: {
     getOrCreateUserWithRegisterData: function(registerData, callback){
-      var phoneData, userData;
+      var phoneData, userData, socialData;
       phoneData = {
         number: registerData.User.CurrentPhone,
         isActive: true
@@ -25,26 +25,29 @@ User = orm.define('User', {
         isRegistered: true,
         isMerged: false
       };
-      User.getOrCreateUserWithPhone(userData, phoneData, function(user){
+      socialData = registerData.User.SN;
+      User.getOrCreateUserWithPhone(userData, phoneData, socialData, function(user){
         callback(user);
       });
     },
-    createUserWithPhone: function(userData, phoneData, callback){
+    createUserWithPhone: function(userData, phoneData, socialData, callback){
       Phone.create(phoneData).success(function(phone){
         User.create(userData).success(function(user){
           user.addPhone(phone).success(function(){
-            user.save().success(function(){
-              callback(user);
-            }).error(function(err){
-              if (err) {
-                throw new Error(err);
-              }
+            user.addSocialNetworksWithoutSave(socialData, function(){
+              user.save().success(function(){
+                callback(user);
+              }).error(function(err){
+                if (err) {
+                  throw new Error(err);
+                }
+              });
             });
           });
         });
       });
     },
-    getOrCreateUserWithPhone: function(userData, phoneData, callback){
+    getOrCreateUserWithPhone: function(userData, phoneData, socialData, callback){
       Phone.find({
         where: {
           number: phoneData.number
@@ -55,12 +58,12 @@ User = orm.define('User', {
             if (user.isRegistered) {
               return callback(user);
             }
-            user.update(userData, function(){
+            user.update(userData, socialData, function(){
               callback(user);
             });
           });
         } else {
-          User.createUserWithPhone(userData, phoneData, callback);
+          User.createUserWithPhone(userData, phoneData, socialData, callback);
         }
       }).error(function(err){
         if (err) {
@@ -96,13 +99,40 @@ User = orm.define('User', {
         });
       });
     },
-    update: function(userData, callback){
+    addSocialNetworks: function(socialData, callback){
+      var that;
+      that = this;
+      that.addSocialNetworksWithoutSave(socialData, function(){
+        that.save().success(function(){
+          callback();
+        });
+      });
+    },
+    addSocialNetworksWithoutSave: function(socialData, callback){
+      var that;
+      that = this;
+      async.forEach(socialData, function(sd, next){
+        SocialNetwork.createSocialNetwork(sd, function(sn){
+          that.addSocial(sn).success(function(){
+            next();
+          });
+        });
+      }, function(err){
+        if (err) {
+          throw new Error(err);
+        }
+        callback();
+      });
+    },
+    update: function(userData, socialData, callback){
       var that;
       that = this;
       that.name = userData.name;
       that.isRegistered = userData.isRegistered;
-      that.save().success(function(){
-        callback();
+      that.addSocialNetworksWithoutSave(socialData, function(){
+        that.save().success(function(){
+          callback();
+        });
       });
     },
     createAndBindContacts: function(contactsRegisterData, callback){

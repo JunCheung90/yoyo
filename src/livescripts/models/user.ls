@@ -10,27 +10,29 @@ User = orm.define 'User',
 			get-or-create-user-with-register-data: !(register-data, callback) ->
 				phone-data = { number: register-data.User.CurrentPhone, is-active: true }
 				user-data = { uid: util.get-UUid!, name: register-data.User.Name, is-registered: true, is-merged: false }
-				(user) <-! User.get-or-create-user-with-phone user-data, phone-data
+				social-data = register-data.User.SN # array of social networks
+				(user) <-! User.get-or-create-user-with-phone user-data, phone-data, social-data
 				callback user
-				
-			create-user-with-phone: !(user-data, phone-data, callback) ->
+
+			create-user-with-phone: !(user-data, phone-data, social-data, callback) ->
 				Phone.create phone-data .success !(phone) ->
 					User.create user-data .success !(user) ->
 						user.addPhone phone .success !->
+							<-! user.add-social-networks-without-save social-data
 							user.save!.success !->
 								callback user
 							.error !(err) ->
 								throw new Error err if err
 
-			get-or-create-user-with-phone: !(user-data, phone-data, callback) ->
+			get-or-create-user-with-phone: !(user-data, phone-data, social-data, callback) ->
 				Phone.find {where: {number: phone-data.number}} .success !(phone) ->
 					if phone
 						phone.get-own-by! .success !(user) ->
 							return callback user if user.isRegistered  
-							<-! user.update user-data # 用户之前并未注册，而是作为他人的联系人，由系统生成的用户，此时需要补充注册信息。
+							<-! user.update user-data, social-data # 用户之前并未注册，而是作为他人的联系人，由系统生成的用户，此时需要补充注册信息。
 							callback user
 					else
-						User.create-user-with-phone user-data, phone-data, callback
+						User.create-user-with-phone user-data, phone-data, social-data, callback
 				.error !(err) ->
 					throw new Erro err if err
 
@@ -51,11 +53,27 @@ User = orm.define 'User',
 							contact.save!.success !->
 								callback!
 
-			update: !(user-data, callback) ->
+			add-social-networks: !(social-data, callback) ->
+				that = @
+				<-! that.add-social-networks-without-save social-data
+				that.save!.success !->
+					callback!
+
+			add-social-networks-without-save: !(social-data, callback) ->
+				that = @
+				(err) <-! async.for-each social-data, !(sd, next) ->
+					(sn) <-! SocialNetwork.create-social-network sd
+					that.addSocial sn .success !->
+						next!
+				throw new Error err if err
+				callback!
+
+			update: !(user-data, social-data, callback) ->
 				that = @ 
 				that.name = user-data.name 
 				that.is-registered = user-data.is-registered
-				that.save!.success !->
+				<-! that.add-social-networks-without-save social-data
+				that.save! .success !->
 					callback!
 
 			create-and-bind-contacts: !(contacts-register-data, callback) ->
@@ -70,6 +88,7 @@ User = orm.define 'User',
 (exports ? this) <<< {User}	
 
 require! ['./contact'.Contact, './phone'.Phone, './social-network'.SocialNetwork]
+
 
 User.hasMany Contact, 
 	as: 'hasContacts'
