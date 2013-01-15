@@ -7,6 +7,7 @@ User = orm.define 'User',
 	isMerged: S.BOOLEAN,
 	* 
 		classMethods:
+			# public
 			get-or-create-user-with-register-data: !(register-data, callback) ->
 				phone-data = { number: register-data.User.CurrentPhone, is-active: true }
 				user-data = { uid: util.get-UUid!, name: register-data.User.Name, is-registered: true, is-merged: false }
@@ -15,14 +16,18 @@ User = orm.define 'User',
 				callback user
 
 			create-user-with-phone: !(user-data, phone-data, social-data, callback) ->
+				(user) <-! User.create-user-with-phone-without-save user-data, phone-data, social-data
+				user.save!.success !->
+					callback user
+				.error !(err) ->
+					throw new Error err if err
+
+			create-user-with-phone-without-save: !(user-data, phone-data, social-data, callback) ->
 				Phone.create phone-data .success !(phone) ->
 					User.create user-data .success !(user) ->
 						user.addPhone phone .success !->
 							<-! user.add-social-networks-without-save social-data
-							user.save!.success !->
-								callback user
-							.error !(err) ->
-								throw new Error err if err
+							callback user
 
 			get-or-create-user-with-phone: !(user-data, phone-data, social-data, callback) ->
 				Phone.find {where: {number: phone-data.number}} .success !(phone) ->
@@ -36,19 +41,33 @@ User = orm.define 'User',
 				.error !(err) ->
 					throw new Erro err if err
 
+			# private
+
 		instanceMethods: 
-			bind-has-contact: !(contact, callback) ->
-				that = @ # LiveScript的 ~> 这里不适合，会将this绑定到当前上下文，而不是user
-				that.add-has-contact contact .success !->
-					contact.set-own-by that .success !->
-						that.save!.success !->
-							contact.save!.success !->
-								callback!
+			# public 
+			create-and-bind-contacts: !(contacts-register-data, callback) ->
+				that = @
+				(err) <-! async.for-each contacts-register-data, !(contact-register-data, next) ->
+					(contact) <-! Contact.create-as-user contact-register-data
+					<-!  that.bind-has-contact contact
+					next!
+				throw new Error err if err
+				callback!
 
 			bind-as-contact: !(contact, callback) ->
 				that = @ 
 				that.add-as-contact contact .success !->
 					contact.set-act-by that .success !->
+						# 此处如果出现多个contact同步问题时，加上二次同步，如同bind-has-contact一样。
+						callback!
+
+			# private
+			bind-has-contact: !(contact, callback) ->
+				debugger;
+				that = @ # LiveScript的 ~> 这里不适合，会将this绑定到当前上下文，而不是user
+				that.add-has-contact contact .success !->
+					contact.set-own-by that .success !->
+						# 这里不能去掉，二次存储是为了解决多个contact同步的问题。
 						that.save!.success !->
 							contact.save!.success !->
 								callback!
@@ -75,15 +94,6 @@ User = orm.define 'User',
 				<-! that.add-social-networks-without-save social-data
 				that.save! .success !->
 					callback!
-
-			create-and-bind-contacts: !(contacts-register-data, callback) ->
-				that = @
-				(err) <-! async.for-each contacts-register-data, !(contact-register-data, next) ->
-					(contact) <-! Contact.create-as-user contact-register-data
-					<-!  that.bind-has-contact contact
-					next!
-				throw new Error err if err
-				callback!
 
 (exports ? this) <<< {User}	
 
