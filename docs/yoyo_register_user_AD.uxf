@@ -1,0 +1,716 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="11.5.1">
+  <zoom_level>10</zoom_level>
+  <group>
+    <element>
+      <type>com.umlet.element.custom.InitialState</type>
+      <coordinates>
+        <x>160</x>
+        <y>130</y>
+        <w>20</w>
+        <h>20</h>
+      </coordinates>
+      <panel_attributes>i</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.State</type>
+      <coordinates>
+        <x>100</x>
+        <y>200</y>
+        <w>180</w>
+        <h>50</h>
+      </coordinates>
+      <panel_attributes>Query Server for Changes
+--
+with local version
+</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.State</type>
+      <coordinates>
+        <x>420</x>
+        <y>200</y>
+        <w>200</w>
+        <h>70</h>
+      </coordinates>
+      <panel_attributes>Check Changes
+--
+consider both local version (lv) &amp; 
+server version (sv)
+</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.State</type>
+      <coordinates>
+        <x>100</x>
+        <y>310</y>
+        <w>160</w>
+        <h>50</h>
+      </coordinates>
+      <panel_attributes>Update contacts
+--
+Sync local contacts
+</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>140</x>
+        <y>110</y>
+        <w>50</w>
+        <h>110</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-</panel_attributes>
+      <additional_attributes>30;90;30;30</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>250</x>
+        <y>190</y>
+        <w>190</w>
+        <h>50</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-</panel_attributes>
+      <additional_attributes>170;30;30;30</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>230</x>
+        <y>240</y>
+        <w>360</w>
+        <h>134</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-
+ 
+lv, sv, changes</panel_attributes>
+      <additional_attributes>30;90;290;90;290;30</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.FinalState</type>
+      <coordinates>
+        <x>150</x>
+        <y>410</y>
+        <w>20</w>
+        <h>20</h>
+      </coordinates>
+      <panel_attributes>i</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>130</x>
+        <y>330</y>
+        <w>50</w>
+        <h>100</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-</panel_attributes>
+      <additional_attributes>30;80;30;30</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.Systemborder</type>
+      <coordinates>
+        <x>20</x>
+        <y>60</y>
+        <w>310</w>
+        <h>410</h>
+      </coordinates>
+      <panel_attributes>topcenter:YoYo Client on Mobile Phone
+</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.Systemborder</type>
+      <coordinates>
+        <x>330</x>
+        <y>60</y>
+        <w>330</w>
+        <h>410</h>
+      </coordinates>
+      <panel_attributes>topcenter:YoYo Server
+</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.Text</type>
+      <coordinates>
+        <x>270</x>
+        <y>20</y>
+        <w>130</w>
+        <h>30</h>
+      </coordinates>
+      <panel_attributes>*Update Contacts*</panel_attributes>
+      <additional_attributes/>
+    </element>
+  </group>
+  <group>
+    <element>
+      <type>com.umlet.element.custom.Text</type>
+      <coordinates>
+        <x>1170</x>
+        <y>20</y>
+        <w>320</w>
+        <h>30</h>
+      </coordinates>
+      <panel_attributes>*Update Contacts Details*</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>990</x>
+        <y>80</y>
+        <w>50</w>
+        <h>90</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-</panel_attributes>
+      <additional_attributes>30;70;30;30</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.InitialState</type>
+      <coordinates>
+        <x>1010</x>
+        <y>90</y>
+        <w>20</w>
+        <h>20</h>
+      </coordinates>
+      <panel_attributes>i</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.State</type>
+      <coordinates>
+        <x>950</x>
+        <y>150</y>
+        <w>180</w>
+        <h>40</h>
+      </coordinates>
+      <panel_attributes>Query Server for Changes
+
+</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.State</type>
+      <coordinates>
+        <x>1350</x>
+        <y>150</y>
+        <w>160</w>
+        <h>50</h>
+      </coordinates>
+      <panel_attributes>Check versions changes
+</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.Decision</type>
+      <coordinates>
+        <x>1410</x>
+        <y>240</y>
+        <w>40</w>
+        <h>40</h>
+      </coordinates>
+      <panel_attributes>bg=green
+</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>1100</x>
+        <y>120</y>
+        <w>270</w>
+        <h>94</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-
+client local version (clv)
+client server version (slv)</panel_attributes>
+      <additional_attributes>250;50;30;50</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.State</type>
+      <coordinates>
+        <x>960</x>
+        <y>440</y>
+        <w>200</w>
+        <h>50</h>
+      </coordinates>
+      <panel_attributes>Recieve 1st Query Response
+</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.Decision</type>
+      <coordinates>
+        <x>1030</x>
+        <y>540</y>
+        <w>40</w>
+        <h>40</h>
+      </coordinates>
+      <panel_attributes>bg=green</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.State</type>
+      <coordinates>
+        <x>1330</x>
+        <y>340</y>
+        <w>210</w>
+        <h>50</h>
+      </coordinates>
+      <panel_attributes>Send Nothing Change Message
+</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.State</type>
+      <coordinates>
+        <x>1330</x>
+        <y>540</y>
+        <w>210</w>
+        <h>50</h>
+      </coordinates>
+      <panel_attributes>Send Local Change 
+Only Message
+</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.State</type>
+      <coordinates>
+        <x>1330</x>
+        <y>440</y>
+        <w>210</w>
+        <h>50</h>
+      </coordinates>
+      <panel_attributes>Send Server Change 
+Only Message
+</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.State</type>
+      <coordinates>
+        <x>960</x>
+        <y>720</y>
+        <w>200</w>
+        <h>50</h>
+      </coordinates>
+      <panel_attributes>Find &amp; Send Local Changes
+Agsinst slv</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.State</type>
+      <coordinates>
+        <x>960</x>
+        <y>1000</y>
+        <w>200</w>
+        <h>50</h>
+      </coordinates>
+      <panel_attributes>Update YoYo Contacts</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.State</type>
+      <coordinates>
+        <x>960</x>
+        <y>1100</y>
+        <w>200</w>
+        <h>50</h>
+      </coordinates>
+      <panel_attributes>Sync Mobile Phone Contacts</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.State</type>
+      <coordinates>
+        <x>1340</x>
+        <y>720</y>
+        <w>200</w>
+        <h>50</h>
+      </coordinates>
+      <panel_attributes>Recieve 2nd Query Response
+</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>1330</x>
+        <y>250</y>
+        <w>190</w>
+        <h>110</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-
+clv == slv &amp; csv == ssv</panel_attributes>
+      <additional_attributes>100;90;100;30</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>1420</x>
+        <y>230</y>
+        <w>234</w>
+        <h>250</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-
+ 
+ 
+ 
+clv == slv &amp;&amp; csv != ssv</panel_attributes>
+      <additional_attributes>120;230;140;230;140;30;30;30</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>1420</x>
+        <y>230</y>
+        <w>294</w>
+        <h>360</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-
+ 
+ 
+ 
+ 
+ 
+clv != slv &amp;&amp; 
+csv == ssv</panel_attributes>
+      <additional_attributes>120;340;230;340;230;30;30;30</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>1130</x>
+        <y>340</y>
+        <w>220</w>
+        <h>140</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-</panel_attributes>
+      <additional_attributes>30;120;160;120;160;30;200;30</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>1130</x>
+        <y>430</y>
+        <w>220</w>
+        <h>50</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-</panel_attributes>
+      <additional_attributes>30;30;160;30;200;30</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>1130</x>
+        <y>430</y>
+        <w>220</w>
+        <h>150</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-</panel_attributes>
+      <additional_attributes>30;30;160;30;160;130;200;130</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>1400</x>
+        <y>170</y>
+        <w>50</w>
+        <h>90</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-</panel_attributes>
+      <additional_attributes>30;70;30;30</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>1020</x>
+        <y>460</y>
+        <w>50</w>
+        <h>100</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-</panel_attributes>
+      <additional_attributes>30;80;30;30</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.State</type>
+      <coordinates>
+        <x>1330</x>
+        <y>890</y>
+        <w>200</w>
+        <h>50</h>
+      </coordinates>
+      <panel_attributes>Merge Changes on 
+Client &amp; Server</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.State</type>
+      <coordinates>
+        <x>1330</x>
+        <y>630</y>
+        <w>210</w>
+        <h>50</h>
+      </coordinates>
+      <panel_attributes>Send Both Change Message
+</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>1420</x>
+        <y>230</y>
+        <w>354</w>
+        <h>440</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-
+ 
+ 
+ 
+ 
+ 
+
+clv != slv &amp;&amp;
+csv != ssv</panel_attributes>
+      <additional_attributes>120;420;290;420;290;30;30;30</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>1130</x>
+        <y>430</y>
+        <w>220</w>
+        <h>240</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-</panel_attributes>
+      <additional_attributes>30;30;160;30;160;220;200;220</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.State</type>
+      <coordinates>
+        <x>1330</x>
+        <y>980</y>
+        <w>200</w>
+        <h>50</h>
+      </coordinates>
+      <panel_attributes>Send Merge Change Message</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.Decision</type>
+      <coordinates>
+        <x>1410</x>
+        <y>810</y>
+        <w>40</w>
+        <h>40</h>
+      </coordinates>
+      <panel_attributes>bg=green</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>1400</x>
+        <y>740</y>
+        <w>50</w>
+        <h>90</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-
+</panel_attributes>
+      <additional_attributes>30;70;30;30</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>1370</x>
+        <y>820</y>
+        <w>110</w>
+        <h>90</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-
+csv != ssv</panel_attributes>
+      <additional_attributes>60;70;60;30</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.FinalState</type>
+      <coordinates>
+        <x>1050</x>
+        <y>1190</y>
+        <w>20</w>
+        <h>20</h>
+      </coordinates>
+      <panel_attributes>i</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>720</x>
+        <y>530</y>
+        <w>350</w>
+        <h>690</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-
+Nothing Change</panel_attributes>
+      <additional_attributes>330;670;80;670;80;30;310;30</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>850</x>
+        <y>530</y>
+        <w>200</w>
+        <h>520</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-
+Server Change</panel_attributes>
+      <additional_attributes>110;500;80;500;80;30;180;30</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>970</x>
+        <y>550</y>
+        <w>144</w>
+        <h>190</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-
+Local Change</panel_attributes>
+      <additional_attributes>80;170;80;30</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>1030</x>
+        <y>1020</y>
+        <w>50</w>
+        <h>100</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-</panel_attributes>
+      <additional_attributes>30;80;30;30</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>1130</x>
+        <y>720</y>
+        <w>230</w>
+        <h>50</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-</panel_attributes>
+      <additional_attributes>210;30;30;30</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.State</type>
+      <coordinates>
+        <x>1330</x>
+        <y>1060</y>
+        <w>200</w>
+        <h>50</h>
+      </coordinates>
+      <panel_attributes>Update Server Data</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>1420</x>
+        <y>800</y>
+        <w>254</w>
+        <h>300</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-
+csv == ssv
+</panel_attributes>
+      <additional_attributes>110;280;200;280;200;30;30;30</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>1400</x>
+        <y>910</y>
+        <w>50</w>
+        <h>90</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-</panel_attributes>
+      <additional_attributes>30;70;30;30</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>1400</x>
+        <y>1000</y>
+        <w>50</w>
+        <h>80</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-</panel_attributes>
+      <additional_attributes>30;60;30;30</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.State</type>
+      <coordinates>
+        <x>960</x>
+        <y>900</y>
+        <w>200</w>
+        <h>50</h>
+      </coordinates>
+      <panel_attributes>Recieve 2nd Query Response</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>1130</x>
+        <y>900</y>
+        <w>220</w>
+        <h>130</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-</panel_attributes>
+      <additional_attributes>30;30;160;30;160;110;200;110</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.Relation</type>
+      <coordinates>
+        <x>1030</x>
+        <y>1120</y>
+        <w>50</w>
+        <h>90</h>
+      </coordinates>
+      <panel_attributes>lt=&lt;-</panel_attributes>
+      <additional_attributes>30;70;30;30</additional_attributes>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.Systemborder</type>
+      <coordinates>
+        <x>700</x>
+        <y>50</y>
+        <w>510</w>
+        <h>1190</h>
+      </coordinates>
+      <panel_attributes>topcenter:YoYo Client on Mobile Phone
+
+</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.custom.Systemborder</type>
+      <coordinates>
+        <x>1210</x>
+        <y>50</y>
+        <w>560</w>
+        <h>1190</h>
+      </coordinates>
+      <panel_attributes>topcenter:YoYo Server</panel_attributes>
+      <additional_attributes/>
+    </element>
+  </group>
+</diagram>
