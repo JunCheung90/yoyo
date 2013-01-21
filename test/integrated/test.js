@@ -15,13 +15,6 @@ describe('测试YoYo REST API', function(){
       done();
     });
   });
-  can('查询联系人：GET /contact/10879 应当返回200', function(done){
-    client.get('/contact/10879', function(err, req, res, data){
-      should.not.exist(err);
-      res.statusCode.should.eql(200);
-      done();
-    });
-  });
   can('注册用户：POST /user 应当返回200', function(done){
     var postData;
     postData = require('../test-data/zhangsan.json');

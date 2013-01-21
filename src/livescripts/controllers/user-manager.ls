@@ -31,39 +31,26 @@
 ============== Registration JSON Example End=================
 '''
 
-require! ['../config/config',
-					'../servers-init'.orm, 
-					'../models/user'.User,
-					'../models/phone'.Phone,
-					'../models/contact'.Contact,
-					'../servers-init'.couch]
+require! ['../config/config'.mongo,
+					'../util'
+					'../servers-init'.init-mongo-client, 
+					'../servers-init'.shutdown-mongo-client]
+
 
 register-user = !(register-data, callback) ->
-	throw new Error("Can't register a user with exist id") if register-data.User.id
+	throw new Error("Can't register a user with exist id") if register-data.user.id
 
-	(user) <-! User.get-or-create-user-with-register-data register-data
-	<-! store-or-update-user-contact-book user, register-data
-	<-! user.create-and-bind-contacts register-data.Contacts
-	<-! store-or-update-user-contact-book user, register-data	
+	(user) <-! get-or-create-user-with-register-data register-data
+	<-! create-and-bind-contacts register-data.Contacts
+	# TODO: -! store-or-update-user-contact-book user, register-data	
 	callback {user: user}
 
-# TODO: 
-# ====== The two functions below may be moved to a User Contact Book Manager in future =========
-!function store-or-update-user-contact-book user, contact-book, callback
-	contact-book.User.uid = user.uid
-	doc-id = get-contact-doc-id user.uid
-	url = "/#{config.couch.db}/#{doc-id}"
-	(err, req, res, doc) <-! couch.get url
-	doc.User = contact-book
-	(err, req, res, new-doc-result) <-! couch.put url, doc
-	console.log "Couch Error: %j" err if err
-	callback!
-
-function get-contact-doc-id user-id
-	"#{user-id}-contacts-book" #TODO
-
-
-(exports ? this) <<< {register-user, get-contact-doc-id}
-
-
-
+!function get-or-create-user-with-register-data register-data, callback
+	user-data <<< register-data
+	delete user-data.contact
+	user-data.uid = util.get-UUid!
+	(client, db) <-! init-mongo-client
+	db.collection('users').update {a:1}, {b:1}, {upsert:true}, (err, result)->
+		throw new Error err if err
+		shutdown-mongo-client client
+		callback result

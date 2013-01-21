@@ -1,45 +1,43 @@
 ' Created by Wang, Qing. All rights reserved.\n\n================ Registration JSON Example ==================\n{ \n 	"User": {\n 		"id": null,\n 		"Name": "赵五",\n		"Avatar": null,\n    "CurrentPhone": "23456789",\n 		"SN": [{\n 			"SnName": "豆瓣",\n 			"AccountName": "赵五豆",\n 		}],\n 	},\n 	"Contacts":[\n	 	{\n	 		"id": null,\n	 		"Name": "张大三",\n			"Avatar": null,\n	    "CurrentPhone": "34567890",\n	 	},\n	 	{\n	 		"id": null,\n	 		"Name": "张老三",\n			"Avatar": null,\n	    "CurrentPhone": "34567890",\n	 	}\n 	]\n}\n============== Registration JSON Example End=================';
-var config, orm, User, Phone, Contact, couch, registerUser, ref$;
-config = require('../config/config');
-orm = require('../servers-init').orm;
-User = require('../models/user').User;
-Phone = require('../models/phone').Phone;
-Contact = require('../models/contact').Contact;
-couch = require('../servers-init').couch;
+var mongo, util, initMongoClient, shutdownMongoClient, registerUser;
+mongo = require('../config/config').mongo;
+util = require('../util');
+initMongoClient = require('../servers-init').initMongoClient;
+shutdownMongoClient = require('../servers-init').shutdownMongoClient;
 registerUser = function(registerData, callback){
-  if (registerData.User.id) {
+  if (registerData.user.id) {
     throw new Error("Can't register a user with exist id");
   }
-  User.getOrCreateUserWithRegisterData(registerData, function(user){
-    storeOrUpdateUserContactBook(user, registerData, function(){
-      user.createAndBindContacts(registerData.Contacts, function(){
-        storeOrUpdateUserContactBook(user, registerData, function(){
-          callback({
-            user: user
-          });
-        });
+  getOrCreateUserWithRegisterData(registerData, function(user){
+    createAndBindContacts(registerData.Contacts, function(){
+      callback({
+        user: user
       });
     });
   });
 };
-function storeOrUpdateUserContactBook(user, contactBook, callback){
-  var docId, url;
-  contactBook.User.uid = user.uid;
-  docId = getContactDocId(user.uid);
-  url = "/" + config.couch.db + "/" + docId;
-  couch.get(url, function(err, req, res, doc){
-    doc.User = contactBook;
-    couch.put(url, doc, function(err, req, res, newDocResult){
+function getOrCreateUserWithRegisterData(registerData, callback){
+  import$(userData, registerData);
+  delete userData.contact;
+  userData.uid = util.getUUid();
+  initMongoClient(function(client, db){
+    db.collection('users').update({
+      a: 1
+    }, {
+      b: 1
+    }, {
+      upsert: true
+    }, function(err, result){
       if (err) {
-        console.log("Couch Error: %j", err);
+        throw new Error(err);
       }
-      callback();
+      shutdownMongoClient(client);
+      return callback(result);
     });
   });
 }
-function getContactDocId(userId){
-  return userId + "-contacts-book";
+function import$(obj, src){
+  var own = {}.hasOwnProperty;
+  for (var key in src) if (own.call(src, key)) obj[key] = src[key];
+  return obj;
 }
-ref$ = typeof exports != 'undefined' && exports !== null ? exports : this;
-ref$.registerUser = registerUser;
-ref$.getContactDocId = getContactDocId;
