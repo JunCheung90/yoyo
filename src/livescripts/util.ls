@@ -1,4 +1,6 @@
+require! 'node-uuid'
+
 get-UUid = ->
-	new Date!.get-time! + Math.random!
+	node-uuid.v1!
 
 (exports ? this) <<< {get-UUid}

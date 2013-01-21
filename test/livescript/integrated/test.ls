@@ -16,12 +16,12 @@ describe '测试YoYo REST API' !->
 		<-! drop-create-orm
 		done!
 
-	can '查询联系人：GET /contact/10879 应当返回200' !(done) ->
-		do 
-			(err, req, res, data) <-! client.get '/contact/10879'
-			should.not.exist err
-			res.statusCode.should.eql 200
-			done!
+	# can '查询联系人：GET /contact/10879 应当返回200' !(done) ->
+	# 	do 
+	# 		(err, req, res, data) <-! client.get '/contact/10879'
+	# 		should.not.exist err
+	# 		res.statusCode.should.eql 200
+	# 		done!
 
 	can '注册用户：POST /user 应当返回200' !(done) ->
 		post-data = require '../test-data/zhangsan.json'

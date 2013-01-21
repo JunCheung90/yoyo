@@ -1,32 +1,32 @@
 ﻿{ 
- 	"User": {
+ 	"user": {
  		"id": null,
- 		"Name": "赵五",
-		"Avatar": null,
-    "CurrentPhone": "23456789",
- 		"SN": [{
- 			"SnName": "豆瓣",
- 			"AccountName": "赵五豆"
+ 		"name": "赵五",
+		"avatar": null,
+    "current-phone": "23456789",
+ 		"sn": [{
+ 			"sn-name": "豆瓣",
+ 			"account-name": "赵五豆"
  		}]
  	},
- 	"Contacts":[
+ 	"contacts":[
 	 	{
 	 		"id": null,
-	 		"Name": "张大三",
-			"Avatar": null,
-	    "CurrentPhone": "34567890"
+	 		"name": "张大三",
+			"avatar": null,
+	    "current-phone": "34567890"
 	 	},
 	 	{
 	 		"id": null,
-	 		"Name": "张老三",
-			"Avatar": null,
-	    "CurrentPhone": "34567890"
+	 		"name": "张老三",
+			"avatar": null,
+	    "current-phone": "34567890"
 	 	},
 	 	{
 	 		"id": null,
-	 		"Name": "李大四",
-			"Avatar": null,
-	    "CurrentPhone": "12345678"
+	 		"name": "李大四",
+			"avatar": null,
+	    "current-phone": "12345678"
 	 	}
  	]
 }

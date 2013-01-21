@@ -1,8 +1,14 @@
-require! [restify, sequelize, mysql, './config/config']
+require! [restify, './config/config'.mongo, 
+					'mongodb'.MongoClient, 'mongodb'.Server]
 
-couch = restify.create-json-client config.couch
-orm = new sequelize ...config.sequelize
-mysql-connection = mysql.create-connection config.mysql
-S = sequelize
+init-mongo-client = !(callback) -> #mongo-client, db are used to return
+	mongo-client = new MongoClient new Server mongo.host, mongo.port
+	(err, client) <-! mongo-client.open
+	db = mongo-client.db(mongo.db)
+	callback mongo-client, db
 
-(exports ? this) <<< {couch, orm, mysql-connection, S}
+shutdown-mongo-client = !(mongo-client, callback) ->
+	mongo-client.close!
+	callback!
+
+(exports ? this) <<< {init-mongo-client, shutdown-mongo-client}

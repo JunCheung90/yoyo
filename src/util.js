@@ -1,5 +1,6 @@
-var getUUid;
+var nodeUuid, getUUid;
+nodeUuid = require('node-uuid');
 getUUid = function(){
-  return new Date().getTime() + Math.random();
+  return nodeUuid.v1();
 };
 (typeof exports != 'undefined' && exports !== null ? exports : this).getUUid = getUUid;
