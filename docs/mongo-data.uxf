@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="11.5.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>360</x>
+      <y>40</y>
+      <w>170</w>
+      <h>580</h>
+    </coordinates>
+    <panel_attributes>User-Contacts-Book
+--
+#profile#
+s-version
+l-version
+effective-time
+uid
+name
+nicknames:
+emails:
+phones:
+ims:
+sns:
+addresses:
+tags:
+--
+#has-contacts#
+contacts: [{
+    cid
+    name
+    nicknames:
+    phones:
+    emails:
+    ims:
+    sns:
+    addresses:
+    --- # merge #---
+    merge-state
+    merge-to
+    merge-from
+    --- # relation #---
+    rank-score
+    total
+    tags:
+ }, 
+ ...
+]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>40</x>
+      <y>40</y>
+      <w>230</w>
+      <h>840</h>
+    </coordinates>
+    <panel_attributes>User
+--
+#profile#
+uid
+isPerson
+name
+nicknames:
+emails:
+phones:
+ims:
+sns:
+addresses:
+tags:
+--
+#statuts#
+isRegistered
+isMerged
+lastModifiedDate
+--
+#has-contacts#
+contacts: [{
+    cid
+    name
+    nicknames:
+    phones:
+    emails:
+    ims:
+    sns:
+    addresses:
+    --- # merge #---
+    merge-state
+    merge-to
+    merge-from
+    --- # relation #---
+    tags:
+ }, 
+ ...
+]
+--
+as-contacts-of: [ #-uids-#
+uid_1,
+...
+]
+--
+contacted-strangers: [ #-uids-#
+uid_1,
+...
+]
+--
+contacted-by-strangers: [ #-uids-#
+uid_1,
+...
+]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>630</x>
+      <y>30</y>
+      <w>230</w>
+      <h>290</h>
+    </coordinates>
+    <panel_attributes>Communications
+--
+commu-pair: [uid_1, uid_2]
+total-call-time:
+initial-by-1-time:
+total-call-times:
+intial-by-1-times:
+--
+history: [{
+    type:
+    form:
+    to:
+    start-time:
+    end-time:
+    message:    
+},
+...
+]
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>630</x>
+      <y>370</y>
+      <w>130</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>SN-Updates
+--
+owner: uid
+updates: [{
+    source: sn-id
+    url:
+    message:
+},
+...
+]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Note</type>
+    <coordinates>
+      <x>770</x>
+      <y>430</y>
+      <w>180</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>今后可能用
+CouchDB来做，
+这里会有版本管理的需要。
+bg=blue</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

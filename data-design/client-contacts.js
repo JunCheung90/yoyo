@@ -1,7 +1,7 @@
 var userContacts;
 userContacts = {
-  yoyoLv: "lv-xxxx",
-  yoyoSv: "sv-xxxx",
+  yoyoLv: "uid-lv-xxxx",
+  yoyoSv: "uid-sv-xxxx",
   uid: null,
   name: "张三",
   avatar: null,

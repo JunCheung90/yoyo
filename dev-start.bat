@@ -1,6 +1,7 @@
+start "mongoDB" /D %MONGO_HOME%\bin mongod.exe --dbpath c:\mongo-data
 start "node-inspector" node-inspector
-start "ç¼–è¯‘æºä»£ç " /D .\src lsc -wcbo . livescript
-start "YoYoæœåŠ¡å™¨" supervisor src\server.js
-start "ç¼–è¯‘æµ‹è¯•ä»£ç " /D .\test lsc -wcbo . livescript
-start "å•å…ƒæµ‹è¯•" /D .\test\unit mocha test-mongo-direct -R Spec
-' start "é›†æˆæµ‹è¯•" /D .\test\integrated mocha -R Spec
+start "±àÒëÔ´´úÂë" /D .\src lsc -wcbo . livescript
+start "YoYo·şÎñÆ÷" supervisor src\server.js
+start "±àÒë²âÊÔ´úÂë" /D .\test lsc -wcbo . livescript
+start "µ¥Ôª²âÊÔ" /D .\test\unit mocha test-mongo-direct -R Spec
+' start "¼¯³É²âÊÔ" /D .\test\integrated mocha -R Spec
