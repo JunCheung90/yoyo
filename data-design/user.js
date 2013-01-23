@@ -18,6 +18,7 @@ user = {
       endUsingTime: '2012-11-01'
     }
   ],
+  emails: ['zhangsan@fake.com'],
   ims: [
     {
       type: 'QQ',
@@ -31,7 +32,7 @@ user = {
       apiKey: 'AOL可能给出的api key'
     }
   ],
-  sn: [{
+  sns: [{
     snName: '豆瓣',
     accountName: '张三豆',
     apiKey: 'xxxx'
@@ -43,21 +44,25 @@ user = {
   mergeStatus: 'NONE',
   mergedTo: null,
   mergedFrom: [],
-  contacts: {
-    cid: 'uid-c-timestamp_of_add-seqno',
-    names: ['李小四'],
-    phones: ['123456'],
-    emails: ['lisi@fake.com'],
-    ims: [{
-      type: 'QQ',
-      account: 'lisi111'
-    }],
-    sns: [],
-    tags: [],
-    mergeStatus: 'NONE',
-    mergedTo: null,
-    mergedFrom: []
-  },
+  contacts: [
+    {
+      cid: 'uid-c-timestamp_of_add-seqno',
+      uid: 'uid_lisi',
+      names: ['李小四'],
+      phones: ['123456'],
+      emails: ['lisi@fake.com'],
+      ims: [{
+        type: 'QQ',
+        account: 'lisi111'
+      }],
+      sns: [],
+      tags: []
+    }, {
+      mergeStatus: 'NONE',
+      mergedTo: null,
+      mergedFrom: []
+    }
+  ],
   asContactOf: ['uid-of-zhangsan', 'uid-of-zhaowu'],
   contactedStrangers: ['uid-of-stranger-1', 'uid-of-stranger-2'],
   contactedByStrangers: ['uid-of-stranger-3', 'uid-of-stranger-2']

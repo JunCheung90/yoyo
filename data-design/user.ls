@@ -15,7 +15,7 @@ user = # yoyo server端数据
       start-using-time: '2010-01-01'
       end-using-time: '2012-11-01' # 更换或被系统发现用户停用电话的时间（其它用户用了这个号码）
   emails:
-    zhangsan@fake.com
+    'zhangsan@fake.com'
     ...      
   ims: # 多个IM
     * type: 'QQ'
@@ -26,7 +26,7 @@ user = # yoyo server端数据
       account: '222222'
       is-active: true
       api-key: 'AOL可能给出的api key'
-  sn:
+  sns:
     * sn-name: '豆瓣'
       account-name: '张三豆'
       api-key: 'xxxx' # 服务端授权后得到的key，用以从SN获取信息。
@@ -44,6 +44,7 @@ user = # yoyo server端数据
   #----------- relations ----------#
   contacts: # 当前用户的联系人
     * cid: 'uid-c-timestamp_of_add-seqno'
+      uid: 'uid_lisi'
       names: ['李小四']
       phones: ['123456']
       emails: ['lisi@fake.com']

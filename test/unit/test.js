@@ -1,44 +1,10 @@
-var should, async, orm, User, Phone, Contact, dropCreateOrm, can;
+var should, async, can;
 should = require('should');
 async = require('async');
-orm = require('../../src/servers-init').orm;
-User = require('../../src/models/user').User;
-Phone = require('../../src/models/phone').Phone;
-Contact = require('../../src/models/contact').Contact;
-dropCreateOrm = require('../../src/orm-sync').dropCreateOrm;
 can = it;
 describe('Sequelize 用法', function(){
-  before(function(done){
-    dropCreateOrm(function(){
-      done();
-    });
-  });
   can('创建User张三', function(done){
     checkCreateUserWith('zhangsan.json', '张三', done);
-  });
-  can('添加张三Contacts后，张三有2个Contacts，作为别人的0个Contact', function(done){
-    createUserContacts('zhangsan.json', '张三', function(){
-      checkUserContacts('张三', 2, 0, done);
-    });
-  });
-  can('创建User李四', function(done){
-    checkCreateUserWith('lisi.json', '李四', done);
-  });
-  can('添加李四Contacts后，李四有2个Contacts，作为别人的1个Contact', function(done){
-    createUserContacts('lisi.json', '李四', function(){
-      checkUserContacts('李四', 2, 1, done);
-    });
-  });
-  can('创建User赵五', function(done){
-    checkCreateUserWith('zhaowu.json', '赵五', done);
-  });
-  can('添加赵五Contacts后，赵五有3个Contacts，作为别人的2个Contacts', function(done){
-    createUserContacts('zhaowu.json', '赵五', function(){
-      checkUserContacts('赵五', 3, 2, done);
-    });
-  });
-  can('最新张三联系人情况，有2个Contacts，作为别人的3个Contacts', function(done){
-    checkUserContacts('张三', 2, 3, done);
   });
 });
 function checkCreateUserWith(jsonFileName, userName, callback){

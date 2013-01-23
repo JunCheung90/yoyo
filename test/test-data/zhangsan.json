@@ -1,19 +1,10 @@
-// 这里的数据是客户端（手机端）经过对当前通讯录计算之后post给服务端的。当然，也可以是手机直接将通讯录原汁原味地post到服务端，然后由服务端自行整理成为如下的样子。
 {
 	"name": "张三",
 	"phones": [
 		{
 			"phoneNumber": "34567890",
-			"isActive": true,
-		},
-		/* 下面的电话是在一段时间使用后，用户换号后产生的结果
-		{
-			"phoneNumber": "1",
-			"isActive": false,
-			"startUsingTime": "2010-01-01",
-			"endUsingTime": "2012-11-01"
+			"isActive": true
 		}
-		*/
 	],
 	"emails": [
 		"zhangsan@fake.com"
@@ -22,18 +13,18 @@
 		{
 			"type": "QQ",
 			"account": "zhangsan111",
-			"isActive": true,
+			"isActive": true
 		},
 		{
 			"type": "AOL",
 			"account": "zhangsan222",
-			"isActive": true,
+			"isActive": true
 		}
 	],
-	"sn": [
+	"sns": [
 		{
 			"snName": "豆瓣",
-			"accountName": "张三豆",
+			"accountName": "张三豆"
 		}
 	],
 	"addresses": [
@@ -60,7 +51,7 @@
 				}
 			],
 			"sns": [],
-			"tags": [],
+			"tags": []
 		},
 		{
 			"names": [
@@ -79,7 +70,7 @@
 				}
 			],
 			"sns": [],
-			"tags": [],
-		},
+			"tags": []
+		}
 	]
 }
