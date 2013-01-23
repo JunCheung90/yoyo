@@ -1,33 +1,88 @@
-﻿{ 
- 	"user": {
- 		"id": null,
- 		"name": "赵五",
-		"avatar": null,
-    "current-phone": "23456789",
- 		"sn": [{
- 			"sn-name": "豆瓣",
- 			"account-name": "赵五豆"
- 		}]
- 	},
- 	"contacts":[
-	 	{
-	 		"id": null,
-	 		"name": "张大三",
-			"avatar": null,
-	    "current-phone": "34567890"
-	 	},
-	 	{
-	 		"id": null,
-	 		"name": "张老三",
-			"avatar": null,
-	    "current-phone": "34567890"
-	 	},
-	 	{
-	 		"id": null,
-	 		"name": "李大四",
-			"avatar": null,
-	    "current-phone": "12345678"
-	 	}
- 	]
+// 这里的数据是客户端（手机端）经过对当前通讯录计算之后post给服务端的。当然，也可以是手机直接将通讯录原汁原味地post到服务端，然后由服务端自行整理成为如下的样子。
+{
+	"name": "赵五",
+	"phones": [
+		{
+			"phoneNumber": "23456789",
+			"isActive": true,
+		},
+		/* 下面的电话是在一段时间使用后，用户换号后产生的结果
+		{
+			"phoneNumber": "1",
+			"isActive": false,
+			"startUsingTime": "2010-01-01",
+			"endUsingTime": "2012-11-01"
+		}
+		*/
+	],
+	"emails": [
+		"zhaowu@fake.com"
+	],
+	"ims": [
+		{
+			"type": "QQ",
+			"account": "zhaowu111",
+			"isActive": true,
+		},
+		{
+			"type": "AOL",
+			"account": "zhaowu222",
+			"isActive": true,
+		}
+	],
+	"sn": [
+		{
+			"snName": "豆瓣",
+			"accountName": "赵五豆",
+		}
+	],
+	"addresses": [
+		"广州 大学城 中山大学 至善园 508"
+	],
+	"tags": [
+		"程序员 设计师"
+	],
+	"contacts": [
+		{
+			"names": [
+				"张大三"
+			],
+			"phones": [
+				"34567890"
+			],
+			"emails": [],
+			"ims": [
+				{
+					"type": "QQ",
+					"account": "zhangsan111"
+				}
+			],
+			"sns": [],
+			"tags": [],
+		},
+		{
+			"names": [
+				"张老三"
+			],
+			"phones": [
+				"34567890"
+			],
+			"emails": [],
+			"ims": [],
+			"sns": [],
+			"tags": [],
+		},
+		{
+			"names": [
+				"李大四"
+			],
+			"phones": [
+				"23456789" 
+			],
+			"emails": [],
+			"ims": [],
+			"sns": [],
+			"tags": [],
+		},
+	]
 }
-

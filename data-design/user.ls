@@ -3,7 +3,7 @@ user = # yoyo server端数据
   uid: 'xxxx' # 注册用户之后将存在, 对于尚未注册，而仅仅是通过他人通讯录识别的user，为null。
   is-person: true # true | false 对于单位用户（电话）来说为false
   name: '张三'
-  nicknames: ['小张', '小三']
+  nicknames: ['小张', '小三'] # 从他人通信录里面给当前用户的名称中获取。
   avatars: ['s-aid-1', 's-aid-2', 'u-aid-1', 'u-aid-2'] # avatar的id全局唯一，有系统计算给出的（s）和用户上传的（u）
   current-avatar: 's-aid-2'
   phones: # 记录用户使用（过）的电话号码。
@@ -13,7 +13,10 @@ user = # yoyo server端数据
     * phone-number: '1'
       is-active: false
       start-using-time: '2010-01-01'
-      end-using-time: '2012-11-01' # 
+      end-using-time: '2012-11-01' # 更换或被系统发现用户停用电话的时间（其它用户用了这个号码）
+  emails:
+    zhangsan@fake.com
+    ...      
   ims: # 多个IM
     * type: 'QQ'
       account: '111111'
@@ -31,7 +34,7 @@ user = # yoyo server端数据
   addresses:
     '广州 大学城 中山大学 至善园 307'
     ...
-  tags: ['程序员']
+  tags: ['程序员'] # 用户给自己的标签，或者系统发掘出用户的特征。
   #----------- status ----------#
   is-registered: true
   last-modified-date: '2013-01-09'
@@ -50,6 +53,7 @@ user = # yoyo server端数据
         ...
       sns: [] # 社交网络的列表
       tags: [] # 这些是当前用户给这个联系人定义的标签，说明了他们的关系
+      ...
       #-------- merge --------#
       merge-status: 'NONE' # NONE | MERGED
       merged-to: null # 如果被合并了，这里是合并之后的cid。两个contact合并时，新生成一个contact。
@@ -60,3 +64,9 @@ user = # yoyo server端数据
 # 在当前用户的通信历史中出现过，但又不是用户的联系人的phone、email等等，系统为这些人生成（is-register = false）的用户，并记录它们与用户的关系。
   contacted-strangers: ['uid-of-stranger-1', 'uid-of-stranger-2'] # 用户联系过的strangers。
   contacted-by-strangers: ['uid-of-stranger-3', 'uid-of-stranger-2'] # 联系过用户的strangers，stranger-2即联系过当前用户，也被当前用户联系过。
+require! fs
+
+# 下面部分用来生成json数据
+(err) <-! fs.writeFile 'zhangsan.json', JSON.stringify(user, null, '\t')
+throw new Error err if err
+console.log "user data have been exported to zhangsan.json"

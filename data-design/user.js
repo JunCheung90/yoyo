@@ -1,4 +1,4 @@
-var user;
+var user, fs;
 user = {
   uid: 'xxxx',
   isPerson: true,
@@ -62,3 +62,10 @@ user = {
   contactedStrangers: ['uid-of-stranger-1', 'uid-of-stranger-2'],
   contactedByStrangers: ['uid-of-stranger-3', 'uid-of-stranger-2']
 };
+fs = require('fs');
+fs.writeFile('zhangsan.json', JSON.stringify(user, null, '\t'), function(err){
+  if (err) {
+    throw new Error(err);
+  }
+  console.log("user data have been exported to zhangsan.json");
+});
