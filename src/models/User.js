@@ -1,175 +1,153 @@
-var async, orm, S, util, User, Contact, Phone, SocialNetwork;
+var async, util, createUserWithContacts, buildUserBasicInfo, createDefaultSystemAvatar, mergeSameUsers, newUserWithContacts, isPerson, createContacts, createContactsUsers, createCid, asyncGetApiKeys, asyncGetImApiKey, asyncGetSnApiKey;
 async = require('async');
-orm = require('../servers-init').orm;
-S = require('../servers-init').S;
 util = require('../util');
-User = orm.define('User', {
-  uid: {
-    type: S.STRING,
-    unique: true
-  },
-  name: S.STRING,
-  isRegistered: S.BOOLEAN,
-  isMerged: S.BOOLEAN
-}, {
-  classMethods: {
-    getOrCreateUserWithRegisterData: function(registerData, callback){
-      var phoneData, userData, socialData;
-      phoneData = {
-        number: registerData.User.CurrentPhone,
-        isActive: true
-      };
-      userData = {
-        uid: util.getUUid(),
-        name: registerData.User.Name,
-        isRegistered: true,
-        isMerged: false
-      };
-      socialData = registerData.User.SN;
-      User.getOrCreateUserWithPhone(userData, phoneData, socialData, function(user){
+createUserWithContacts = function(db, userData, callback){
+  var user;
+  user = import$({}, userData);
+  buildUserBasicInfo(user);
+  debugger;
+  mergeSameUsers(db, user, function(isMerged){
+    if (!isMerged) {
+      newUserWithContacts(db, user, function(){
         callback(user);
       });
-    },
-    createUserWithPhone: function(userData, phoneData, socialData, callback){
-      User.createUserWithPhoneWithoutSave(userData, phoneData, socialData, function(user){
-        user.save().success(function(){
-          callback(user);
-        }).error(function(err){
-          if (err) {
-            throw new Error(err);
-          }
-        });
-      });
-    },
-    createUserWithPhoneWithoutSave: function(userData, phoneData, socialData, callback){
-      Phone.create(phoneData).success(function(phone){
-        User.create(userData).success(function(user){
-          user.addPhone(phone).success(function(){
-            user.addSocialNetworksWithoutSave(socialData, function(){
-              callback(user);
-            });
-          });
-        });
-      });
-    },
-    getOrCreateUserWithPhone: function(userData, phoneData, socialData, callback){
-      Phone.find({
-        where: {
-          number: phoneData.number
-        }
-      }).success(function(phone){
-        if (phone) {
-          phone.getOwnBy().success(function(user){
-            if (user.isRegistered) {
-              return callback(user);
-            }
-            user.update(userData, socialData, function(){
-              callback(user);
-            });
-          });
-        } else {
-          User.createUserWithPhone(userData, phoneData, socialData, callback);
-        }
-      }).error(function(err){
-        if (err) {
-          throw new Erro(err);
-        }
-      });
+    } else {
+      callback(user);
     }
-  },
-  instanceMethods: {
-    createAndBindContacts: function(contactsRegisterData, callback){
-      var that;
-      that = this;
-      async.forEach(contactsRegisterData, function(contactRegisterData, next){
-        Contact.createAsUser(contactRegisterData, function(contact){
-          that.bindHasContact(contact, function(){
-            next();
-          });
-        });
-      }, function(err){
-        if (err) {
-          throw new Error(err);
-        }
-        callback();
-      });
-    },
-    bindAsContact: function(contact, callback){
-      var that;
-      that = this;
-      that.addAsContact(contact).success(function(){
-        contact.setActBy(that).success(function(){
-          callback();
-        });
-      });
-    },
-    bindHasContact: function(contact, callback){
-      debugger;
-      var that;
-      that = this;
-      that.addHasContact(contact).success(function(){
-        contact.setOwnBy(that).success(function(){
-          that.save().success(function(){
-            contact.save().success(function(){
-              callback();
-            });
-          });
-        });
-      });
-    },
-    addSocialNetworks: function(socialData, callback){
-      var that;
-      that = this;
-      that.addSocialNetworksWithoutSave(socialData, function(){
-        that.save().success(function(){
-          callback();
-        });
-      });
-    },
-    addSocialNetworksWithoutSave: function(socialData, callback){
-      var that;
-      that = this;
-      async.forEach(socialData, function(sd, next){
-        SocialNetwork.createSocialNetwork(sd, function(sn){
-          that.addSocial(sn).success(function(){
-            next();
-          });
-        });
-      }, function(err){
-        if (err) {
-          throw new Error(err);
-        }
-        callback();
-      });
-    },
-    update: function(userData, socialData, callback){
-      var that;
-      that = this;
-      that.name = userData.name;
-      that.isRegistered = userData.isRegistered;
-      that.addSocialNetworksWithoutSave(socialData, function(){
-        that.save().success(function(){
-          callback();
-        });
-      });
-    }
+  });
+};
+buildUserBasicInfo = function(user){
+  var current, ref$, i$, len$, phone;
+  current = new Date().getTime();
+  user.uid = util.getUUid();
+  user.isRegistered = true;
+  user.lastModifiedDate = current;
+  user.mergeStatus = 'NONE';
+  user.mergeTo = null;
+  user.mergeFrom = [];
+  if (!(user != null && ((ref$ = user.avatar) != null && ref$.length))) {
+    user.avatars = [createDefaultSystemAvatar(user)];
   }
-});
-(typeof exports != 'undefined' && exports !== null ? exports : this).User = User;
-Contact = require('./contact').Contact;
-Phone = require('./phone').Phone;
-SocialNetwork = require('./social-network').SocialNetwork;
-User.hasMany(Contact, {
-  as: 'hasContacts',
-  foreignKey: 'own_by_user_id'
-});
-User.hasMany(Contact, {
-  as: 'asContacts',
-  foreignKey: 'act_by_user_id'
-});
-User.hasMany(Phone, {
-  as: 'phones'
-});
-User.hasMany(SocialNetwork, {
-  as: 'socials'
-});
+  user.currentAvatar = user.avatars[0];
+  for (i$ = 0, len$ = (ref$ = user.phones).length; i$ < len$; ++i$) {
+    phone = ref$[i$];
+    phone.startUsingTime = current;
+  }
+};
+createDefaultSystemAvatar = function(user){
+  return console.log("create-default-system-avatar NOT IMPLEMENTED!");
+};
+mergeSameUsers = function(db, user, callback){
+  console.log("merge-same-users NOT IMPLEMENTED!");
+  callback(false);
+};
+newUserWithContacts = function(db, user, callback){
+  user.asContactOf = [];
+  user.contactedStrangers = [];
+  user.contactedByStrangers = [];
+  if (user.isPerson = isPerson(user)) {
+    createContacts(db, user, function(){
+      db.users.insert(user, function(err, result){
+        if (err) {
+          throw new Error(err);
+        }
+        asyncGetApiKeys(db, user);
+        callback(user);
+      });
+    });
+  } else {
+    db.users.insert(user, function(err, result){
+      if (err) {
+        throw new Error(err);
+      }
+      callback(user);
+    });
+  }
+};
+isPerson = function(user){
+  return true;
+};
+createContacts = function(db, user, callback){
+  var toCreateContactUsers;
+  user.contactsSeq = 0;
+  toCreateContactUsers = [];
+  async.forEach(user.contacts, function(contact, next){
+    contact.cid = createCid(user.uid, ++user.contactsSeq);
+    db.users.find({
+      phones: {
+        $all: contact.phones
+      }
+    }).toArray(function(err, contactUser){
+      if ((contactUser != null ? contactUser.length : void 8) > 1) {
+        throw new Error(contact + " refers to more than one user: " + contactUser);
+      }
+      if (!(contactUser != null && contactUser.length)) {
+        toCreateContactUsers.push(contact);
+      }
+      next();
+    });
+  }, function(err){
+    createContactsUsers(db, toCreateContactUsers, function(){
+      callback();
+    });
+  });
+};
+createContactsUsers = function(db, contacts, callback){
+  var users, i$, len$, contact, user, phones, emails, ims, sns;
+  users = [];
+  for (i$ = 0, len$ = contacts.length; i$ < len$; ++i$) {
+    contact = contacts[i$];
+    user = (phones = contact.phones, emails = contact.emails, ims = contact.ims, sns = contact.sns, contact);
+    contact.uid = user.uid = util.getUUid();
+    user.isRegistered = false;
+    users.push(user);
+  }
+  db.users.insert(users, function(err, users){
+    if (err) {
+      throw new Error(err);
+    }
+    callback();
+  });
+};
+createCid = function(uid, seqNo){
+  return uid + '-c-' + new Date().getTime() + '-' + seqNo;
+};
+asyncGetApiKeys = function(db, user){
+  async.forEach(user.ims, function(im, next){
+    asyncGetImApiKey(im, function(apiKey){
+      im.apiKey = apiKey;
+      next();
+    });
+  }, function(err){
+    if (err) {
+      throw new Error(err);
+    }
+    async.forEach(user.sns, function(sn, next){
+      asyncGetSnApiKey(sn, function(apiKey){
+        sn.apiKey = apiKey;
+        next();
+      });
+    }, function(err){
+      if (err) {
+        throw new Error(err);
+      }
+      db.users.save(user, function(err, user){
+        if (err) {
+          throw new Error(err);
+        }
+      });
+    });
+  });
+};
+asyncGetImApiKey = function(im, callback){
+  callback();
+};
+asyncGetSnApiKey = function(sn, callback){
+  callback();
+};
+(typeof exports != 'undefined' && exports !== null ? exports : this).createUserWithContacts = createUserWithContacts;
+function import$(obj, src){
+  var own = {}.hasOwnProperty;
+  for (var key in src) if (own.call(src, key)) obj[key] = src[key];
+  return obj;
+}

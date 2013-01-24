@@ -9,6 +9,7 @@ initMongoClient = function(callback){
   mongoClient.open(function(err, client){
     var db;
     db = mongoClient.db(mongo.db);
+    db.users = db.collection('users');
     callback(mongoClient, db);
   });
 };

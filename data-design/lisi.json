@@ -1,0 +1,83 @@
+// 这里的数据是客户端（手机端）经过对当前通讯录计算之后post给服务端的。当然，也可以是手机直接将通讯录原汁原味地post到服务端，然后由服务端自行整理成为如下的样子。
+{
+	"name": "李四",
+	"phones": [
+		{
+			"phoneNumber": "12345678",
+			"isActive": true,
+		},
+		/* 下面的电话是在一段时间使用后，用户换号后产生的结果
+		{
+			"phoneNumber": "1",
+			"isActive": false,
+			"startUsingTime": "2010-01-01",
+			"endUsingTime": "2012-11-01"
+		}
+		*/
+	],
+	"emails": [
+		"lisi@fake.com"
+	],
+	"ims": [
+		{
+			"type": "QQ",
+			"account": "lisi111",
+			"isActive": true,
+		},
+		{
+			"type": "AOL",
+			"account": "lisi222",
+			"isActive": true,
+		}
+	],
+	"sn": [
+		{
+			"snName": "豆瓣",
+			"accountName": "李四豆",
+		}
+	],
+	"addresses": [
+		"广州 大学城 中山大学 至善园 408"
+	],
+	"tags": [
+		"程序员"
+	],
+	"contacts": [
+		{
+			"names": [
+				"张大三"
+			],
+			"phones": [
+				"34567890"
+			],
+			"emails": [],
+			"ims": [
+				{
+					"type": "QQ",
+					"account": "zhangsan111"
+				}
+			],
+			"sns": [],
+			"tags": [],
+		},
+		{
+			"names": [
+				"赵小五"
+			],
+			"phones": [
+			//	"23456789" // 这里赵五没有电话，也应该能够被识别出来
+			],
+			"emails": [
+				"zhaowu@fake.com" // 通过email识别出了用户
+			],
+			"ims": [
+				{
+					"type": "QQ",
+					"account": "zhaowu111"
+				}
+			],
+			"sns": [],
+			"tags": [],
+		},
+	]
+}

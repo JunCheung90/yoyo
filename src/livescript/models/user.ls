@@ -1,110 +1,108 @@
-require! [async, '../servers-init'.orm, '../servers-init'.S, '../util']
+require! [async, '../util']
 
-User = orm.define 'User', 
-	uid: {type: S.STRING, unique:true}
-	name: S.STRING
-	isRegistered: S.BOOLEAN
-	isMerged: S.BOOLEAN,
-	* 
-		classMethods:
-			# public
-			get-or-create-user-with-register-data: !(register-data, callback) ->
-				phone-data = { number: register-data.User.CurrentPhone, is-active: true }
-				user-data = { uid: util.get-UUid!, name: register-data.User.Name, is-registered: true, is-merged: false }
-				social-data = register-data.User.SN # array of social networks
-				(user) <-! User.get-or-create-user-with-phone user-data, phone-data, social-data
-				callback user
+create-user-with-contacts = !(db, user-data, callback)->
+	# 不论系统中目前此用户是否已经注册，总是生成一个新的user，然后判断原有用户中有无重复用户，如果有就merge到这个用户。
+	# 如果系统中此用户尚未注册过，则新建user。
+	user = {} <<< user-data
+	build-user-basic-info user
+	debugger;
+	(is-merged) <-! merge-same-users db, user
+	if not is-merged # 没有重复用户，需要新建
+		<-! new-user-with-contacts db, user  
+		callback user
+	else
+		callback user
 
-			create-user-with-phone: !(user-data, phone-data, social-data, callback) ->
-				(user) <-! User.create-user-with-phone-without-save user-data, phone-data, social-data
-				user.save!.success !->
-					callback user
-				.error !(err) ->
-					throw new Error err if err
+build-user-basic-info = !(user)->
+	current = new Date!.get-time!
+	user.uid = util.get-UUid!
+	user.is-registered = true
+	user.last-modified-date = current
+	user.merge-status = 'NONE'
+	user.merge-to = null
+	user.merge-from = []
 
-			create-user-with-phone-without-save: !(user-data, phone-data, social-data, callback) ->
-				Phone.create phone-data .success !(phone) ->
-					User.create user-data .success !(user) ->
-						user.addPhone phone .success !->
-							<-! user.add-social-networks-without-save social-data
-							callback user
+	user.avatars = [create-default-system-avatar user] if not user?.avatar?.length
+	user.current-avatar = user.avatars[0]
+	[phone.start-using-time = current for phone in user.phones]
 
-			get-or-create-user-with-phone: !(user-data, phone-data, social-data, callback) ->
-				Phone.find {where: {number: phone-data.number}} .success !(phone) ->
-					if phone
-						phone.get-own-by! .success !(user) ->
-							return callback user if user.isRegistered  
-							<-! user.update user-data, social-data # 用户之前并未注册，而是作为他人的联系人，由系统生成的用户，此时需要补充注册信息。
-							callback user
-					else
-						User.create-user-with-phone user-data, phone-data, social-data, callback
-				.error !(err) ->
-					throw new Erro err if err
+create-default-system-avatar = (user) ->
+	#TODO:
+	console.log "create-default-system-avatar NOT IMPLEMENTED!"
 
-			# private
+merge-same-users = !(db, user, callback) ->
+	#TODO:
+	console.log "merge-same-users NOT IMPLEMENTED!"
+	callback false # TODO: 现在默认不合并用户
 
-		instanceMethods: 
-			# public 
-			create-and-bind-contacts: !(contacts-register-data, callback) ->
-				that = @
-				(err) <-! async.for-each contacts-register-data, !(contact-register-data, next) ->
-					(contact) <-! Contact.create-as-user contact-register-data
-					<-!  that.bind-has-contact contact
-					next!
-				throw new Error err if err
-				callback!
+new-user-with-contacts = !(db, user, callback) ->
+	user.as-contact-of = []
+	user.contacted-strangers = []
+	user.contacted-by-strangers = []	
+	if user.is-person = is-person user # 人类
+		<-!	create-contacts db, user # 联系人更新（识别为user，或创建为user）后，方回调。
+		(err, result) <-! db.users.insert user
+		throw new Error err if err
+		async-get-api-keys db, user
+		callback user
+	else # 单位
+		(err, result) <-! db.users.insert user
+		throw new Error err if err
+		callback user
 
-			bind-as-contact: !(contact, callback) ->
-				that = @ 
-				that.add-as-contact contact .success !->
-					contact.set-act-by that .success !->
-						# 此处如果出现多个contact同步问题时，加上二次同步，如同bind-has-contact一样。
-						callback!
+is-person = (user) ->
+	# TODO: 判断用户是否是人，而不是单位。这里通过手机来注册，一般都是人类。
+	true
 
-			# private
-			bind-has-contact: !(contact, callback) ->
-				debugger;
-				that = @ # LiveScript的 ~> 这里不适合，会将this绑定到当前上下文，而不是user
-				that.add-has-contact contact .success !->
-					contact.set-own-by that .success !->
-						# 这里不能去掉，二次存储是为了解决多个contact同步的问题。
-						that.save!.success !->
-							contact.save!.success !->
-								callback!
+create-contacts = !(db, user, callback) ->
+	user.contacts-seq = 0
+	to-create-contact-users = []
+	(err) <-! async.for-each user.contacts, !(contact, next) ->
+		contact.cid = create-cid user.uid, ++user.contacts-seq
+		(err, contact-user) <-! db.users.find({phones: {$all: contact.phones}}).toArray
+		# TODO: 需要处理联系人号码不对的情况。看看通话历史当中是否有过对应号码的通话。
+		throw new Error "#{contact} refers to more than one user: #{contact-user}" if contact-user?.length > 1
+		to-create-contact-users.push contact if not contact-user?.length
+		next!
+	<-! create-contacts-users db, to-create-contact-users 	
+	callback!
 
-			add-social-networks: !(social-data, callback) ->
-				that = @
-				<-! that.add-social-networks-without-save social-data
-				that.save!.success !->
-					callback!
+create-contacts-users = !(db, contacts, callback) ->
+	users = []
+	for contact in contacts
+		user = {phones, emails, ims, sns} = contact
+		contact.uid = user.uid = util.get-UUid!
+		user.is-registered = false
+		users.push user
+	(err, users) <-! db.users.insert users
+	throw new Error err if err
+	callback!
 
-			add-social-networks-without-save: !(social-data, callback) ->
-				that = @
-				(err) <-! async.for-each social-data, !(sd, next) ->
-					(sn) <-! SocialNetwork.create-social-network sd
-					that.addSocial sn .success !->
-						next!
-				throw new Error err if err
-				callback!
+create-cid = (uid, seq-no) ->
+	uid + '-c-' + new Date!.get-time! + '-' + seq-no
 
-			update: !(user-data, social-data, callback) ->
-				that = @ 
-				that.name = user-data.name 
-				that.is-registered = user-data.is-registered
-				<-! that.add-social-networks-without-save social-data
-				that.save! .success !->
-					callback!
+async-get-api-keys = !(db, user)-> # 异步方法，完成之后会存储user。
+	(err) <-! async.for-each user.ims, !(im, next) ->
+		(api-key) <-! async-get-im-api-key im
+		im.api-key = api-key
+		next!
+	throw new Error err if err
 
-(exports ? this) <<< {User}	
+	(err) <-! async.for-each user.sns, !(sn, next) ->
+		(api-key) <-! async-get-sn-api-key sn
+		sn.api-key = api-key
+		next!
+	throw new Error err if err
 
-require! ['./contact'.Contact, './phone'.Phone, './social-network'.SocialNetwork]
+	(err, user) <-! db.users.save user
+	throw new Error err if err
 
+async-get-im-api-key = !(im, callback) ->
+	# TODO: 
+	callback!
 
-User.hasMany Contact, 
-	as: 'hasContacts'
-	foreign-key: 'own_by_user_id'
-User.hasMany Contact, 
-	as: 'asContacts'
-	foreign-key: 'act_by_user_id'
-User.hasMany Phone, {as: 'phones'}
-User.hasMany SocialNetwork, {as: 'socials'}
+async-get-sn-api-key = !(sn, callback) ->
+	# TODO: 
+	callback!
+
+(exports ? this) <<< {create-user-with-contacts}	

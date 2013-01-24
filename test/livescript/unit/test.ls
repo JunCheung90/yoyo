@@ -1,12 +1,19 @@
-require! ['should', 'async']
+require! ['should', 'async', 
+					'../../src/models/User',
+					'../../src/servers-init'.init-mongo-client, 
+					'../../src/servers-init'.shutdown-mongo-client]
+
+[db, client] = [null null]
 
 can = it # it在LiveScript中被作为缺省的参数，因此我们先置换为can
 
-describe 'Sequelize 用法', !->
-	# do
-	# 	(done) <-! before
-	# 	<-! drop-create-orm
-	# 	done!
+describe 'mongoDb版的注册用户', !->
+	do
+		(done) <-! before
+		(mongo-client, mongo-db) <-! init-mongo-client
+		[db, client] := [mongo-db, mongo-client]
+		<-! db.drop-collection 'users'
+		done!
 
 	can '创建User张三', !(done) ->
 		check-create-user-with 'zhangsan.json', '张三', done
@@ -32,17 +39,19 @@ describe 'Sequelize 用法', !->
 	# can '最新张三联系人情况，有2个Contacts，作为别人的3个Contacts' !(done) ->
 	# 	check-user-contacts '张三', 2, 3, done	
 
+	do
+		(done) <-! after
+		<-! shutdown-mongo-client client
+		done!
+
 !function check-create-user-with json-file-name, user-name, callback
 	user-data = require "../test-data/#{json-file-name}"
-	(user) <-! User.get-or-create-user-with-register-data user-data
-	User.find {where: {name: user-name}} .success !(found-user) ->
-		# sequelize对createAt和updateAt的处理比较奇怪，found-user和user
-		# 在这里会不一样。should包中的eql方法是逐一比较各个属性值的，故而这里
-		# 采用比较uid和name的方式
-		# found-user.uid.should.eql user.uid
-		found-user.name.should.eql user.name
-		console.log "\n\t成功创建了User：#{user.name}"
-		callback!
+	(user) <-! User.create-user-with-contacts db, user-data
+	(err, found-users) <-! db.users.find({name: '张三'}).to-array
+	found-users.length.should.eql 1
+	found-users[0].name.should.eql user.name
+	console.log "\n\t成功创建了User：#{user.name}"
+	callback!
 
 !function create-user-contacts json-file-name, user-name, callback
 	contacts-data = (require "../test-data/#{json-file-name}").Contacts

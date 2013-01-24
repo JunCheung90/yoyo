@@ -37,47 +37,28 @@ require! ['../config/config'.mongo,
 					'../servers-init'.shutdown-mongo-client]
 
 [db, client] = [null null]
+(mongo-client, mongo-db) <-! init-mongo-client
+[db, client] := [mongo-db, mongo-client]
 
 register-user = !(register-data, callback) ->
 	throw new Error("Can't register a user with exist id") if register-data.uid
 	response = {}
-	response.user = user <<< register-data
-
-	for phone in user.phones
-		update-exist-user exist-user, user, phone if exist-user = get-user-with-phone phone
-	return response if user.uid # 和目前已有的user合并了。如果没有uid，说明以前用户的这个电话，现在是当前用户用了。因此，还是要新建用户。
-
-	current = new Date!.to-string!
-	user.uid = util.get-UUid!
-	user.is-registered = true
-	user.last-modified-date = current
-	user.merge-status = 'NONE'
-	user.merge-to = null
-	user.merge-from = []
-
-	user.is-person = is-person user
-	user.avatars = [create-default-system-avatar user] if not user?.avatar?.length
-	user.current-avatar = user.avatars[0]
-	[phone.start-using-time = current for phone in user.phones]
-
-	return resopnse if not user.is-person # 单位（非个人）用户注册完毕，没有联系人
-
-	[im.api-key = get-im-api-key im for im in user.ims]
-	[sn.api-key = get-sn-api-key sn for im in user.sns]
-	user.contacts-seq = 0
-	create-contacts user.contacts, user.uid, user.contacts-seq
-	user.as-contact-of = []
-
-	user.contacted-strangers = []
-	user.contacted-by-strangers = []
-
-	# find-interesting-info-from-call-log user.call-log, response
-	# find-interesting-info-from-im-log user.im-log, response
-
-	db.collection('users').insert user, (err, result)->
-		should.not.exist err 
-		console.log 'response: %j' response
+	if !db
+		(mongo-client, mongo-db) <-! init-mongo-client
+		[db, client] := [mongo-db, mongo-client]
+		(user, info) <-! create-user-and-mining-interesting-info db, register-data
+		[response.user, response.interesting-info] = [user, info]
 		callback response
+	else
+		(user, info) <-! create-user-and-mining-interesting-info db, register-data
+		[response.user, response.interesting-info] = [user, info]
+		callback response
+		
+	
+create-user-and-mining-interesting-info = !(db, register-data, callback) ->
+	(user) <-! User.create-user-with-contacts db, register-data.user
+	(info) <-! User.mining-interesting-info db, user
+	callback user, info
 
 
 
