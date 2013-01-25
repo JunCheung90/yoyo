@@ -5,12 +5,9 @@ create-user-with-contacts = !(db, user-data, callback)->
   # 如果系统中此用户尚未注册过，则新建user。
   user = {} <<< user-data
   build-user-basic-info user
-  (is-merged) <-! merge-same-users db, user
-  if not is-merged # 没有重复用户，需要新建
-    <-! new-user-with-contacts db, user  
-    callback user
-  else
-    callback user
+  (user) <-! merge-same-users db, user
+  <-! create-or-update-user-with-contacts db, user  
+  callback user
 
 build-user-basic-info = !(user)->
   current = new Date!.get-time!
@@ -27,25 +24,40 @@ build-user-basic-info = !(user)->
 
 create-default-system-avatar = (user) ->
   #TODO:
-  # console.log "create-default-system-avatar NOT IMPLEMENTED!"
 
 merge-same-users = !(db, user, callback) ->
-  #TODO:
-  # console.log "merge-same-users NOT IMPLEMENTED!"
-  callback false # TODO: 现在默认不合并用户
+  phones = [phone.phone-number for phone in user.phones]
+  query-statement = 
+    $or:
+      * "phones.phoneNumber": $in: phones
+      * emails: $in: user.emails or []
+      ...
+  (err, users) <-! db.users.find(query-statement).toArray
+  throw new Error err if err
+  switch users.length
+  case 0 then callback user # 0 为没有找到已存在的用户
+  case 1 then # 1 为找到合并用户。这里的exist-user，以前并未注册，只是他人通讯录中出现过而已。
+    exist-user = users[0] 
+    exist-user <<< user
+    (err, result) <-! db.users.save exist-user
+    throw new Error err if err
+    callback exist-user
+  default
+    throw new Error "#{user-amount} exist users are similar with #{user.name}, THE LOGIC IS NOT IMPLEMENTED YET!" if user-amount > 1
 
-new-user-with-contacts = !(db, user, callback) ->
-  user.as-contact-of = []
-  user.contacted-strangers = []
-  user.contacted-by-strangers = []  
-  if user.is-person = is-person user # 人类
+
+create-or-update-user-with-contacts = !(db, user, callback) ->
+  user.as-contact-of ||= []
+  user.contacted-strangers ||= []
+  user.contacted-by-strangers ||= []  
+  if user.is-person ||= is-person user # 人类
     <-! create-contacts db, user # 联系人更新（识别为user，或创建为user）后，方回调。
-    (err, result) <-! db.users.insert user
+    (err, result) <-! db.users.save user
     throw new Error err if err
     async-get-api-keys db, user
     callback user
   else # 单位
-    (err, result) <-! db.users.insert user
+    (err, result) <-! db.users.save user
     throw new Error err if err
     callback user
 
@@ -54,16 +66,22 @@ is-person = (user) ->
   true
 
 create-contacts = !(db, user, callback) ->
-  user.contacts-seq = 0
+  user.contacts-seq ||= 0
   to-create-contact-users = []
-  (err) <-! async.for-each user.contacts, !(contact, next) ->
-    contact.cid = create-cid user.uid, ++user.contacts-seq
-    (contact-user-amount) <-! identify-and-bind-contact-as-user db, contact, user
-    throw new Error "#{contact} refers to more than one user: #{contact-user}" if contact-user-amount > 1
-    to-create-contact-users.push contact if not contact-user?.length
-    next!
-  <-! create-contacts-users db, to-create-contact-users   
-  callback!
+  (err) <-! async.for-each user.contacts, !(contact, next) -> # 为了性能异步并发
+    (!(contact) ->
+        contact.cid = create-cid user.uid, ++user.contacts-seq
+        (contact-user-amount) <-! identify-and-bind-contact-as-user db, contact, user
+        throw new Error "#{contact} refers to more than one user: #{contact-user}" if contact-user-amount > 1
+        to-create-contact-users.push contact if contact-user-amount is 0
+        next!   
+    )(contact)
+  throw new Error err if err
+  if to-create-contact-users.length > 0 then
+    <-! create-contacts-users db, to-create-contact-users, user   
+    callback!
+  else
+    callback!
 
 identify-and-bind-contact-as-user = !(db, contact, owner, callback) -> # 回调返回找到并bind的用户个数。如果找到唯一用户，则将contact bind到这个用户上。
   # TODO: 需要处理各种情况：1）电话号码相同也有可能不是同一个人（换电话了）；2）email比较肯定，很少会换；
@@ -74,19 +92,18 @@ identify-and-bind-contact-as-user = !(db, contact, owner, callback) -> # 回调�
       * "phones.phoneNumber": $in: contact.phones or []
       * emails: $in: contact.emails or []
       ...
-  (err, contact-user) <-! db.users.find(query-statement).toArray
+  (err, contact-users) <-! db.users.find(query-statement).toArray
   throw new Error err if err
-  debugger
-  contact-user-amount = contact-user?.length or 0
-  callback 0 if contact-user-amount is 0
-  if contact-user-amount is 1 # 找到唯一对应的用户
-    do
-      <-! bind-contact db, contact, contact-user, owner # 性能考虑：这里可以考虑改为不用同步，直接就callback了，不等bind-contact。
-      callback 1
-  else
-    callback contact-user-amount
+  contact-user-amount = contact-users?.length or 0
+  switch contact-user-amount
+  case 0 then callback 0 # 没有找到已存在的用户
+  case 1 then  
+    <-! bind-contact db, contact, contact-users[0], owner # 性能考虑：这里可以考虑改为不用同步，直接就callback了，不等bind-contact。
+    callback 1
+  default callback contact-user-amount
 
 bind-contact = !(db, contact, contact-user, owner, callback) -> 
+  debugger
   contact.uid = contact-user.uid
   contact-user.as-contact-of ||= []
   contact-user.as-contact-of.push owner.uid
@@ -94,13 +111,15 @@ bind-contact = !(db, contact, contact-user, owner, callback) ->
   throw new Error err if err
   callback!
 
-create-contacts-users = !(db, contacts, callback) ->
+create-contacts-users = !(db, contacts, owner, callback) ->
   users = []
   for contact in contacts
     user = {}
     user{phones, emails, ims, sns} = contact # TODO：这里需要考虑contact的信息是否应当抽取到user。
     contact.uid = user.uid = util.get-UUid!
     user.is-registered = false
+    user.as-contact-of ||= []
+    user.as-contact-of.push owner.uid
     users.push user
   (err, users) <-! db.users.insert users
   throw new Error err if err

@@ -1,18 +1,14 @@
-var async, util, createUserWithContacts, buildUserBasicInfo, createDefaultSystemAvatar, mergeSameUsers, newUserWithContacts, isPerson, createContacts, identifyAndBindContactAsUser, bindContact, createContactsUsers, createCid, asyncGetApiKeys, asyncGetImApiKey, asyncGetSnApiKey;
+var async, util, createUserWithContacts, buildUserBasicInfo, createDefaultSystemAvatar, mergeSameUsers, createOrUpdateUserWithContacts, isPerson, createContacts, identifyAndBindContactAsUser, bindContact, createContactsUsers, createCid, asyncGetApiKeys, asyncGetImApiKey, asyncGetSnApiKey;
 async = require('async');
 util = require('../util');
 createUserWithContacts = function(db, userData, callback){
   var user;
   user = import$({}, userData);
   buildUserBasicInfo(user);
-  mergeSameUsers(db, user, function(isMerged){
-    if (!isMerged) {
-      newUserWithContacts(db, user, function(){
-        callback(user);
-      });
-    } else {
+  mergeSameUsers(db, user, function(user){
+    createOrUpdateUserWithContacts(db, user, function(){
       callback(user);
-    }
+    });
   });
 };
 buildUserBasicInfo = function(user){
@@ -35,15 +31,59 @@ buildUserBasicInfo = function(user){
 };
 createDefaultSystemAvatar = function(user){};
 mergeSameUsers = function(db, user, callback){
-  callback(false);
+  var phones, res$, i$, ref$, len$, phone, queryStatement;
+  res$ = [];
+  for (i$ = 0, len$ = (ref$ = user.phones).length; i$ < len$; ++i$) {
+    phone = ref$[i$];
+    res$.push(phone.phoneNumber);
+  }
+  phones = res$;
+  queryStatement = {
+    $or: [
+      {
+        "phones.phoneNumber": {
+          $in: phones
+        }
+      }, {
+        emails: {
+          $in: user.emails || []
+        }
+      }
+    ]
+  };
+  db.users.find(queryStatement).toArray(function(err, users){
+    var existUser;
+    if (err) {
+      throw new Error(err);
+    }
+    switch (users.length) {
+    case 0:
+      callback(user);
+      break;
+    case 1:
+      existUser = users[0];
+      import$(existUser, user);
+      db.users.save(existUser, function(err, result){
+        if (err) {
+          throw new Error(err);
+        }
+        callback(existUser);
+      });
+      break;
+    default:
+      if (userAmount > 1) {
+        throw new Error(userAmount + " exist users are similar with " + user.name + ", THE LOGIC IS NOT IMPLEMENTED YET!");
+      }
+    }
+  });
 };
-newUserWithContacts = function(db, user, callback){
-  user.asContactOf = [];
-  user.contactedStrangers = [];
-  user.contactedByStrangers = [];
-  if (user.isPerson = isPerson(user)) {
+createOrUpdateUserWithContacts = function(db, user, callback){
+  user.asContactOf || (user.asContactOf = []);
+  user.contactedStrangers || (user.contactedStrangers = []);
+  user.contactedByStrangers || (user.contactedByStrangers = []);
+  if (user.isPerson || (user.isPerson = isPerson(user))) {
     createContacts(db, user, function(){
-      db.users.insert(user, function(err, result){
+      db.users.save(user, function(err, result){
         if (err) {
           throw new Error(err);
         }
@@ -52,7 +92,7 @@ newUserWithContacts = function(db, user, callback){
       });
     });
   } else {
-    db.users.insert(user, function(err, result){
+    db.users.save(user, function(err, result){
       if (err) {
         throw new Error(err);
       }
@@ -65,23 +105,32 @@ isPerson = function(user){
 };
 createContacts = function(db, user, callback){
   var toCreateContactUsers;
-  user.contactsSeq = 0;
+  user.contactsSeq || (user.contactsSeq = 0);
   toCreateContactUsers = [];
   async.forEach(user.contacts, function(contact, next){
-    contact.cid = createCid(user.uid, ++user.contactsSeq);
-    identifyAndBindContactAsUser(db, contact, user, function(contactUserAmount){
-      if (contactUserAmount > 1) {
-        throw new Error(contact + " refers to more than one user: " + contactUser);
-      }
-      if (!((typeof contactUser != 'undefined' && contactUser !== null) && contactUser.length)) {
-        toCreateContactUsers.push(contact);
-      }
-      next();
-    });
+    (function(contact){
+      contact.cid = createCid(user.uid, ++user.contactsSeq);
+      identifyAndBindContactAsUser(db, contact, user, function(contactUserAmount){
+        if (contactUserAmount > 1) {
+          throw new Error(contact + " refers to more than one user: " + contactUser);
+        }
+        if (contactUserAmount === 0) {
+          toCreateContactUsers.push(contact);
+        }
+        next();
+      });
+    })(contact);
   }, function(err){
-    createContactsUsers(db, toCreateContactUsers, function(){
+    if (err) {
+      throw new Error(err);
+    }
+    if (toCreateContactUsers.length > 0) {
+      createContactsUsers(db, toCreateContactUsers, user, function(){
+        callback();
+      });
+    } else {
       callback();
-    });
+    }
   });
 };
 identifyAndBindContactAsUser = function(db, contact, owner, callback){
@@ -99,37 +148,39 @@ identifyAndBindContactAsUser = function(db, contact, owner, callback){
       }
     ]
   };
-  db.users.find(queryStatement).toArray(function(err, contactUser){
+  db.users.find(queryStatement).toArray(function(err, contactUsers){
     var contactUserAmount;
     if (err) {
       throw new Error(err);
     }
-    debugger;
-    contactUserAmount = (contactUser != null ? contactUser.length : void 8) || 0;
-    if (contactUserAmount === 0) {
+    contactUserAmount = (contactUsers != null ? contactUsers.length : void 8) || 0;
+    switch (contactUserAmount) {
+    case 0:
       callback(0);
-    }
-    if (contactUserAmount === 1) {
-      bindContact(db, contact, contactUser, owner, function(){
+      break;
+    case 1:
+      bindContact(db, contact, contactUsers[0], owner, function(){
         callback(1);
       });
-    } else {
+      break;
+    default:
       callback(contactUserAmount);
     }
   });
 };
 bindContact = function(db, contact, contactUser, owner, callback){
+  debugger;
   contact.uid = contactUser.uid;
   contactUser.asContactOf || (contactUser.asContactOf = []);
   contactUser.asContactOf.push(owner.uid);
-  db.users.update(contactUser, function(err, result){
+  db.users.save(contactUser, function(err, result){
     if (err) {
       throw new Error(err);
     }
     callback();
   });
 };
-createContactsUsers = function(db, contacts, callback){
+createContactsUsers = function(db, contacts, owner, callback){
   var users, i$, len$, contact, user;
   users = [];
   for (i$ = 0, len$ = contacts.length; i$ < len$; ++i$) {
@@ -138,6 +189,8 @@ createContactsUsers = function(db, contacts, callback){
     user.phones = contact.phones, user.emails = contact.emails, user.ims = contact.ims, user.sns = contact.sns;
     contact.uid = user.uid = util.getUUid();
     user.isRegistered = false;
+    user.asContactOf || (user.asContactOf = []);
+    user.asContactOf.push(owner.uid);
     users.push(user);
   }
   db.users.insert(users, function(err, users){

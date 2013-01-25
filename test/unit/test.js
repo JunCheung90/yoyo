@@ -16,15 +16,23 @@ describe('mongoDb版的注册用户', function(){
       });
     });
   });
-  can('创建User张三，张三有2个Contacts，作为别人的0个Contact。', function(done){
+  can('创建User张三，张三有2个Contacts，作为2人的Contact。', function(done){
     checkCreateUserWith('zhangsan.json', '张三', function(){
       checkUserContacts('张三', 2, 0, done);
     });
   });
-  can('创建User李四，李四有2个Contacts，作为别人的1个Contact。', function(done){
+  can('创建User李四，李四有2个Contacts，作为1人的Contact。', function(done){
     checkCreateUserWith('lisi.json', '李四', function(){
       checkUserContacts('李四', 2, 1, done);
     });
+  });
+  can('创建User赵五，赵五有3个Contacts，作为2人的Contacts。', function(done){
+    checkCreateUserWith('zhaowu.json', '赵五', function(){
+      checkUserContacts('赵五', 3, 2, done);
+    });
+  });
+  can('最新张三联系人情况，有2个Contacts，作为2人的Contacts', function(done){
+    checkUserContacts('张三', 2, 2, done);
   });
   after(function(done){
     shutdownMongoClient(client, function(){
@@ -68,19 +76,7 @@ function checkUserContacts(userName, amountOfHasContacts, amountOfAsContacts, ca
       return results$;
     }()));
     foundUser.asContactOf.length.should.eql(amountOfAsContacts);
-    console.log("\n\t找回的User：" + userName + "作为" + foundUser.asContactOf.length + "个联系人：%j", (function(){
-      var i$, ref$, len$, lresult$, j$, ref1$, len1$, results$ = [];
-      for (i$ = 0, len$ = (ref$ = foundUser.asContactOf).length; i$ < len$; ++i$) {
-        contact = ref$[i$];
-        lresult$ = [];
-        for (j$ = 0, len1$ = (ref1$ = contact.names).length; j$ < len1$; ++j$) {
-          name = ref1$[j$];
-          lresult$.push(name);
-        }
-        results$.push(lresult$);
-      }
-      return results$;
-    }()));
+    console.log("\n\t找回的User：" + userName + "作为" + foundUser.asContactOf.length + "个联系人");
     console.log("\n\t找回的User：" + userName + "有" + foundUser.sns.length + "个SN：%j", (function(){
       var i$, ref$, len$, results$ = [];
       for (i$ = 0, len$ = (ref$ = foundUser.sns).length; i$ < len$; ++i$) {
