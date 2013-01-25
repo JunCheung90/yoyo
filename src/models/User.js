@@ -122,7 +122,7 @@ bindContact = function(db, contact, contactUser, owner, callback){
   contact.uid = contactUser.uid;
   contactUser.asContactOf || (contactUser.asContactOf = []);
   contactUser.asContactOf.push(owner.uid);
-  db.users.save(contactUser, function(err, result){
+  db.users.update(contactUser, function(err, result){
     if (err) {
       throw new Error(err);
     }
