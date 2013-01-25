@@ -5,7 +5,6 @@ createUserWithContacts = function(db, userData, callback){
   var user;
   user = import$({}, userData);
   buildUserBasicInfo(user);
-  debugger;
   mergeSameUsers(db, user, function(isMerged){
     if (!isMerged) {
       newUserWithContacts(db, user, function(){
@@ -34,11 +33,8 @@ buildUserBasicInfo = function(user){
     phone.startUsingTime = current;
   }
 };
-createDefaultSystemAvatar = function(user){
-  return console.log("create-default-system-avatar NOT IMPLEMENTED!");
-};
+createDefaultSystemAvatar = function(user){};
 mergeSameUsers = function(db, user, callback){
-  console.log("merge-same-users NOT IMPLEMENTED!");
   callback(false);
 };
 newUserWithContacts = function(db, user, callback){
@@ -91,25 +87,25 @@ createContacts = function(db, user, callback){
 identifyAndBindContactAsUser = function(db, contact, owner, callback){
   var queryStatement;
   queryStatement = {
-    $or: [{
-      phones: {
-        $all: contact.phones
-      },
-      emails: {
-        $all: contact.emails
+    $or: [
+      {
+        "phones.phoneNumber": {
+          $in: contact.phones || []
+        }
+      }, {
+        emails: {
+          $in: contact.emails || []
+        }
       }
-    }]
+    ]
   };
   db.users.find(queryStatement).toArray(function(err, contactUser){
     var contactUserAmount;
     if (err) {
       throw new Error(err);
     }
-    contactUserAmount = contactUser != null
-      ? contactUser
-      : {
-        length: contactUser[0]
-      };
+    debugger;
+    contactUserAmount = (contactUser != null ? contactUser.length : void 8) || 0;
     if (contactUserAmount === 0) {
       callback(0);
     }
@@ -124,6 +120,7 @@ identifyAndBindContactAsUser = function(db, contact, owner, callback){
 };
 bindContact = function(db, contact, contactUser, owner, callback){
   contact.uid = contactUser.uid;
+  contactUser.asContactOf || (contactUser.asContactOf = []);
   contactUser.asContactOf.push(owner.uid);
   db.users.save(contactUser, function(err, result){
     if (err) {

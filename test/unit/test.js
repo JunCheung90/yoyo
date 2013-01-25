@@ -26,14 +26,6 @@ describe('mongoDb版的注册用户', function(){
       checkUserContacts('李四', 2, 1, done);
     });
   });
-  can('创建User赵五，赵五有3个Contacts，作为别人的2个Contacts。', function(done){
-    checkCreateUserWith('zhaowu.json', '赵五', function(){
-      checkUserContacts('赵五', 3, 2, done);
-    });
-  });
-  can('最新张三联系人情况，有2个Contacts，作为别人的3个Contacts', function(done){
-    checkUserContacts('张三', 2, 3, done);
-  });
   after(function(done){
     shutdownMongoClient(client, function(){
       done();
@@ -45,11 +37,11 @@ function checkCreateUserWith(jsonFileName, userName, callback){
   userData = require("../test-data/" + jsonFileName);
   User.createUserWithContacts(db, userData, function(user){
     db.users.find({
-      name: '张三'
+      name: userName
     }).toArray(function(err, foundUsers){
       foundUsers.length.should.eql(1);
-      foundUsers[0].name.should.eql(user.name);
-      console.log("\n\t成功创建了User：" + user.name);
+      foundUsers[0].name.should.eql(userName);
+      console.log("\n\t成功创建了User：" + foundUsers[0].name);
       callback();
     });
   });

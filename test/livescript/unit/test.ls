@@ -24,13 +24,13 @@ describe 'mongoDb版的注册用户', !->
 		check-user-contacts '李四', 2, 1, done
 
 
-	can '创建User赵五，赵五有3个Contacts，作为别人的2个Contacts。', !(done) ->
-		<-! check-create-user-with 'zhaowu.json', '赵五'
-		check-user-contacts '赵五', 3, 2, done
+	# can '创建User赵五，赵五有3个Contacts，作为别人的2个Contacts。', !(done) ->
+	# 	<-! check-create-user-with 'zhaowu.json', '赵五'
+	# 	check-user-contacts '赵五', 3, 2, done
 
 
-	can '最新张三联系人情况，有2个Contacts，作为别人的3个Contacts' !(done) ->
-		check-user-contacts '张三', 2, 3, done	
+	# can '最新张三联系人情况，有2个Contacts，作为别人的3个Contacts' !(done) ->
+	# 	check-user-contacts '张三', 2, 3, done	
 
 	do
 		(done) <-! after
@@ -40,10 +40,10 @@ describe 'mongoDb版的注册用户', !->
 !function check-create-user-with json-file-name, user-name, callback
 	user-data = require "../test-data/#{json-file-name}"
 	(user) <-! User.create-user-with-contacts db, user-data
-	(err, found-users) <-! db.users.find({name: '张三'}).to-array
+	(err, found-users) <-! db.users.find({name: user-name}).to-array
 	found-users.length.should.eql 1
-	found-users[0].name.should.eql user.name
-	console.log "\n\t成功创建了User：#{user.name}"
+	found-users[0].name.should.eql user-name
+	console.log "\n\t成功创建了User：#{found-users[0].name}"
 	callback!
 
 
