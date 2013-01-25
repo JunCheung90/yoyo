@@ -1,4 +1,4 @@
-var async, util, createUserWithContacts, buildUserBasicInfo, createDefaultSystemAvatar, mergeSameUsers, newUserWithContacts, isPerson, createContacts, createContactsUsers, createCid, asyncGetApiKeys, asyncGetImApiKey, asyncGetSnApiKey;
+var async, util, createUserWithContacts, buildUserBasicInfo, createDefaultSystemAvatar, mergeSameUsers, newUserWithContacts, isPerson, createContacts, identifyAndBindContactAsUser, bindContact, createContactsUsers, createCid, asyncGetApiKeys, asyncGetImApiKey, asyncGetSnApiKey;
 async = require('async');
 util = require('../util');
 createUserWithContacts = function(db, userData, callback){
@@ -73,15 +73,11 @@ createContacts = function(db, user, callback){
   toCreateContactUsers = [];
   async.forEach(user.contacts, function(contact, next){
     contact.cid = createCid(user.uid, ++user.contactsSeq);
-    db.users.find({
-      phones: {
-        $all: contact.phones
-      }
-    }).toArray(function(err, contactUser){
-      if ((contactUser != null ? contactUser.length : void 8) > 1) {
+    identifyAndBindContactAsUser(db, contact, user, function(contactUserAmount){
+      if (contactUserAmount > 1) {
         throw new Error(contact + " refers to more than one user: " + contactUser);
       }
-      if (!(contactUser != null && contactUser.length)) {
+      if (!((typeof contactUser != 'undefined' && contactUser !== null) && contactUser.length)) {
         toCreateContactUsers.push(contact);
       }
       next();
@@ -92,12 +88,57 @@ createContacts = function(db, user, callback){
     });
   });
 };
+identifyAndBindContactAsUser = function(db, contact, owner, callback){
+  var queryStatement;
+  queryStatement = {
+    $or: [{
+      phones: {
+        $all: contact.phones
+      },
+      emails: {
+        $all: contact.emails
+      }
+    }]
+  };
+  db.users.find(queryStatement).toArray(function(err, contactUser){
+    var contactUserAmount;
+    if (err) {
+      throw new Error(err);
+    }
+    contactUserAmount = contactUser != null
+      ? contactUser
+      : {
+        length: contactUser[0]
+      };
+    if (contactUserAmount === 0) {
+      callback(0);
+    }
+    if (contactUserAmount === 1) {
+      bindContact(db, contact, contactUser, owner, function(){
+        callback(1);
+      });
+    } else {
+      callback(contactUserAmount);
+    }
+  });
+};
+bindContact = function(db, contact, contactUser, owner, callback){
+  contact.uid = contactUser.uid;
+  contactUser.asContactOf.push(owner.uid);
+  db.users.save(contactUser, function(err, result){
+    if (err) {
+      throw new Error(err);
+    }
+    callback();
+  });
+};
 createContactsUsers = function(db, contacts, callback){
-  var users, i$, len$, contact, user, phones, emails, ims, sns;
+  var users, i$, len$, contact, user;
   users = [];
   for (i$ = 0, len$ = contacts.length; i$ < len$; ++i$) {
     contact = contacts[i$];
-    user = (phones = contact.phones, emails = contact.emails, ims = contact.ims, sns = contact.sns, contact);
+    user = {};
+    user.phones = contact.phones, user.emails = contact.emails, user.ims = contact.ims, user.sns = contact.sns;
     contact.uid = user.uid = util.getUUid();
     user.isRegistered = false;
     users.push(user);

@@ -59,18 +59,45 @@ create-contacts = !(db, user, callback) ->
 	to-create-contact-users = []
 	(err) <-! async.for-each user.contacts, !(contact, next) ->
 		contact.cid = create-cid user.uid, ++user.contacts-seq
-		(err, contact-user) <-! db.users.find({phones: {$all: contact.phones}}).toArray
-		# TODO: 需要处理联系人号码不对的情况。看看通话历史当中是否有过对应号码的通话。
-		throw new Error "#{contact} refers to more than one user: #{contact-user}" if contact-user?.length > 1
+		(contact-user-amount) <-! identify-and-bind-contact-as-user db, contact, user
+		throw new Error "#{contact} refers to more than one user: #{contact-user}" if contact-user-amount > 1
 		to-create-contact-users.push contact if not contact-user?.length
 		next!
 	<-! create-contacts-users db, to-create-contact-users 	
 	callback!
 
+identify-and-bind-contact-as-user = !(db, contact, owner, callback) -> # 回调返回找到并bind的用户个数。如果找到唯一用户，则将contact bind到这个用户上。
+	# TODO: 需要处理各种情况：1）电话号码相同也有可能不是同一个人（换电话了）；2）email比较肯定，很少会换；
+	# 3）im会换；4）sn不清楚；5）这里还有数据本身有错误，用户记错了或在手机端处理时有错的情况，例如：将电话号码记错一位，少记一位等等。
+	# 考虑使用规则引擎。
+	query-statement = 
+		$or:
+			phones: $all: contact.phones
+			emails: $all: contact.emails
+			...
+	(err, contact-user) <-! db.users.find(query-statement).toArray
+	throw new Error err if err
+	contact-user-amount = contact-user ? contact-user.length : 0
+	callback 0 if contact-user-amount is 0
+	if contact-user-amount is 1 # 找到唯一对应的用户
+		do
+			<-! bind-contact db, contact, contact-user, owner # 性能考虑：这里可以考虑改为不用同步，直接就callback了，不等bind-contact。
+			callback 1
+	else
+		callback contact-user-amount
+
+bind-contact = !(db, contact, contact-user, owner, callback) -> 
+	contact.uid = contact-user.uid
+	contact-user.as-contact-of.push owner.uid
+	(err, result) <-! db.users.save contact-user
+	throw new Error err if err
+	callback!
+
 create-contacts-users = !(db, contacts, callback) ->
 	users = []
 	for contact in contacts
-		user = {phones, emails, ims, sns} = contact
+		user = {}
+		user{phones, emails, ims, sns} = contact # TODO：这里需要考虑contact的信息是否应当抽取到user。
 		contact.uid = user.uid = util.get-UUid!
 		user.is-registered = false
 		users.push user
