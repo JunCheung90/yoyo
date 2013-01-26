@@ -30,7 +30,7 @@ describe 'mongoDb版的注册用户', !->
 
 
   can '最新张三联系人情况，有2个Contacts，作为2人的Contacts。\n' !(done) ->
-    check-user-contacts '张三', 2, 2, done  
+    check-user-contacts '张三', 2, 2, done 
 
   do
     (done) <-! after

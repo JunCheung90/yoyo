@@ -62,6 +62,9 @@ mergeSameUsers = function(db, user, callback){
       break;
     case 1:
       existUser = users[0];
+      if (existUser.isRegistered) {
+        throw new Error("User: " + user.name + " is conflict with exist user: " + existUser + ". THE HANDLER LOGIC IS NOT IMPLEMENTED YET!");
+      }
       import$(existUser, user);
       db.users.save(existUser, function(err, result){
         if (err) {

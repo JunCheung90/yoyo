@@ -1,7 +1,7 @@
 require! [async, '../util']
 
 create-user-with-contacts = !(db, user-data, callback)->
-  # 不论系统中目前此用户是否已经注册，总是生成一个新的user，然后判断原有用户中有无重复用户，如果有就merge到这个用户。
+  # 
   # 如果系统中此用户尚未注册过，则新建user。
   user = {} <<< user-data
   build-user-basic-info user
@@ -24,6 +24,7 @@ build-user-basic-info = !(user)->
 
 create-default-system-avatar = (user) ->
   #TODO:
+ 
 
 merge-same-users = !(db, user, callback) ->
   phones = [phone.phone-number for phone in user.phones]
@@ -38,13 +39,16 @@ merge-same-users = !(db, user, callback) ->
   case 0 then callback user # 0 为没有找到已存在的用户
   case 1 then # 1 为找到合并用户。这里的exist-user，以前并未注册，只是他人通讯录中出现过而已。
     exist-user = users[0] 
-    exist-user <<< user
+    throw new Error "User: #{user.name} is conflict with exist user: #{exist-user}. THE HANDLER LOGIC IS NOT IMPLEMENTED YET!" if exist-user.is-registered
+    exist-user <<< user # 这里的exist-user，以前并未注册，只是他人通讯录中出现过而已。
     (err, result) <-! db.users.save exist-user
     throw new Error err if err
     callback exist-user
   default
     throw new Error "#{user-amount} exist users are similar with #{user.name}, THE LOGIC IS NOT IMPLEMENTED YET!" if user-amount > 1
 
+# find-similar-users = !(db, user-or-contact, callback) ->
+#   if user-or-contact.contacts # 只有user才有contacts
 
 create-or-update-user-with-contacts = !(db, user, callback) ->
   user.as-contact-of ||= []
