@@ -1,40 +1,65 @@
-require! ['../servers-init'.orm, '../servers-init'.S, '../util']
+require! [async, '../util']
 
-Contact = orm.define 'Contact', 
-	cid: {type: S.STRING, unique: true}
-	name: S.STRING
-	isMerged: S.BOOLEAN
-	* 
-		classMethods: 
-			create-as-user: !(contact-register-data, callback) ->
-				contact-data = { cid: util.get-UUid!, name: contact-register-data.Name, is-merged: false }
-				phone-data = { number: contact-register-data.CurrentPhone, is-active: true }
-				social-data = [] # TODO: there is NO soical data in US1's 张三、李四、赵五 data
-				Contact.create-as-user-with-contact-phone-data contact-data, phone-data, social-data, callback
+create-contacts = !(db, user, callback) ->
+  user.contacts-seq ||= 0
+  to-create-contact-users = []
+  (err) <-! async.for-each user.contacts, !(contact, next) -> # 为了性能异步并发
+    (!(contact) ->
+        contact.cid = create-cid user.uid, ++user.contacts-seq
+        (contact-user-amount) <-! identify-and-bind-contact-as-user db, contact, user
+        throw new Error "#{contact} refers to more than one user: #{contact-user}" if contact-user-amount > 1
+        to-create-contact-users.push contact if contact-user-amount is 0
+        next!   
+    )(contact)
+  throw new Error err if err
+  if to-create-contact-users.length > 0 then
+    <-! create-contacts-users db, to-create-contact-users, user   
+    callback!
+  else
+    callback!
 
-			create-as-user-with-contact-phone-data: !(contact-data, phone-data, social-data, callback) ->
-				user-data = { uid: util.get-UUid!, name: null, is-registered: false, is-merged: false }
-				# 如果找不到Contact对应的User，则需要新建一个无名的User。
-				# TODO：所有的数据都要抽取到User上。参考：http://my.ss.sysu.edu.cn/wiki/pages/viewpage.action?pageId=111607873#id-基于nodejsCouchDBNeo4j建设先进服务器-关于Contact和User关系的思考，需要改进。
-				(user) <-! User.get-or-create-user-with-phone user-data, phone-data, social-data
-				Contact.create contact-data .success !(contact) ->
-					<-! user.bind-as-contact contact
-					callback contact
+identify-and-bind-contact-as-user = !(db, contact, owner, callback) -> # 回调返回找到并bind的用户个数。如果找到唯一用户，则将contact bind到这个用户上。
+  # TODO: 需要处理各种情况：1）电话号码相同也有可能不是同一个人（换电话了）；2）email比较肯定，很少会换；
+  # 3）im会换；4）sn不清楚；5）这里还有数据本身有错误，用户记错了或在手机端处理时有错的情况，例如：将电话号码记错一位，少记一位等等。
+  # 考虑使用规则引擎。
+  query-statement = 
+    $or:
+      * "phones.phoneNumber": $in: contact.phones or []
+      * emails: $in: contact.emails or []
+      ...
+  (err, contact-users) <-! db.users.find(query-statement).toArray
+  throw new Error err if err
+  contact-user-amount = contact-users?.length or 0
+  switch contact-user-amount
+  case 0 then callback 0 # 没有找到已存在的用户
+  case 1 then  
+    <-! bind-contact db, contact, contact-users[0], owner # 性能考虑：这里可以考虑改为不用同步，直接就callback了，不等bind-contact。
+    callback 1
+  default callback contact-user-amount
 
-		instanceMethods: {}
+bind-contact = !(db, contact, contact-user, owner, callback) -> 
+  contact.uid = contact-user.uid
+  contact-user.as-contact-of ||= []
+  contact-user.as-contact-of.push owner.uid
+  (err, result) <-! db.users.save contact-user
+  throw new Error err if err
+  callback!
 
-(exports ? this) <<< {Contact}
+create-contacts-users = !(db, contacts, owner, callback) ->
+  users = []
+  for contact in contacts
+    user = {}
+    user{phones, emails, ims, sns} = contact # TODO：这里需要考虑contact的信息是否应当抽取到user。
+    contact.uid = user.uid = util.get-UUid!
+    user.is-registered = false
+    user.as-contact-of ||= []
+    user.as-contact-of.push owner.uid
+    users.push user
+  (err, users) <-! db.users.insert users
+  throw new Error err if err
+  callback!
 
-require! ['./user'.User, './phone'.Phone, 
-	'./social-network'.SocialNetwork, './contacts-merge-record'.ContactsMergeRecord]
+create-cid = (uid, seq-no) ->
+  uid + '-c-' + new Date!.get-time! + '-' + seq-no
 
-Contact.hasMany Phone, {as: 'phones'}
-Contact.hasMany SocialNetwork, {as: 'socials'}
-Contact.hasOne ContactsMergeRecord, {as: 'mergedToContact'}
-
-Contact.belongsTo User, 
-	as: 'ownBy'
-	foreign-key: 'own_by_user_id'
-Contact.belongsTo User, 
-	as: 'actBy'
-	foreign-key: 'act_by_user_id'
+(exports ? this) <<< {create-contacts} 

@@ -1,10 +1,11 @@
-var should, async, User, initMongoClient, shutdownMongoClient, ref$, db, client, can;
+var should, async, User, initMongoClient, shutdownMongoClient, ref$, db, client, multipleTimes, can;
 should = require('should');
 async = require('async');
 User = require('../../src/models/User');
 initMongoClient = require('../../src/servers-init').initMongoClient;
 shutdownMongoClient = require('../../src/servers-init').shutdownMongoClient;
 ref$ = [null, null], db = ref$[0], client = ref$[1];
+multipleTimes = 1000;
 can = it;
 describe('mongoDb版的注册用户', function(){
   before(function(done){
@@ -16,23 +17,23 @@ describe('mongoDb版的注册用户', function(){
       });
     });
   });
-  can('创建User张三，张三有2个Contacts，作为2人的Contact。\n', function(done){
-    checkCreateUserWith('zhangsan.json', '张三', function(){
-      checkUserContacts('张三', 2, 0, done);
+  can('创建User张三，张三有2个Contacts，作为0人的Contact。\n', function(done){
+    createAndCheckUser('zhangsan.json', '张三', function(){
+      checkUserContacts('张三', multipleTimes + 2, 0, done);
     });
   });
   can('创建User李四，李四有2个Contacts，作为1人的Contact。\n', function(done){
-    checkCreateUserWith('lisi.json', '李四', function(){
-      checkUserContacts('李四', 2, 1, done);
+    createAndCheckUser('lisi.json', '李四', function(){
+      checkUserContacts('李四', multipleTimes + 2, 1, done);
     });
   });
   can('创建User赵五，赵五有3个Contacts，作为2人的Contacts。\n', function(done){
-    checkCreateUserWith('zhaowu.json', '赵五', function(){
-      checkUserContacts('赵五', 3, 2, done);
+    createAndCheckUser('zhaowu.json', '赵五', function(){
+      checkUserContacts('赵五', multipleTimes + 3, 2, done);
     });
   });
   can('最新张三联系人情况，有2个Contacts，作为2人的Contacts。\n', function(done){
-    checkUserContacts('张三', 2, 2, done);
+    checkUserContacts('张三', multipleTimes + 2, 2, done);
   });
   after(function(done){
     shutdownMongoClient(client, function(){
@@ -40,9 +41,10 @@ describe('mongoDb版的注册用户', function(){
     });
   });
 });
-function checkCreateUserWith(jsonFileName, userName, callback){
+function createAndCheckUser(jsonFileName, userName, callback){
   var userData;
   userData = require("../test-data/" + jsonFileName);
+  userData = multipleContactsData(userData, multipleTimes);
   User.createUserWithContacts(db, userData, function(user){
     db.users.find({
       name: userName
@@ -54,27 +56,28 @@ function checkCreateUserWith(jsonFileName, userName, callback){
     });
   });
 }
+function multipleContactsData(userData, contactsAmount){
+  var i$, i;
+  for (i$ = 1; i$ <= contactsAmount; ++i$) {
+    i = i$;
+    userData.contacts.push(generateFakeContact());
+  }
+  return userData;
+}
+function generateFakeContact(){
+  var fakeContact;
+  return fakeContact = {
+    "phones": [Math.random() * 100000]
+  };
+}
 function checkUserContacts(userName, amountOfHasContacts, amountOfAsContacts, callback){
   db.users.find({
     name: userName
   }).toArray(function(err, foundUsers){
-    var foundUser, contact, name, sn;
+    var foundUser, sn;
     foundUsers.length.should.eql(1);
     foundUser = foundUsers[0];
     foundUser.contacts.length.should.eql(amountOfHasContacts);
-    console.log("\n\t找回的User：" + userName + "有" + foundUser.contacts.length + "个联系人：%j", (function(){
-      var i$, ref$, len$, lresult$, j$, ref1$, len1$, results$ = [];
-      for (i$ = 0, len$ = (ref$ = foundUser.contacts).length; i$ < len$; ++i$) {
-        contact = ref$[i$];
-        lresult$ = [];
-        for (j$ = 0, len1$ = (ref1$ = contact.names).length; j$ < len1$; ++j$) {
-          name = ref1$[j$];
-          lresult$.push(name);
-        }
-        results$.push(lresult$);
-      }
-      return results$;
-    }()));
     foundUser.asContactOf.length.should.eql(amountOfAsContacts);
     console.log("\n\t找回的User：" + userName + "作为" + foundUser.asContactOf.length + "个联系人");
     console.log("\n\t找回的User：" + userName + "有" + foundUser.sns.length + "个SN：%j", (function(){

@@ -43,7 +43,7 @@ user = # yoyo server端数据
   merged-from: [] # 如果是合并产生的user，这里记录合并前的uid
   #----------- relations ----------#
   contacts: # 当前用户的联系人
-    * cid: 'uid-c-timestamp_of_add-seqno'
+    * cid: 'owner-uid-c-timestamp_of_add-seqno'
       uid: 'uid_lisi'
       names: ['李小四']
       phones: ['123456']
