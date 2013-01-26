@@ -16,22 +16,22 @@ describe('mongoDb版的注册用户', function(){
       });
     });
   });
-  can('创建User张三，张三有2个Contacts，作为2人的Contact。', function(done){
+  can('创建User张三，张三有2个Contacts，作为2人的Contact。\n', function(done){
     checkCreateUserWith('zhangsan.json', '张三', function(){
       checkUserContacts('张三', 2, 0, done);
     });
   });
-  can('创建User李四，李四有2个Contacts，作为1人的Contact。', function(done){
+  can('创建User李四，李四有2个Contacts，作为1人的Contact。\n', function(done){
     checkCreateUserWith('lisi.json', '李四', function(){
       checkUserContacts('李四', 2, 1, done);
     });
   });
-  can('创建User赵五，赵五有3个Contacts，作为2人的Contacts。', function(done){
+  can('创建User赵五，赵五有3个Contacts，作为2人的Contacts。\n', function(done){
     checkCreateUserWith('zhaowu.json', '赵五', function(){
       checkUserContacts('赵五', 3, 2, done);
     });
   });
-  can('最新张三联系人情况，有2个Contacts，作为2人的Contacts', function(done){
+  can('最新张三联系人情况，有2个Contacts，作为2人的Contacts。\n', function(done){
     checkUserContacts('张三', 2, 2, done);
   });
   after(function(done){

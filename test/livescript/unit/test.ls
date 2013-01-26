@@ -15,21 +15,21 @@ describe 'mongoDb版的注册用户', !->
     <-! db.drop-collection 'users'
     done!
 
-  can '创建User张三，张三有2个Contacts，作为2人的Contact。', !(done) ->
+  can '创建User张三，张三有2个Contacts，作为2人的Contact。\n', !(done) ->
     <-! check-create-user-with 'zhangsan.json', '张三'
     check-user-contacts '张三', 2, 0, done
 
-  can '创建User李四，李四有2个Contacts，作为1人的Contact。', !(done) ->
+  can '创建User李四，李四有2个Contacts，作为1人的Contact。\n', !(done) ->
     <-! check-create-user-with 'lisi.json', '李四'
     check-user-contacts '李四', 2, 1, done
 
 
-  can '创建User赵五，赵五有3个Contacts，作为2人的Contacts。', !(done) ->
+  can '创建User赵五，赵五有3个Contacts，作为2人的Contacts。\n', !(done) ->
     <-! check-create-user-with 'zhaowu.json', '赵五'
     check-user-contacts '赵五', 3, 2, done
 
 
-  can '最新张三联系人情况，有2个Contacts，作为2人的Contacts' !(done) ->
+  can '最新张三联系人情况，有2个Contacts，作为2人的Contacts。\n' !(done) ->
     check-user-contacts '张三', 2, 2, done  
 
   do

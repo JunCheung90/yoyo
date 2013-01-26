@@ -1,7 +1,7 @@
 start "mongoDB" /D %MONGO_HOME%\bin mongod.exe --dbpath d:\mongodb-data
 start "node-inspector" node-inspector
-start "编译源代码" /D .\src lsc -wcbo . livescript
-start "YoYo服务器" supervisor src\server.js
-start "编译测试代码" /D .\test lsc -wcbo . livescript
-start "单元测试" /D .\test\unit mocha test-mongo-direct -R Spec
-' start "集成测试" /D .\test\integrated mocha -R Spec
+start "SOURCE CODE" /D .\src lsc -wcbo . livescript
+start "YoYo SERVER" supervisor src\server.js
+start "TESTING CODE" /D .\test lsc -wcbo . livescript
+start "UNIT TESTING" /D .\test\unit mocha test-mongo-direct -R Spec
+' start "INTIGRATED TESTING" /D .\test\integrated mocha -R Spec
