@@ -114,7 +114,6 @@ merge-two-contacts = (c1, c2) -> # 返回null表示PENDING合并，没有真正�
   debugger
   m-to.merged-from ||= []
   m-to.merged-from.push m-from.cid
-  console.log "\n\n*************** Contact: #{m-to.names[0]} is merged from: %j ***************\n\n", m-to.merged-from
   m-from.merged-to = m-to.cid
   m-from.act-by-user = m-to.act-by-user
 

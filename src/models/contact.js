@@ -177,7 +177,6 @@ mergeTwoContacts = function(c1, c2){
   debugger;
   mTo.mergedFrom || (mTo.mergedFrom = []);
   mTo.mergedFrom.push(mFrom.cid);
-  console.log("\n\n*************** Contact: " + mTo.names[0] + " is merged from: %j ***************\n\n", mTo.mergedFrom);
   mFrom.mergedTo = mTo.cid;
   mFrom.actByUser = mTo.actByUser;
   if (mTo.isMergePending) {

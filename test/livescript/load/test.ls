@@ -1,11 +1,12 @@
 require! ['should', 'async', 
           '../../src/models/User',
           '../../src/servers-init'.init-mongo-client, 
-          '../../src/servers-init'.shutdown-mongo-client]
+          '../../src/servers-init'.shutdown-mongo-client,
+          '../../src/util']
 
 [db, client] = [null null]
 
-MULTIPLE-TIMES = 0
+MULTIPLE-TIMES = 1000
 
 can = it # it在LiveScript中被作为缺省的参数，因此我们先置换为can
 
@@ -35,8 +36,8 @@ describe 'mongoDb版的注册用户', !->
     <-! shutdown-mongo-client client
     done!
 
-!function create-and-check-user json-file-name, user-name, fake-contacts-amount callback
-  user-data = require "../test-data/#{json-file-name}"
+!function create-and-check-user json-file-name, user-name, fake-contacts-amount, callback
+  user-data = util.load-json __dirname + "/../test-data/#{json-file-name}"
   user-data = multiple-contacts-data user-data, fake-contacts-amount
   console.log "\n\n*************** #{user-name} has #{user-data.contacts.length} contacts. ************************\n\n"
   (user) <-! User.create-user-with-contacts db, user-data
