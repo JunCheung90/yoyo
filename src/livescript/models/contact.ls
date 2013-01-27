@@ -20,7 +20,7 @@ create-contacts = !(db, user, callback) ->
     <-! create-contacts-users db, to-create-contact-users, user   
     callback!
   else
-    callback!
+    callback! 
 
 identify-and-bind-contact-as-user = !(db, contact, owner, callback) -> # 回调返回找到并bind的用户个数。如果找到唯一用户，则将contact bind到这个用户上。
   # TODO: 需要处理各种情况：1）电话号码相同也有可能不是同一个人（换电话了）；2）email比较肯定，很少会换；
@@ -81,7 +81,7 @@ create-cid = (uid, seq-no) ->
 # --- ContactMerger ------- #
 # TODO：这里复杂的合并逻辑还没有完成：1）
 merge-strategy = require '../contacts-merging-strategy'
-_und = require 'underscore' 
+_ = require 'underscore' 
 
 check-and-merge-contacts = !(contact-being-checked, contacts) ->
   for contact in contacts
@@ -95,33 +95,32 @@ check-and-merge-contacts = !(contact-being-checked, contacts) ->
 should-contacts-be-merged = (c1, c2) ->
   # TODO：加载contacts-merging-strategy
   for key in merge-strategy.direct-merging
-    if _und.is-array c1[key] then
-      return "MERGED" if !_und.is-empty _und.intersection c1[key], c2[key]
+    if _.is-array c1[key] then
+      return "MERGED" if !_.is-empty _.intersection c1[key], c2[key]
     else
-      return "MERGED" if _und.is-equal c1[key], c2[key]
+      return "MERGED" if _.is-equal c1[key], c2[key]
 
   for key in merge-strategy.recommand-merging
-    if _und.is-array c1[key] then
-      return "PENDING" if !_und.is-empty _und.intersection c1[key], c2[key]
+    if _.is-array c1[key] then
+      return "PENDING" if !_.is-empty _.intersection c1[key], c2[key]
     else
-      return "PENDING" if _und.is-equal c1[key], c2[key]
+      return "PENDING" if _.is-equal c1[key], c2[key]
 
   "NONE"
 
 merge-two-contacts = (c1, c2) -> # 返回null表示PENDING合并，没有真正合并内容；否则返回合并之后的Contact，整合所有信息到这个Contact。
   m-to = select-merge-to c1, c2 # 注意发现了与"PENDING"联系人相同的Cotact时，这里的m-to需要通盘考虑。
   m-from = if m-to.cid is c1.cid then c2 else c1
-  debugger
   m-to.merged-from ||= []
   m-to.merged-from.push m-from.cid
   m-from.merged-to = m-to.cid
   m-from.act-by-user = m-to.act-by-user
 
   if m-to.is-merge-pending then return null # "PENDING" 时，并不直接合并内容，而是等待用户处理后完成。
-  for key in _und.keys c1
+  for key in _.keys c1
     continue if key in ['cid', 'isMergePending', 'mergedTo', 'mergedFrom']
-    if _und.is-array c1[key] then
-      m-to[key] = _und.union m-to[key], m-from[key]
+    if _.is-array c1[key] then
+      m-to[key] = _.union m-to[key], m-from[key]
     else
       throw new Error "#{m-to.names} and #{m-from.names} contact merging CONFLICT for key: #{key}, with different value: #{m-to[key]}, #{m-from[key]}" if m-to[key] != m-from[key]
 

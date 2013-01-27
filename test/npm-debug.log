@@ -1,0 +1,161 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\Program Files\\nodejs\\\\node.exe',
+1 verbose cli   'C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'install',
+1 verbose cli   'v8-profiler' ]
+2 info using npm@1.1.66
+3 info using node@v0.8.15
+4 verbose node symlink C:\Program Files\nodejs\\node.exe
+5 verbose read json D:\yoyo-mongo\test\package.json
+6 verbose read json D:\yoyo-mongo\test\node_modules\mysql\package.json
+7 verbose read json D:\yoyo-mongo\test\node_modules\request\package.json
+8 verbose read json D:\yoyo-mongo\test\node_modules\restify\package.json
+9 verbose read json D:\yoyo-mongo\test\node_modules\should\package.json
+10 verbose read json D:\yoyo-mongo\test\package.json
+11 verbose cache add [ 'v8-profiler', null ]
+12 silly cache add name=undefined spec="v8-profiler" args=["v8-profiler",null]
+13 verbose parsed url { pathname: 'v8-profiler',
+13 verbose parsed url   path: 'v8-profiler',
+13 verbose parsed url   href: 'v8-profiler' }
+14 silly lockFile a12f389f-v8-profiler v8-profiler
+15 verbose lock v8-profiler C:\Users\Wang Qing\AppData\Roaming\npm-cache\a12f389f-v8-profiler.lock
+16 silly lockFile a12f389f-v8-profiler v8-profiler
+17 verbose addNamed [ 'v8-profiler', '' ]
+18 verbose addNamed [ null, '' ]
+19 silly lockFile f875d38f-v8-profiler v8-profiler@
+20 verbose lock v8-profiler@ C:\Users\Wang Qing\AppData\Roaming\npm-cache\f875d38f-v8-profiler.lock
+21 silly addNameRange { name: 'v8-profiler', range: '', hasData: false }
+22 verbose url raw v8-profiler
+23 verbose url resolving [ 'https://registry.npmjs.org/', './v8-profiler' ]
+24 verbose url resolved https://registry.npmjs.org/v8-profiler
+25 info trying registry request attempt 1 at 22:11:34
+26 verbose etag "F4HY6RB21UTGF72G4AHYDAGQQ"
+27 http GET https://registry.npmjs.org/v8-profiler
+28 http 304 https://registry.npmjs.org/v8-profiler
+29 silly registry.get cb [ 304,
+29 silly registry.get   { server: 'CouchDB/1.2.1 (Erlang OTP/R15B)',
+29 silly registry.get     etag: '"F4HY6RB21UTGF72G4AHYDAGQQ"',
+29 silly registry.get     date: 'Sun, 27 Jan 2013 14:09:57 GMT',
+29 silly registry.get     'content-length': '0' } ]
+30 verbose etag v8-profiler from cache
+31 silly addNameRange number 2 { name: 'v8-profiler', range: '', hasData: true }
+32 silly addNameRange versions [ 'v8-profiler',
+32 silly addNameRange   [ '0.0.1', '0.0.2', '0.0.3', '3.6.2beta', '3.6.2beta2', '3.6.2-1' ] ]
+33 verbose addNamed [ 'v8-profiler', '3.6.2-1' ]
+34 verbose addNamed [ '3.6.2-1', '3.6.2-1' ]
+35 silly lockFile 19e1a1b9-v8-profiler-3-6-2-1 v8-profiler@3.6.2-1
+36 verbose lock v8-profiler@3.6.2-1 C:\Users\Wang Qing\AppData\Roaming\npm-cache\19e1a1b9-v8-profiler-3-6-2-1.lock
+37 verbose read json C:\Users\Wang Qing\AppData\Roaming\npm-cache\v8-profiler\3.6.2-1\package\package.json
+38 silly lockFile 19e1a1b9-v8-profiler-3-6-2-1 v8-profiler@3.6.2-1
+39 silly lockFile f875d38f-v8-profiler v8-profiler@
+40 silly resolved [ { name: 'v8-profiler',
+40 silly resolved     version: '3.6.2-1',
+40 silly resolved     description: 'node bindings for the v8 profiler',
+40 silly resolved     homepage: 'http://github.com/dannycoates/v8-profiler',
+40 silly resolved     author: { name: 'Danny Coates', email: 'dannycoates@gmail.com' },
+40 silly resolved     keywords: [ 'profiler', 'inspector' ],
+40 silly resolved     engines: { node: '>=0.6' },
+40 silly resolved     main: 'v8-profiler',
+40 silly resolved     scripts: { install: 'node-gyp rebuild' },
+40 silly resolved     gypfile: true,
+40 silly resolved     readme: 'v8-profiler provides [node](http://github.com/ry/node) bindings for the v8 \nprofiler and integration with [node-inspector](http://github.com/dannycoates/node-inspector)\n\n## Installation\n\n    npm install v8-profiler\n\n## Usage\n\n    var profiler = require(\'v8-profiler\');\n\n## API\n\n    var snapshot = profiler.takeSnapshot([name])      //takes a heap snapshot\n\n    profiler.startProfiling([name])                   //begin cpu profiling\n    var cpuProfile = profiler.stopProfiling([name])   //finish cpu profiling\n\n## node-inspector\n\nCpu profiles can be viewed and heap snapshots may be taken and viewed from the\nprofiles panel.\n',
+40 silly resolved     readmeFilename: 'readme.md',
+40 silly resolved     _id: 'v8-profiler@3.6.2-1',
+40 silly resolved     _from: 'v8-profiler' } ]
+41 info install v8-profiler@3.6.2-1 into D:\yoyo-mongo\test
+42 info installOne v8-profiler@3.6.2-1
+43 verbose from cache C:\Users\Wang Qing\AppData\Roaming\npm-cache\v8-profiler\3.6.2-1\package\package.json
+44 info D:\yoyo-mongo\test\node_modules\v8-profiler unbuild
+45 verbose read json D:\yoyo-mongo\test\node_modules\v8-profiler\package.json
+46 verbose tar unpack C:\Users\Wang Qing\AppData\Roaming\npm-cache\v8-profiler\3.6.2-1\package.tgz
+47 silly lockFile 31e2d01a-go-test-node-modules-v8-profiler D:\yoyo-mongo\test\node_modules\v8-profiler
+48 verbose lock D:\yoyo-mongo\test\node_modules\v8-profiler C:\Users\Wang Qing\AppData\Roaming\npm-cache\31e2d01a-go-test-node-modules-v8-profiler.lock
+49 silly gunzTarPerm modes [ '755', '644' ]
+50 silly gunzTarPerm extractEntry package.json
+51 silly gunzTarPerm modified mode [ 'package.json', 438, 420 ]
+52 silly gunzTarPerm extractEntry .npmignore
+53 silly gunzTarPerm modified mode [ '.npmignore', 438, 420 ]
+54 silly gunzTarPerm extractEntry v8-profiler.js
+55 silly gunzTarPerm modified mode [ 'v8-profiler.js', 438, 420 ]
+56 silly gunzTarPerm extractEntry profile.cc
+57 silly gunzTarPerm modified mode [ 'profile.cc', 438, 420 ]
+58 silly gunzTarPerm extractEntry graph_edge.cc
+59 silly gunzTarPerm modified mode [ 'graph_edge.cc', 438, 420 ]
+60 silly gunzTarPerm extractEntry graph_edge.h
+61 silly gunzTarPerm modified mode [ 'graph_edge.h', 438, 420 ]
+62 silly gunzTarPerm extractEntry graph_node.cc
+63 silly gunzTarPerm modified mode [ 'graph_node.cc', 438, 420 ]
+64 silly gunzTarPerm extractEntry graph_node.h
+65 silly gunzTarPerm modified mode [ 'graph_node.h', 438, 420 ]
+66 silly gunzTarPerm extractEntry heap_profiler.cc
+67 silly gunzTarPerm modified mode [ 'heap_profiler.cc', 438, 420 ]
+68 silly gunzTarPerm extractEntry heap_profiler.h
+69 silly gunzTarPerm modified mode [ 'heap_profiler.h', 438, 420 ]
+70 silly gunzTarPerm extractEntry Makefile
+71 silly gunzTarPerm modified mode [ 'Makefile', 438, 420 ]
+72 silly gunzTarPerm extractEntry binding.gyp
+73 silly gunzTarPerm modified mode [ 'binding.gyp', 438, 420 ]
+74 silly gunzTarPerm extractEntry cpu_profiler.h
+75 silly gunzTarPerm modified mode [ 'cpu_profiler.h', 438, 420 ]
+76 silly gunzTarPerm extractEntry profile.h
+77 silly gunzTarPerm modified mode [ 'profile.h', 438, 420 ]
+78 silly gunzTarPerm extractEntry profiler.cc
+79 silly gunzTarPerm modified mode [ 'profiler.cc', 438, 420 ]
+80 silly gunzTarPerm extractEntry profile_node.cc
+81 silly gunzTarPerm modified mode [ 'profile_node.cc', 438, 420 ]
+82 silly gunzTarPerm extractEntry profile_node.h
+83 silly gunzTarPerm modified mode [ 'profile_node.h', 438, 420 ]
+84 silly gunzTarPerm extractEntry readme.md
+85 silly gunzTarPerm modified mode [ 'readme.md', 438, 420 ]
+86 silly gunzTarPerm extractEntry snapshot.cc
+87 silly gunzTarPerm modified mode [ 'snapshot.cc', 438, 420 ]
+88 silly gunzTarPerm extractEntry snapshot.h
+89 silly gunzTarPerm modified mode [ 'snapshot.h', 438, 420 ]
+90 silly gunzTarPerm extractEntry cpu_profiler.cc
+91 silly gunzTarPerm modified mode [ 'cpu_profiler.cc', 438, 420 ]
+92 silly gunzTarPerm extractEntry wscript
+93 silly gunzTarPerm modified mode [ 'wscript', 438, 420 ]
+94 verbose read json D:\yoyo-mongo\test\node_modules\v8-profiler\package.json
+95 silly lockFile 31e2d01a-go-test-node-modules-v8-profiler D:\yoyo-mongo\test\node_modules\v8-profiler
+96 info preinstall v8-profiler@3.6.2-1
+97 verbose from cache D:\yoyo-mongo\test\node_modules\v8-profiler\package.json
+98 verbose readDependencies using package.json deps
+99 verbose from cache D:\yoyo-mongo\test\node_modules\v8-profiler\package.json
+100 verbose readDependencies using package.json deps
+101 silly resolved []
+102 verbose about to build D:\yoyo-mongo\test\node_modules\v8-profiler
+103 info build D:\yoyo-mongo\test\node_modules\v8-profiler
+104 verbose from cache D:\yoyo-mongo\test\node_modules\v8-profiler\package.json
+105 verbose linkStuff [ false, false, false, 'D:\\yoyo-mongo\\test\\node_modules' ]
+106 info linkStuff v8-profiler@3.6.2-1
+107 verbose linkBins v8-profiler@3.6.2-1
+108 verbose linkMans v8-profiler@3.6.2-1
+109 verbose rebuildBundles v8-profiler@3.6.2-1
+110 info install v8-profiler@3.6.2-1
+111 verbose unsafe-perm in lifecycle true
+112 silly exec cmd "/c" "node-gyp rebuild"
+113 silly cmd,/c,node-gyp rebuild,D:\yoyo-mongo\test\node_modules\v8-profiler spawning
+114 info v8-profiler@3.6.2-1 Failed to exec install script
+115 info D:\yoyo-mongo\test\node_modules\v8-profiler unbuild
+116 verbose from cache D:\yoyo-mongo\test\node_modules\v8-profiler\package.json
+117 info preuninstall v8-profiler@3.6.2-1
+118 info uninstall v8-profiler@3.6.2-1
+119 verbose true,D:\yoyo-mongo\test\node_modules,D:\yoyo-mongo\test\node_modules unbuild v8-profiler@3.6.2-1
+120 info postuninstall v8-profiler@3.6.2-1
+121 error v8-profiler@3.6.2-1 install: `node-gyp rebuild`
+121 error `cmd "/c" "node-gyp rebuild"` failed with 1
+122 error Failed at the v8-profiler@3.6.2-1 install script.
+122 error This is most likely a problem with the v8-profiler package,
+122 error not with npm itself.
+122 error Tell the author that this fails on your system:
+122 error     node-gyp rebuild
+122 error You can get their info via:
+122 error     npm owner ls v8-profiler
+122 error There is likely additional logging output above.
+123 error System Windows_NT 6.1.7601
+124 error command "C:\\Program Files\\nodejs\\\\node.exe" "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "install" "v8-profiler"
+125 error cwd D:\yoyo-mongo\test
+126 error node -v v0.8.15
+127 error npm -v 1.1.66
+128 error code ELIFECYCLE
+129 verbose exit [ 1, true ]

@@ -1,0 +1,406 @@
+Statistical profiling result from v8.log, (4940 ticks, 768 unaccounted, 0 excluded).
+
+ [Unknown]:
+   ticks  total  nonlib   name
+    768   15.5%
+
+ [Shared libraries]:
+   ticks  total  nonlib   name
+    347    7.0%    0.0%  C:\windows\SYSTEM32\ntdll.dll
+     13    0.3%    0.0%  C:\windows\system32\kernel32.dll
+
+ [JavaScript]:
+   ticks  total  nonlib   name
+   1769   35.8%   38.6%  LazyCompile: indexOf native array.js:1236
+   1614   32.7%   35.2%  Stub: CompareStub_EQ_STRICT
+    106    2.1%    2.3%  Function: serializeObject D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:334
+     74    1.5%    1.6%  Function: Module._compile module.js:372
+     55    1.1%    1.2%  Function: calculateObjectSize D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:201
+     51    1.0%    1.1%  LazyCompile: forEach native array.js:1062 {1}
+     46    0.9%    1.0%  LazyCompile: Buffer.write buffer.js:323 {2}
+     42    0.9%    0.9%  LazyCompile: IN native runtime.js:354
+     40    0.8%    0.9%  LazyCompile: _.contains._.include D:\yoyo-mongo\node_modules\underscore\underscore.js:216 {1}
+     38    0.8%    0.8%  Function: _.uniq._.unique D:\yoyo-mongo\node_modules\underscore\underscore.js:450
+     25    0.5%    0.5%  Function: calculateElement D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:227
+     23    0.5%    0.5%  LazyCompile: EQUALS native runtime.js:54
+     21    0.4%    0.5%  Function: packElement D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:421
+     21    0.4%    0.5%  Function: _.intersection D:\yoyo-mongo\node_modules\underscore\underscore.js:467
+     20    0.4%    0.4%  LazyCompile: filter native array.js:1011
+     19    0.4%    0.4%  Stub: CEntryStub
+     17    0.3%    0.4%  LazyCompile: ArrayConcat native array.js:471
+     16    0.3%    0.3%  Stub: InstanceofStub
+     16    0.3%    0.3%  Function: NativeModule.compile node.js:613
+     16    0.3%    0.3%  Function: BSON.deserialize D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:1132
+     16    0.3%    0.3%  Builtin: ArgumentsAdaptorTrampoline
+     15    0.3%    0.3%  LazyCompile: getUUid D:\yoyo-mongo\src\util.js:9
+     13    0.3%    0.3%  LazyCompile: toLowerCase native string.js:739
+     12    0.2%    0.3%  LazyCompile: shouldContactsBeMerged D:\yoyo-mongo\src\models\Contact.js:145 {1}
+     11    0.2%    0.2%  Stub: KeyedLoadElementStub
+     11    0.2%    0.2%  LazyCompile: UseSparseVariant native array.js:111
+     10    0.2%    0.2%  LazyCompile: Db._executeQueryCommand D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1757 {1}
+      9    0.2%    0.2%  Function: Socket._write net.js:514
+      8    0.2%    0.2%  Function: fs.statSync fs.js:523
+      7    0.1%    0.2%  Stub: FastNewContextStub
+      7    0.1%    0.2%  LazyCompile: toString native v8natives.js:223
+      7    0.1%    0.2%  LazyCompile: ArraySlice native array.js:621 {1}
+      7    0.1%    0.2%  Function: v1 D:\yoyo-mongo\node_modules\node-uuid\uuid.js:115
+      6    0.1%    0.1%  LazyCompile: checkAndMergeContacts D:\yoyo-mongo\src\models\Contact.js:126 {2}
+      6    0.1%    0.1%  LazyCompile: __executeQueryCommand D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1554 {3}
+      6    0.1%    0.1%  LazyCompile: ToObject native runtime.js:567
+      6    0.1%    0.1%  LazyCompile: Buffer.write buffer.js:323 {1}
+      6    0.1%    0.1%  LazyCompile: Buffer.toString buffer.js:392 {2}
+      5    0.1%    0.1%  Stub: ToBooleanStub_Bool
+      5    0.1%    0.1%  Stub: KeyedLoadElementStub {1}
+      5    0.1%    0.1%  LazyCompile: isArray native array.js:1463
+      5    0.1%    0.1%  LazyCompile: Socket._write net.js:514 {2}
+      5    0.1%    0.1%  LazyCompile: STRICT_EQUALS native runtime.js:100
+      5    0.1%    0.1%  LazyCompile: NativeModule.require node.js:568 {1}
+      5    0.1%    0.1%  LazyCompile: <anonymous> native string.js:36
+      5    0.1%    0.1%  Function: eq D:\yoyo-mongo\node_modules\underscore\underscore.js:821
+      5    0.1%    0.1%  Function: _rng D:\yoyo-mongo\node_modules\node-uuid\uuid.js:20
+      4    0.1%    0.1%  Stub: StringAddStub
+      4    0.1%    0.1%  Stub: CompareICStub {2}
+      4    0.1%    0.1%  LazyCompile: isDate D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:16
+      4    0.1%    0.1%  LazyCompile: NonNumberToNumber native runtime.js:538
+      4    0.1%    0.1%  LazyCompile: EventEmitter.emit events.js:54 {1}
+      4    0.1%    0.1%  Function: mergeContacts D:\yoyo-mongo\src\models\Contact.js:86
+      4    0.1%    0.1%  Function: find D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\collection.js:789
+      4    0.1%    0.1%  Function: createContacts D:\yoyo-mongo\src\models\Contact.js:14
+      4    0.1%    0.1%  Function: __executeQueryCommand D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1554
+      3    0.1%    0.1%  Stub: BinaryOpStub_ADD_Alloc_SMI
+      3    0.1%    0.1%  LazyCompile: writeIEEE754 D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\float_parser.js:67 {1}
+      3    0.1%    0.1%  LazyCompile: unparse D:\yoyo-mongo\node_modules\node-uuid\uuid.js:82
+      3    0.1%    0.1%  LazyCompile: packElement D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:421 {2}
+      3    0.1%    0.1%  LazyCompile: keys native v8natives.js:333
+      3    0.1%    0.1%  LazyCompile: _.isEqual D:\yoyo-mongo\node_modules\underscore\underscore.js:912
+      3    0.1%    0.1%  LazyCompile: Socket._write net.js:514 {1}
+      3    0.1%    0.1%  LazyCompile: QueryCommand.toBinary D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\commands\query_command.js:113 {1}
+      3    0.1%    0.1%  LazyCompile: DefineOneShotAccessor native messages.js:759
+      3    0.1%    0.1%  LazyCompile: Buffer.toString buffer.js:392 {1}
+      3    0.1%    0.1%  LazyCompile: Buffer buffer.js:204 {1}
+      3    0.1%    0.1%  LazyCompile: <anonymous> native date.js:145
+      3    0.1%    0.1%  Function: statPath module.js:88
+      3    0.1%    0.1%  Function: identifyAndBindContactAsUser D:\yoyo-mongo\src\models\Contact.js:40
+      3    0.1%    0.1%  Function: fs.lstatSync fs.js:519
+      3    0.1%    0.1%  Function: _.each._.forEach D:\yoyo-mongo\node_modules\underscore\underscore.js:75
+      3    0.1%    0.1%  Function: Db._executeQueryCommand D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1757
+      3    0.1%    0.1%  Function: Connection.write D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\connection\connection.js:133
+      3    0.1%    0.1%  Function: Buffer.toString buffer.js:392
+      3    0.1%    0.1%  Builtin: JSConstructStubGeneric
+      2    0.0%    0.0%  Stub: SubStringStub
+      2    0.0%    0.0%  Stub: KeyedStoreElementStub
+      2    0.0%    0.0%  Stub: CompareICStub {4}
+      2    0.0%    0.0%  Stub: CallFunctionStub_Args1_Recording
+      2    0.0%    0.0%  Stub: BinaryOpStub_BIT_AND_Alloc_SMI
+      2    0.0%    0.0%  LazyCompile: toString native v8natives.js:1378
+      2    0.0%    0.0%  LazyCompile: packElement D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:421 {1}
+      2    0.0%    0.0%  LazyCompile: indexOf native string.js:118
+      2    0.0%    0.0%  LazyCompile: exports.resolve path.js:85 {1}
+      2    0.0%    0.0%  LazyCompile: exec native regexp.js:171 {1}
+      2    0.0%    0.0%  LazyCompile: checkAndMergeContacts D:\yoyo-mongo\src\models\Contact.js:126 {1}
+      2    0.0%    0.0%  LazyCompile: captureStackTrace native messages.js:1100
+      2    0.0%    0.0%  LazyCompile: _.uniq._.unique D:\yoyo-mongo\node_modules\underscore\underscore.js:441 {1}
+      2    0.0%    0.0%  LazyCompile: _.union D:\yoyo-mongo\node_modules\underscore\underscore.js:461 {1}
+      2    0.0%    0.0%  LazyCompile: Socket.write net.js:464 {1}
+      2    0.0%    0.0%  LazyCompile: FILTER_KEY native runtime.js:398
+      2    0.0%    0.0%  LazyCompile: EventEmitter.listeners events.js:246
+      2    0.0%    0.0%  LazyCompile: EventEmitter.addListener events.js:138 {1}
+      2    0.0%    0.0%  LazyCompile: DefineObjectProperty native v8natives.js:695
+      2    0.0%    0.0%  LazyCompile: Cursor D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\cursor.js:47 {1}
+      2    0.0%    0.0%  LazyCompile: BasicJSONSerialize native json.js:273
+      2    0.0%    0.0%  LazyCompile: ArraySlice native array.js:621
+      2    0.0%    0.0%  KeyedStoreIC: <anonymous> {1}
+      2    0.0%    0.0%  Function: generateQueryCommand D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\cursor.js:480
+      2    0.0%    0.0%  Function: fs.openSync fs.js:336
+      2    0.0%    0.0%  Function: _.isEmpty D:\yoyo-mongo\node_modules\underscore\underscore.js:918
+      2    0.0%    0.0%  Function: Server.connect.connectionPool.on.server._serverState D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\connection\server.js:301
+      2    0.0%    0.0%  Function: Module.load module.js:346
+      2    0.0%    0.0%  Function: Module._resolveFilename module.js:323
+      2    0.0%    0.0%  Function: Module._nodeModulePaths module.js:207
+      2    0.0%    0.0%  Function: Module._findPath module.js:160
+      2    0.0%    0.0%  Function: BSON.deserialize.readCStyleString D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:1145 {2}
+      2    0.0%    0.0%  Builtin: FunctionCall
+      1    0.0%    0.0%  Stub: StringAddStub {1}
+      1    0.0%    0.0%  Stub: RegExpExecStub
+      1    0.0%    0.0%  Stub: NumberToStringStub
+      1    0.0%    0.0%  Stub: MathPowStub
+      1    0.0%    0.0%  Stub: InterruptStub
+      1    0.0%    0.0%  Stub: FastNewContextStub {2}
+      1    0.0%    0.0%  Stub: FastNewContextStub {1}
+      1    0.0%    0.0%  Stub: FastNewClosureStub
+      1    0.0%    0.0%  Stub: FastCloneShallowObjectStub
+      1    0.0%    0.0%  Stub: CompareStub_EQ
+      1    0.0%    0.0%  Stub: CompareICStub {5}
+      1    0.0%    0.0%  Stub: CompareICStub {3}
+      1    0.0%    0.0%  Stub: CompareICStub {1}
+      1    0.0%    0.0%  Stub: CompareICStub
+      1    0.0%    0.0%  Stub: CallFunctionStub_Args5_Recording
+      1    0.0%    0.0%  Stub: CallFunctionStub_Args3_Recording
+      1    0.0%    0.0%  Stub: CallFunctionStub_Args0_Recording
+      1    0.0%    0.0%  Stub: CallConstructStub_Recording
+      1    0.0%    0.0%  Stub: CallConstructStub
+      1    0.0%    0.0%  Stub: BinaryOpStub_SUB_OverwriteLeft_SMI
+      1    0.0%    0.0%  Stub: BinaryOpStub_SHR_Alloc_SMI
+      1    0.0%    0.0%  Stub: BinaryOpStub_MOD_OverwriteLeft_HeapNumbers
+      1    0.0%    0.0%  Stub: BinaryOpStub_DIV_Alloc_HeapNumbers
+      1    0.0%    0.0%  Stub: BinaryOpStub_BIT_AND_OverwriteLeft_SMI
+      1    0.0%    0.0%  Stub: BinaryOpStub_ADD_OverwriteLeft_BothStrings
+      1    0.0%    0.0%  Stub: BinaryOpStub_ADD_Alloc_BothStrings
+      1    0.0%    0.0%  Script: native string.js
+      1    0.0%    0.0%  Script: D:\yoyo-mongo\node_modules\restify\node_modules\bunyan\lib\bunyan.js
+      1    0.0%    0.0%  RegExp: \\s*#.*|^\\s*|\\s*$
+      1    0.0%    0.0%  RegExp: [\\\\\\/]+
+      1    0.0%    0.0%  LazyCompile: tryExtensions module.js:148 {1}
+      1    0.0%    0.0%  LazyCompile: toString native v8natives.js:1378 {1}
+      1    0.0%    0.0%  LazyCompile: stringify native json.js:307
+      1    0.0%    0.0%  LazyCompile: splitPath path.js:70
+      1    0.0%    0.0%  LazyCompile: parse native json.js:55
+      1    0.0%    0.0%  LazyCompile: packElement D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:421 {3}
+      1    0.0%    0.0%  LazyCompile: mergeTwoContacts D:\yoyo-mongo\src\models\Contact.js:173 {2}
+      1    0.0%    0.0%  LazyCompile: isNaN native v8natives.js:96
+      1    0.0%    0.0%  LazyCompile: isFinite native v8natives.js:103
+      1    0.0%    0.0%  LazyCompile: isBuffer buffer.js:287
+      1    0.0%    0.0%  LazyCompile: identifyAndBindContactAsUser D:\yoyo-mongo\src\models\Contact.js:40 {3}
+      1    0.0%    0.0%  LazyCompile: identifyAndBindContactAsUser D:\yoyo-mongo\src\models\Contact.js:40 {2}
+      1    0.0%    0.0%  LazyCompile: getTime native date.js:380
+      1    0.0%    0.0%  LazyCompile: forEach native array.js:1062
+      1    0.0%    0.0%  LazyCompile: exec native regexp.js:171
+      1    0.0%    0.0%  LazyCompile: every native array.js:1148
+      1    0.0%    0.0%  LazyCompile: defineProperties native v8natives.js:1102
+      1    0.0%    0.0%  LazyCompile: createCid D:\yoyo-mongo\src\models\Contact.js:120
+      1    0.0%    0.0%  LazyCompile: __executeQueryCommand D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1554 {2}
+      1    0.0%    0.0%  LazyCompile: __defineGetter__ native v8natives.js:281
+      1    0.0%    0.0%  LazyCompile: _.uniq._.unique D:\yoyo-mongo\node_modules\underscore\underscore.js:450 {1}
+      1    0.0%    0.0%  LazyCompile: _.every._.all D:\yoyo-mongo\node_modules\underscore\underscore.js:189 {1}
+      1    0.0%    0.0%  LazyCompile: ToPropertyDescriptor native v8natives.js:420
+      1    0.0%    0.0%  LazyCompile: StringSplitOnRegExp native string.js:591
+      1    0.0%    0.0%  LazyCompile: SimpleSlice native array.js:324
+      1    0.0%    0.0%  LazyCompile: SetUpGlobal native v8natives.js:177
+      1    0.0%    0.0%  LazyCompile: SetUpArray native array.js:1469
+      1    0.0%    0.0%  LazyCompile: STRING_ADD_LEFT native runtime.js:183
+      1    0.0%    0.0%  LazyCompile: Module._resolveFilename module.js:323 {1}
+      1    0.0%    0.0%  LazyCompile: Module._findPath module.js:160 {1}
+      1    0.0%    0.0%  LazyCompile: MOD native runtime.js:238
+      1    0.0%    0.0%  LazyCompile: Long D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\long.js:42
+      1    0.0%    0.0%  LazyCompile: Join native array.js:119
+      1    0.0%    0.0%  LazyCompile: IsGenericDescriptor native v8natives.js:361
+      1    0.0%    0.0%  LazyCompile: InstantiateFunction native apinatives.js:65
+      1    0.0%    0.0%  LazyCompile: Instantiate native apinatives.js:44
+      1    0.0%    0.0%  LazyCompile: INSTANCE_OF native runtime.js:367
+      1    0.0%    0.0%  LazyCompile: EventEmitter.once events.js:184 {1}
+      1    0.0%    0.0%  LazyCompile: DoRegExpExec native regexp.js:123
+      1    0.0%    0.0%  LazyCompile: Db._registerHandler D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1455 {2}
+      1    0.0%    0.0%  LazyCompile: Db._registerHandler D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1455 {1}
+      1    0.0%    0.0%  LazyCompile: Db._hasHandler D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1521
+      1    0.0%    0.0%  LazyCompile: DIV native runtime.js:230
+      1    0.0%    0.0%  LazyCompile: DELETE native runtime.js:348
+      1    0.0%    0.0%  LazyCompile: Cursor.toArray D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\cursor.js:137 {1}
+      1    0.0%    0.0%  LazyCompile: BuildResultFromMatchInfo native regexp.js:130
+      1    0.0%    0.0%  LazyCompile: BasicSerializeObject native json.js:244
+      1    0.0%    0.0%  LazyCompile: BSON.serializeWithBufferAndIndex D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:1477 {1}
+      1    0.0%    0.0%  LazyCompile: BSON.deserialize.readCStyleString D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:1145
+      1    0.0%    0.0%  LazyCompile: <anonymous> tty.js:1
+      1    0.0%    0.0%  LazyCompile: <anonymous> querystring.js:1
+      1    0.0%    0.0%  LazyCompile: <anonymous> node.js:27
+      1    0.0%    0.0%  LazyCompile: <anonymous> net.js:1
+      1    0.0%    0.0%  LazyCompile: <anonymous> fs.js:1
+      1    0.0%    0.0%  LazyCompile: <anonymous> D:\yoyo-mongo\node_modules\restify\node_modules\semver\semver.js:1
+      1    0.0%    0.0%  LazyCompile: <anonymous> D:\yoyo-mongo\node_modules\restify\node_modules\retry\lib\retry.js:1
+      1    0.0%    0.0%  LazyCompile: <anonymous> D:\yoyo-mongo\node_modules\restify\node_modules\http-signature\node_modules\asn1\lib\ber\index.js:1
+      1    0.0%    0.0%  LazyCompile: <anonymous> D:\yoyo-mongo\node_modules\restify\node_modules\http-signature\lib\util.js:1
+      1    0.0%    0.0%  LazyCompile: <anonymous> D:\yoyo-mongo\node_modules\restify\lib\index.js:1
+      1    0.0%    0.0%  LazyCompile: <anonymous> D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\objectid.js:1
+      1    0.0%    0.0%  LazyCompile: <anonymous> D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\long.js:1
+      1    0.0%    0.0%  LazyCompile: <anonymous> D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\gridfs\grid.js:1
+      1    0.0%    0.0%  Function: realpathSync fs.js:987
+      1    0.0%    0.0%  Function: isArrayIsh buffer.js:268
+      1    0.0%    0.0%  Function: insertAll D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\collection.js:248
+      1    0.0%    0.0%  Function: identifyAndBindContactAsUser D:\yoyo-mongo\src\models\Contact.js:55
+      1    0.0%    0.0%  Function: getRequestId D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\commands\base_command.js:8
+      1    0.0%    0.0%  Function: g events.js:190
+      1    0.0%    0.0%  Function: fs.fstatSync fs.js:515
+      1    0.0%    0.0%  Function: exports.resolve path.js:85
+      1    0.0%    0.0%  Function: exports.normalize path.js:162
+      1    0.0%    0.0%  Function: exports._makeLong path.js:429
+      1    0.0%    0.0%  Function: exports.Connection.createDataHandler D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\connection\connection.js:207
+      1    0.0%    0.0%  Function: createContacts D:\yoyo-mongo\src\models\Contact.js:26
+      1    0.0%    0.0%  Function: coerce buffer.js:193
+      1    0.0%    0.0%  Function: allocPool buffer.js:280
+      1    0.0%    0.0%  Function: __executeInsertCommand D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1824
+      1    0.0%    0.0%  Function: _.union D:\yoyo-mongo\node_modules\underscore\underscore.js:461
+      1    0.0%    0.0%  Function: _.intersection D:\yoyo-mongo\node_modules\underscore\underscore.js:470
+      1    0.0%    0.0%  Function: _.functions._.methods D:\yoyo-mongo\node_modules\underscore\underscore.js:754
+      1    0.0%    0.0%  Function: _.contains._.include D:\yoyo-mongo\node_modules\underscore\underscore.js:216
+      1    0.0%    0.0%  Function: MongoReply.parseHeader D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\responses\mongo_reply.js:11
+      1    0.0%    0.0%  Function: Module._resolveLookupPaths module.js:231
+      1    0.0%    0.0%  Function: Module._extensions..js module.js:465
+      1    0.0%    0.0%  Function: EventEmitter.once events.js:184
+      1    0.0%    0.0%  Function: EventEmitter.addListener events.js:138
+      1    0.0%    0.0%  Function: Db._registerHandler D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1455
+      1    0.0%    0.0%  Function: Db._executeQueryCommand D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1815
+      1    0.0%    0.0%  Function: Db D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:64
+      1    0.0%    0.0%  Function: Cursor.toArray D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\cursor.js:151
+      1    0.0%    0.0%  Function: Cursor.nextObject.commandHandler D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\cursor.js:589
+      1    0.0%    0.0%  Function: Cursor.nextObject D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\cursor.js:572
+      1    0.0%    0.0%  Function: Cursor D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\cursor.js:47
+      1    0.0%    0.0%  Function: Buffer.write buffer.js:323
+      1    0.0%    0.0%  Function: Buffer.copy buffer.js:509
+      1    0.0%    0.0%  Function: <anonymous> D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\index.js:22
+      1    0.0%    0.0%  Function: <anonymous> D:\yoyo-mongo\node_modules\async\lib\async.js:2
+      1    0.0%    0.0%  CallMegamorphic: args_count: 3
+      1    0.0%    0.0%  Builtin: ArrayConstructCode
+
+ [C++]:
+   ticks  total  nonlib   name
+
+ [GC]:
+   ticks  total  nonlib   name
+     24    0.5%
+
+ [Bottom up (heavy) profile]:
+  Note: percentage shows a share of a particular caller in the total
+  amount of its parent calls.
+  Callers occupying less than 2.0% are not shown.
+
+   ticks parent  name
+   1769   35.8%  LazyCompile: indexOf native array.js:1236
+   1768   99.9%    LazyCompile: _.contains._.include D:\yoyo-mongo\node_modules\underscore\underscore.js:216 {1}
+   1768  100.0%      Function: _.uniq._.unique D:\yoyo-mongo\node_modules\underscore\underscore.js:450
+   1768  100.0%        LazyCompile: forEach native array.js:1062 {1}
+   1768  100.0%          Function: _.each._.forEach D:\yoyo-mongo\node_modules\underscore\underscore.js:75
+   1768  100.0%            LazyCompile: _.uniq._.unique D:\yoyo-mongo\node_modules\underscore\underscore.js:441 {1}
+
+   1614   32.7%  Stub: CompareStub_EQ_STRICT
+   1612   99.9%    LazyCompile: _.contains._.include D:\yoyo-mongo\node_modules\underscore\underscore.js:216 {1}
+   1612  100.0%      Function: _.uniq._.unique D:\yoyo-mongo\node_modules\underscore\underscore.js:450
+   1612  100.0%        LazyCompile: forEach native array.js:1062 {1}
+   1612  100.0%          Function: _.each._.forEach D:\yoyo-mongo\node_modules\underscore\underscore.js:75
+   1612  100.0%            LazyCompile: _.uniq._.unique D:\yoyo-mongo\node_modules\underscore\underscore.js:441 {1}
+
+    347    7.0%  C:\windows\SYSTEM32\ntdll.dll
+    150   43.2%    Function: _rng D:\yoyo-mongo\node_modules\node-uuid\uuid.js:20
+    150  100.0%      Function: <anonymous> D:\yoyo-mongo\node_modules\node-uuid\uuid.js:6
+    150  100.0%        LazyCompile: <anonymous> D:\yoyo-mongo\node_modules\node-uuid\uuid.js:1
+    150  100.0%          Function: Module._compile module.js:372
+    150  100.0%            Function: Module._extensions..js module.js:465
+     36   10.4%    LazyCompile: Socket._write net.js:514 {2}
+     36  100.0%      LazyCompile: Socket.write net.js:464 {1}
+     33   91.7%        Function: Connection.write D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\connection\connection.js:133
+     29   87.9%          Function: __executeQueryCommand D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1554
+     29  100.0%            LazyCompile: Db._executeQueryCommand D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1757 {1}
+      4   12.1%          Function: __executeInsertCommand D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1824
+      4  100.0%            Function: Db._executeInsertCommand D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1881
+      3    8.3%        Function: exports.log console.js:24
+      2   66.7%          Function: <anonymous> D:\yoyo-mongo\test\load\profile.js:36
+      2  100.0%            Function: Cursor.toArray D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\cursor.js:151
+      1   33.3%          Function: createAndCheckUser D:\yoyo-mongo\test\load\profile.js:28
+      1  100.0%            Function: <anonymous> D:\yoyo-mongo\test\load\profile.js:20
+     16    4.6%    LazyCompile: Socket._write net.js:514 {1}
+     16  100.0%      LazyCompile: Socket.write net.js:464 {1}
+     16  100.0%        Function: Connection.write D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\connection\connection.js:133
+     15   93.8%          Function: __executeQueryCommand D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1554
+     14   93.3%            LazyCompile: Db._executeQueryCommand D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1757 {1}
+      1    6.7%            Function: Db._executeQueryCommand D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1757
+      1    6.3%          Function: __executeInsertCommand D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1824
+      1  100.0%            Function: Db._executeInsertCommand D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1881
+     13    3.7%    Function: fs.lstatSync fs.js:519
+      8   61.5%      Function: realpathSync fs.js:987
+      6   75.0%        LazyCompile: tryExtensions module.js:148 {1}
+      5   83.3%          Function: Module._findPath module.js:160
+      5  100.0%            Function: Module._resolveFilename module.js:323
+      1   16.7%          Function: tryPackage module.js:122
+      1  100.0%            Function: Module._findPath module.js:160
+      2   25.0%        Function: tryFile module.js:138
+      2  100.0%          Function: tryExtensions module.js:148
+      2  100.0%            Function: Module._findPath module.js:160
+      4   30.8%      Function: start fs.js:1010
+      2   50.0%        LazyCompile: realpathSync fs.js:987 {1}
+      2  100.0%          LazyCompile: tryExtensions module.js:148 {1}
+      2  100.0%            Function: Module._findPath module.js:160
+      2   50.0%        Function: realpathSync fs.js:987
+      2  100.0%          LazyCompile: tryExtensions module.js:148 {1}
+      1   50.0%            Function: tryPackage module.js:122
+      1   50.0%            Function: Module._findPath module.js:160
+      1    7.7%      LazyCompile: realpathSync fs.js:987 {1}
+      1  100.0%        LazyCompile: tryExtensions module.js:148 {1}
+      1  100.0%          Function: Module._findPath module.js:160
+      1  100.0%            Function: Module._resolveFilename module.js:323
+     12    3.5%    Function: fs.statSync fs.js:523
+     12  100.0%      Function: statPath module.js:88
+      6   50.0%        LazyCompile: tryExtensions module.js:148 {1}
+      6  100.0%          Function: Module._findPath module.js:160
+      6  100.0%            Function: Module._resolveFilename module.js:323
+      5   41.7%        Function: tryFile module.js:138
+      3   60.0%          Function: tryExtensions module.js:148
+      3  100.0%            Function: Module._findPath module.js:160
+      1   20.0%          Function: tryPackage module.js:122
+      1  100.0%            Function: Module._findPath module.js:160
+      1   20.0%          Function: Module._findPath module.js:160
+      1  100.0%            Function: Module._resolveFilename module.js:323
+      1    8.3%        LazyCompile: tryFile module.js:138 {1}
+      1  100.0%          Function: Module._findPath module.js:160
+      1  100.0%            Function: Module._resolveFilename module.js:323
+     12    3.5%    Function: Socket._write net.js:514
+      6   50.0%      LazyCompile: Socket.write net.js:464 {1}
+      5   83.3%        Function: Connection.write D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\connection\connection.js:133
+      5  100.0%          Function: __executeQueryCommand D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1554
+      5  100.0%            LazyCompile: Db._executeQueryCommand D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1757 {1}
+      1   16.7%        Function: exports.log console.js:24
+      1  100.0%          Function: createAndCheckUser D:\yoyo-mongo\test\load\profile.js:28
+      1  100.0%            Function: <anonymous> D:\yoyo-mongo\test\load\profile.js:19
+      6   50.0%      Function: Socket.write net.js:464
+      5   83.3%        Function: Connection.write D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\connection\connection.js:133
+      5  100.0%          Function: __executeQueryCommand D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1554
+      5  100.0%            Function: Db._executeQueryCommand D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1757
+      1   16.7%        Function: exports.log console.js:24
+      1  100.0%          Function: createAndCheckUser D:\yoyo-mongo\test\load\profile.js:28
+      1  100.0%            Function: <anonymous> D:\yoyo-mongo\test\load\profile.js:18
+     10    2.9%    Function: calculateElement D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:227
+     10  100.0%      Function: calculateObjectSize D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:201
+      8   80.0%        Function: calculateElement D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:227
+      8  100.0%          Function: calculateObjectSize D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:201
+      6   75.0%            Function: calculateElement D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:227
+      2   25.0%            LazyCompile: BSON.calculateObjectSize D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:1462 {1}
+      2   20.0%        LazyCompile: BSON.calculateObjectSize D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:1462 {1}
+      1   50.0%          LazyCompile: QueryCommand.toBinary D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\commands\query_command.js:113 {1}
+      1  100.0%            Function: Connection.write D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\connection\connection.js:133
+      1   50.0%          Function: QueryCommand.toBinary D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\commands\query_command.js:113
+      1  100.0%            Function: Connection.write D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\connection\connection.js:133
+      7    2.0%    Function: statPath module.js:88
+      5   71.4%      LazyCompile: tryExtensions module.js:148 {1}
+      4   80.0%        Function: Module._findPath module.js:160
+      4  100.0%          Function: Module._resolveFilename module.js:323
+      4  100.0%            Function: Module._load module.js:275
+      1   20.0%        LazyCompile: Module._findPath module.js:160 {1}
+      1  100.0%          LazyCompile: Module._resolveFilename module.js:323 {1}
+      1  100.0%            Function: Module._load module.js:275
+      1   14.3%      LazyCompile: tryFile module.js:138 {1}
+      1  100.0%        Function: Module._findPath module.js:160
+      1  100.0%          Function: Module._resolveFilename module.js:323
+      1  100.0%            Function: Module._load module.js:275
+      1   14.3%      LazyCompile: Module._findPath module.js:160 {1}
+      1  100.0%        LazyCompile: Module._resolveFilename module.js:323 {1}
+      1  100.0%          Function: Module._load module.js:275
+      1  100.0%            LazyCompile: Module.require module.js:361 {1}
+
+    106    2.1%  Function: serializeObject D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:334
+     96   90.6%    Function: packElement D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:421
+     96  100.0%      Function: serializeObject D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:334
+     65   67.7%        LazyCompile: BSON.serializeWithBufferAndIndex D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:1477 {1}
+     51   78.5%          LazyCompile: QueryCommand.toBinary D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\commands\query_command.js:113 {1}
+     51  100.0%            Function: Connection.write D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\connection\connection.js:133
+     11   16.9%          Function: UpdateCommand.toBinary D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\commands\update_command.js:64
+     11  100.0%            Function: Connection.write D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\connection\connection.js:133
+      3    4.6%          Function: InsertCommand.toBinary D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\commands\insert_command.js:65
+      3  100.0%            Function: Connection.write D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\connection\connection.js:133
+     31   32.3%        Function: packElement D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:421
+     31  100.0%          Function: serializeObject D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:334
+     22   71.0%            Function: packElement D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:421
+      8   25.8%            LazyCompile: BSON.serializeWithBufferAndIndex D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:1477 {1}
+      1    3.2%            Function: serializeWithBufferAndIndex D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:317
+      8    7.5%    LazyCompile: BSON.serializeWithBufferAndIndex D:\yoyo-mongo\node_modules\mongodb\node_modules\bson\lib\bson\bson.js:1477 {1}
+      8  100.0%      LazyCompile: QueryCommand.toBinary D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\commands\query_command.js:113 {1}
+      8  100.0%        Function: Connection.write D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\connection\connection.js:133
+      8  100.0%          Function: __executeQueryCommand D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1554
+      8  100.0%            LazyCompile: Db._executeQueryCommand D:\yoyo-mongo\node_modules\mongodb\lib\mongodb\db.js:1757 {1}
+

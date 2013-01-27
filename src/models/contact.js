@@ -3,7 +3,7 @@ if (typeof window == 'undefined' || window === null) {
 } else {
   prelude.installPrelude(window);
 }
-var async, util, createContacts, identifyAndBindContactAsUser, bindContact, mergeContacts, createContactsUsers, createCid, mergeStrategy, _und, checkAndMergeContacts, shouldContactsBeMerged, mergeTwoContacts, selectMergeTo;
+var async, util, createContacts, identifyAndBindContactAsUser, bindContact, mergeContacts, createContactsUsers, createCid, mergeStrategy, _, checkAndMergeContacts, shouldContactsBeMerged, mergeTwoContacts, selectMergeTo;
 async = require('async');
 util = require('../util');
 createContacts = function(db, user, callback){
@@ -122,7 +122,7 @@ createCid = function(uid, seqNo){
 };
 (typeof exports != 'undefined' && exports !== null ? exports : this).createContacts = createContacts;
 mergeStrategy = require('../contacts-merging-strategy');
-_und = require('underscore');
+_ = require('underscore');
 checkAndMergeContacts = function(contactBeingChecked, contacts){
   var i$, len$, contact;
   for (i$ = 0, len$ = contacts.length; i$ < len$; ++i$) {
@@ -146,24 +146,24 @@ shouldContactsBeMerged = function(c1, c2){
   var i$, ref$, len$, key;
   for (i$ = 0, len$ = (ref$ = mergeStrategy.directMerging).length; i$ < len$; ++i$) {
     key = ref$[i$];
-    if (_und.isArray(c1[key])) {
-      if (!_und.isEmpty(_und.intersection(c1[key], c2[key]))) {
+    if (_.isArray(c1[key])) {
+      if (!_.isEmpty(_.intersection(c1[key], c2[key]))) {
         return "MERGED";
       }
     } else {
-      if (_und.isEqual(c1[key], c2[key])) {
+      if (_.isEqual(c1[key], c2[key])) {
         return "MERGED";
       }
     }
   }
   for (i$ = 0, len$ = (ref$ = mergeStrategy.recommandMerging).length; i$ < len$; ++i$) {
     key = ref$[i$];
-    if (_und.isArray(c1[key])) {
-      if (!_und.isEmpty(_und.intersection(c1[key], c2[key]))) {
+    if (_.isArray(c1[key])) {
+      if (!_.isEmpty(_.intersection(c1[key], c2[key]))) {
         return "PENDING";
       }
     } else {
-      if (_und.isEqual(c1[key], c2[key])) {
+      if (_.isEqual(c1[key], c2[key])) {
         return "PENDING";
       }
     }
@@ -174,7 +174,6 @@ mergeTwoContacts = function(c1, c2){
   var mTo, mFrom, i$, ref$, len$, key;
   mTo = selectMergeTo(c1, c2);
   mFrom = mTo.cid === c1.cid ? c2 : c1;
-  debugger;
   mTo.mergedFrom || (mTo.mergedFrom = []);
   mTo.mergedFrom.push(mFrom.cid);
   mFrom.mergedTo = mTo.cid;
@@ -182,13 +181,13 @@ mergeTwoContacts = function(c1, c2){
   if (mTo.isMergePending) {
     return null;
   }
-  for (i$ = 0, len$ = (ref$ = _und.keys(c1)).length; i$ < len$; ++i$) {
+  for (i$ = 0, len$ = (ref$ = _.keys(c1)).length; i$ < len$; ++i$) {
     key = ref$[i$];
     if (key == 'cid' || key == 'isMergePending' || key == 'mergedTo' || key == 'mergedFrom') {
       continue;
     }
-    if (_und.isArray(c1[key])) {
-      mTo[key] = _und.union(mTo[key], mFrom[key]);
+    if (_.isArray(c1[key])) {
+      mTo[key] = _.union(mTo[key], mFrom[key]);
     } else {
       if (mTo[key] !== mFrom[key]) {
         throw new Error(mTo.names + " and " + mFrom.names + " contact merging CONFLICT for key: " + key + ", with different value: " + mTo[key] + ", " + mFrom[key]);
