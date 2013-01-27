@@ -1,13 +1,18 @@
-var should, async, User, initMongoClient, shutdownMongoClient, ref$, db, client, multipleTimes, can;
+if (typeof window == 'undefined' || window === null) {
+  require('prelude-ls').installPrelude(global);
+} else {
+  prelude.installPrelude(window);
+}
+var should, async, User, initMongoClient, shutdownMongoClient, util, ref$, db, client, can;
 should = require('should');
 async = require('async');
 User = require('../../src/models/User');
 initMongoClient = require('../../src/servers-init').initMongoClient;
 shutdownMongoClient = require('../../src/servers-init').shutdownMongoClient;
+util = require('../../src/util');
 ref$ = [null, null], db = ref$[0], client = ref$[1];
-multipleTimes = 0;
 can = it;
-describe('mongoDb版的注册用户', function(){
+describe('mongoDb版注册用户：识别用户，绑定用户（User）和联系人（Contact）', function(){
   before(function(done){
     initMongoClient(function(mongoClient, mongoDb){
       var ref$;
@@ -19,21 +24,52 @@ describe('mongoDb版的注册用户', function(){
   });
   can('创建User张三，张三有2个Contacts，作为0人的Contact。\n', function(done){
     createAndCheckUser('zhangsan.json', '张三', function(){
-      checkUserContacts('张三', multipleTimes + 2, 0, done);
+      checkUserContacts('张三', 2, 0, done);
     });
   });
   can('创建User李四，李四有2个Contacts，作为1人的Contact。\n', function(done){
     createAndCheckUser('lisi.json', '李四', function(){
-      checkUserContacts('李四', multipleTimes + 2, 1, done);
+      checkUserContacts('李四', 2, 1, done);
     });
   });
   can('创建User赵五，赵五有3个Contacts，作为2人的Contacts。\n', function(done){
     createAndCheckUser('zhaowu.json', '赵五', function(){
-      checkUserContacts('赵五', multipleTimes + 3, 2, done);
+      checkUserContacts('赵五', 3, 2, done);
     });
   });
   can('最新张三联系人情况，有2个Contacts，作为2人的Contacts。\n', function(done){
-    checkUserContacts('张三', multipleTimes + 2, 2, done);
+    checkUserContacts('张三', 2, 2, done);
+  });
+  after(function(done){
+    shutdownMongoClient(client, function(){
+      done();
+    });
+  });
+});
+describe('mongoDb版注册用户：合并联系人', function(){
+  before(function(done){
+    initMongoClient(function(mongoClient, mongoDb){
+      var ref$;
+      ref$ = [mongoDb, mongoClient], db = ref$[0], client = ref$[1];
+      db.dropCollection('users', function(){
+        done();
+      });
+    });
+  });
+  can('创建User赵五。赵五的联系人两个Contacts（张大三、张老三）合并为一。\n', function(done){
+    createAndCheckUser('zhaowu.json', '赵五', function(){
+      db.users.find({
+        'name': '赵五'
+      }).toArray(function(err, foundUsers){
+        foundUsers.length.should.eql(1);
+        areContactsMergedCorrect(foundUsers[0].contacts, function(){
+          db.users.find().toArray(function(err, allUsers){
+            allUsers.length.should.eql(3);
+            done();
+          });
+        });
+      });
+    });
   });
   after(function(done){
     shutdownMongoClient(client, function(){
@@ -43,9 +79,7 @@ describe('mongoDb版的注册用户', function(){
 });
 function createAndCheckUser(jsonFileName, userName, callback){
   var userData;
-  userData = require("../test-data/" + jsonFileName);
-  userData = multipleContactsData(userData, multipleTimes);
-  console.log("\n\n*************** " + userName + " has " + userData.contacts.length + " contacts. ************************\n\n");
+  userData = util.loadJson(__dirname + ("/../test-data/" + jsonFileName));
   User.createUserWithContacts(db, userData, function(user){
     db.users.find({
       name: userName
@@ -56,20 +90,6 @@ function createAndCheckUser(jsonFileName, userName, callback){
       callback();
     });
   });
-}
-function multipleContactsData(userData, contactsAmount){
-  var i$, i;
-  for (i$ = 1; i$ <= contactsAmount; ++i$) {
-    i = i$;
-    userData.contacts.push(generateFakeContact());
-  }
-  return userData;
-}
-function generateFakeContact(){
-  var fakeContact;
-  return fakeContact = {
-    "phones": [Math.random() * 100000]
-  };
 }
 function checkUserContacts(userName, amountOfHasContacts, amountOfAsContacts, callback){
   db.users.find({
@@ -94,4 +114,15 @@ function checkUserContacts(userName, amountOfHasContacts, amountOfAsContacts, ca
     }()));
     callback();
   });
+}
+function areContactsMergedCorrect(contacts, callback){
+  var mergedResultContacts, resultContact;
+  mergedResultContacts = filter(isMergedResultContact, contacts);
+  mergedResultContacts.length.should.eql(1);
+  resultContact = mergedResultContacts[0];
+  resultContact.mergedFrom.length.should.eql(1);
+  callback();
+}
+function isMergedResultContact(contact){
+  return contact.mergedFrom && !contact.mergeTo;
 }

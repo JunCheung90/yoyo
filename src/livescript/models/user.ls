@@ -25,7 +25,7 @@ create-default-system-avatar = (user) ->
   #TODO:
  
 
-merge-same-users = !(db, user, callback) ->
+merge-same-users = !(db, user, callback) -> # 目前只是merge一个非注册用户（通讯录中出现过、未注册的User）和一个将要注册的用户。今后将升级为merge其它情况。
   phones = [phone.phone-number for phone in user.phones]
   query-statement = # 目前只是检查电话和email的重复，来判断用户重复。今后可能引进规则引擎。
     $or:

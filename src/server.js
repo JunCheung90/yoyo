@@ -1,3 +1,8 @@
+if (typeof window == 'undefined' || window === null) {
+  require('prelude-ls').installPrelude(global);
+} else {
+  prelude.installPrelude(window);
+}
 var fs, express, contactManager, userManager, yoyo;
 fs = require('fs');
 express = require('express');

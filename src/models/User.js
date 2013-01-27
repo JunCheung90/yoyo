@@ -1,3 +1,8 @@
+if (typeof window == 'undefined' || window === null) {
+  require('prelude-ls').installPrelude(global);
+} else {
+  prelude.installPrelude(window);
+}
 var async, util, Contact, createUserWithContacts, buildUserBasicInfo, createDefaultSystemAvatar, mergeSameUsers, createOrUpdateUserWithContacts, isPerson, asyncGetApiKeys, asyncGetImApiKey, asyncGetSnApiKey;
 async = require('async');
 util = require('../util');

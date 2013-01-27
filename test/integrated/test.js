@@ -1,3 +1,8 @@
+if (typeof window == 'undefined' || window === null) {
+  require('prelude-ls').installPrelude(global);
+} else {
+  prelude.installPrelude(window);
+}
 var restify, should, orm, dropCreateOrm, yoyoConfig, client, can;
 restify = require('restify');
 should = require('should');

@@ -1,3 +1,8 @@
+if (typeof window == 'undefined' || window === null) {
+  require('prelude-ls').installPrelude(global);
+} else {
+  prelude.installPrelude(window);
+}
 var restify, mongo, MongoClient, Server, initMongoClient, shutdownMongoClient, ref$;
 restify = require('restify');
 mongo = require('./config/config').mongo;

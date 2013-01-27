@@ -1,3 +1,8 @@
+if (typeof window == 'undefined' || window === null) {
+  require('prelude-ls').installPrelude(global);
+} else {
+  prelude.installPrelude(window);
+}
 var should, async, MongoClient, Server, initMongoClient, shutdownMongoClient, ref$, db, client, can;
 should = require('should');
 async = require('async');

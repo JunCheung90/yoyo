@@ -1,3 +1,8 @@
+if (typeof window == 'undefined' || window === null) {
+  require('prelude-ls').installPrelude(global);
+} else {
+  prelude.installPrelude(window);
+}
 var ref$;
 ref$ = typeof exports != 'undefined' && exports !== null ? exports : this;
 ref$.mongo = {

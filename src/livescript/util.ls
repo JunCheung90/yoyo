@@ -1,6 +1,15 @@
-require! 'node-uuid'
+require! ['fs', 'node-uuid']
 
 get-UUid = ->
-	node-uuid.v1!
+  node-uuid.v1!
 
-(exports ? this) <<< {get-UUid}
+load-json = (filename, encoding) ->
+  try
+    encoding ||= 'utf8'
+    contents = fs.read-file-sync filename, encoding
+    return JSON.parse contents
+  catch err
+    throw err
+    
+
+(exports ? this) <<< {get-UUid, load-json}
