@@ -13,7 +13,7 @@ build-user-basic-info = !(user)->
   user.uid = util.get-UUid!
   user.is-registered = true
   user.last-modified-date = current
-  user.merge-status = 'NONE'
+  user.is-merge-pending = false
   user.merge-to = null
   user.merge-from = []
 

@@ -18,7 +18,7 @@ buildUserBasicInfo = function(user){
   user.uid = util.getUUid();
   user.isRegistered = true;
   user.lastModifiedDate = current;
-  user.mergeStatus = 'NONE';
+  user.isMergePending = false;
   user.mergeTo = null;
   user.mergeFrom = [];
   if (!(user != null && ((ref$ = user.avatar) != null && ref$.length))) {

@@ -41,12 +41,12 @@ user = {
   tags: ['程序员'],
   isRegistered: true,
   lastModifiedDate: '2013-01-09',
-  mergeStatus: 'NONE',
+  isMergePending: false,
   mergedTo: null,
   mergedFrom: [],
   contacts: [
     {
-      cid: 'uid-c-timestamp_of_add-seqno',
+      cid: 'owner-uid-c-timestamp_of_add-seqno',
       uid: 'uid_lisi',
       names: ['李小四'],
       phones: ['123456'],

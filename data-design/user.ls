@@ -38,13 +38,14 @@ user = # yoyo server端数据
   #----------- status ----------#
   is-registered: true
   last-modified-date: '2013-01-09'
-  merge-status: 'NONE' # NONE | MERGED
-  merged-to: null # 如果被合并了，这里是合并之后的uid。两个user合并时，新生成一个user。
-  merged-from: [] # 如果是合并产生的user，这里记录合并前的uid
+  is-merge-pending: false # 为true时，下面merge处于pending，需要用户来确认或者拒绝。为false时：或为未曾合并的用户（merge-to && merge-from == false），或为合并完成后的用户。
+  # 两个user A、B合并时，如果A合并到B（因为B更常用），合并后则A：{merge-to: b_uid, merge-from} B：{merge-to: null, merge-from: [a_uid]}。
+  merged-to: null 
+  merged-from: [] # 
   #----------- relations ----------#
   contacts: # 当前用户的联系人
     * cid: 'owner-uid-c-timestamp_of_add-seqno'
-      uid: 'uid_lisi'
+      act-by-user: 'uid_lisi'
       names: ['李小四']
       phones: ['123456']
       emails: ['lisi@fake.com']
@@ -56,9 +57,10 @@ user = # yoyo server端数据
       tags: [] # 这些是当前用户给这个联系人定义的标签，说明了他们的关系
       ...
       #-------- merge --------#
-      merge-status: 'NONE' # NONE | MERGED
-      merged-to: null # 如果被合并了，这里是合并之后的cid。两个contact合并时，新生成一个contact。
-      merged-from: [] # 如果是合并产生的contact，这里记录合并前的cid
+      # 用户的merge总是由后端执行，如果不确定则为pending，让后台管理员来人工处理。
+      is-merge-pending: false
+      merged-to: null 
+      merged-from: [] 
 
   as-contact-of: ['uid-of-zhangsan', 'uid-of-zhaowu'] # 当前用户都出现为谁的联系人
 #-------- strangers --------#

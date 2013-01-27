@@ -38,7 +38,7 @@ identify-and-bind-contact-as-user = !(db, contact, owner, callback) -> # 回调�
   default callback contact-user-amount
 
 bind-contact = !(db, contact, contact-user, owner, callback) -> 
-  contact.uid = contact-user.uid
+  contact.act-by-user = contact-user.uid
   contact-user.as-contact-of ||= []
   contact-user.as-contact-of.push owner.uid
   (err, result) <-! db.users.save contact-user
@@ -50,7 +50,7 @@ create-contacts-users = !(db, contacts, owner, callback) ->
   for contact in contacts
     user = {}
     user{phones, emails, ims, sns} = contact # TODO：这里需要考虑contact的信息是否应当抽取到user。
-    contact.uid = user.uid = util.get-UUid!
+    contact.act-by-user = user.uid = util.get-UUid!
     user.is-registered = false
     user.as-contact-of ||= []
     user.as-contact-of.push owner.uid

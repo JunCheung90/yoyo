@@ -5,7 +5,7 @@ require! ['should', 'async',
 
 [db, client] = [null null]
 
-multiple-times = 1000
+multiple-times = 0
 
 can = it # it在LiveScript中被作为缺省的参数，因此我们先置换为can
 
@@ -35,19 +35,20 @@ describe 'mongoDb版的注册用户', !->
     check-user-contacts '张三', multiple-times + 2, 2, done 
 
   do
-    (done) <-! after
+    (done) <-! after 
     <-! shutdown-mongo-client client
     done!
 
 !function create-and-check-user json-file-name, user-name, callback
   user-data = require "../test-data/#{json-file-name}"
   user-data = multiple-contacts-data user-data, multiple-times
+  console.log "\n\n*************** #{user-name} has #{user-data.contacts.length} contacts. ************************\n\n"
   (user) <-! User.create-user-with-contacts db, user-data
   (err, found-users) <-! db.users.find({name: user-name}).to-array
   found-users.length.should.eql 1
   found-users[0].name.should.eql user-name
   console.log "\n\t成功创建了User：#{found-users[0].name}"
-  callback!
+  callback! 
 
 function multiple-contacts-data user-data, contacts-amount
   for i from 1 to contacts-amount

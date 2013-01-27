@@ -5,7 +5,7 @@ User = require('../../src/models/User');
 initMongoClient = require('../../src/servers-init').initMongoClient;
 shutdownMongoClient = require('../../src/servers-init').shutdownMongoClient;
 ref$ = [null, null], db = ref$[0], client = ref$[1];
-multipleTimes = 1000;
+multipleTimes = 0;
 can = it;
 describe('mongoDb版的注册用户', function(){
   before(function(done){
@@ -45,6 +45,7 @@ function createAndCheckUser(jsonFileName, userName, callback){
   var userData;
   userData = require("../test-data/" + jsonFileName);
   userData = multipleContactsData(userData, multipleTimes);
+  console.log("\n\n*************** " + userName + " has " + userData.contacts.length + " contacts. ************************\n\n");
   User.createUserWithContacts(db, userData, function(user){
     db.users.find({
       name: userName

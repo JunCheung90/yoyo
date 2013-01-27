@@ -67,7 +67,7 @@ identifyAndBindContactAsUser = function(db, contact, owner, callback){
   });
 };
 bindContact = function(db, contact, contactUser, owner, callback){
-  contact.uid = contactUser.uid;
+  contact.actByUser = contactUser.uid;
   contactUser.asContactOf || (contactUser.asContactOf = []);
   contactUser.asContactOf.push(owner.uid);
   db.users.save(contactUser, function(err, result){
@@ -84,7 +84,7 @@ createContactsUsers = function(db, contacts, owner, callback){
     contact = contacts[i$];
     user = {};
     user.phones = contact.phones, user.emails = contact.emails, user.ims = contact.ims, user.sns = contact.sns;
-    contact.uid = user.uid = util.getUUid();
+    contact.actByUser = user.uid = util.getUUid();
     user.isRegistered = false;
     user.asContactOf || (user.asContactOf = []);
     user.asContactOf.push(owner.uid);
