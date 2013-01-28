@@ -1,3 +1,7 @@
+/*
+ * Created by Wang, Qing. All rights reserved.
+ */
+
 require! [fs, express, 
 	'./controllers/contact-manager', 
 	'./controllers/user-manager']

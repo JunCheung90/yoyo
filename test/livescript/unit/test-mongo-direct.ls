@@ -1,3 +1,7 @@
+/*
+ * Created by Wang, Qing. All rights reserved.
+ */
+
 require! ['should', 'async', 'mongodb'.MongoClient, 'mongodb'.Server,
 					'../../src/servers-init'.init-mongo-client, 
 					'../../src/servers-init'.shutdown-mongo-client]

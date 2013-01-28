@@ -1,3 +1,7 @@
+/*
+ * Created by Wang, Qing. All rights reserved.
+ */
+
 require! [restify, './config/config'.mongo, 
 					'mongodb'.MongoClient, 'mongodb'.Server]
 

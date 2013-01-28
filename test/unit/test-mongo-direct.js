@@ -3,6 +3,9 @@ if (typeof window == 'undefined' || window === null) {
 } else {
   prelude.installPrelude(window);
 }
+/*
+ * Created by Wang, Qing. All rights reserved.
+ */
 var should, async, MongoClient, Server, initMongoClient, shutdownMongoClient, ref$, db, client, can;
 should = require('should');
 async = require('async');

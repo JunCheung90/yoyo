@@ -1,3 +1,7 @@
+/*
+ * Created by Wang, Qing. All rights reserved.
+ */
+
 require! ['fs', 'node-uuid']
 
 get-UUid = ->

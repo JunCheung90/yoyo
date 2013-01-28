@@ -3,9 +3,13 @@ if (typeof window == 'undefined' || window === null) {
 } else {
   prelude.installPrelude(window);
 }
-var async, util, createContacts, identifyAndBindContactAsUser, bindContact, mergeContacts, createContactsUsers, createCid, mergeStrategy, _, checkAndMergeContacts, shouldContactsBeMerged, mergeTwoContacts, selectMergeTo;
+/*
+ * Created by Wang, Qing. All rights reserved.
+ */
+var async, util, ContactMerger, createContacts, identifyAndBindContactAsUser, bindContact, createContactsUsers, createCid;
 async = require('async');
 util = require('../util');
+ContactMerger = require('./Contact-Merger');
 createContacts = function(db, user, callback){
   var toCreateContactUsers;
   user.contactsSeq || (user.contactsSeq = 0);
@@ -27,7 +31,7 @@ createContacts = function(db, user, callback){
     if (err) {
       throw new Error(err);
     }
-    mergeContacts(user.contacts);
+    ContactMerger.mergeContacts(user.contacts);
     if (toCreateContactUsers.length > 0) {
       createContactsUsers(db, toCreateContactUsers, user, function(){
         callback();
@@ -83,17 +87,6 @@ bindContact = function(db, contact, contactUser, owner, callback){
     callback();
   });
 };
-mergeContacts = function(contacts){
-  var contactsChecked, i$, len$, contact, uid;
-  contactsChecked = [];
-  for (i$ = 0, len$ = contacts.length; i$ < len$; ++i$) {
-    contact = contacts[i$];
-    uid = util.getUUid();
-    contact.actByUser = util.getUUid();
-    checkAndMergeContacts(contact, contactsChecked);
-    contactsChecked.push(contact);
-  }
-};
 createContactsUsers = function(db, contacts, owner, callback){
   var users, i$, len$, contact, user;
   users = [];
@@ -121,81 +114,3 @@ createCid = function(uid, seqNo){
   return uid + '-c-' + new Date().getTime() + '-' + seqNo;
 };
 (typeof exports != 'undefined' && exports !== null ? exports : this).createContacts = createContacts;
-mergeStrategy = require('../contacts-merging-strategy');
-_ = require('underscore');
-checkAndMergeContacts = function(contactBeingChecked, contacts){
-  var i$, len$, contact;
-  for (i$ = 0, len$ = contacts.length; i$ < len$; ++i$) {
-    contact = contacts[i$];
-    if (contact.mergedTo && !contact.isMergePending) {
-      continue;
-    }
-    switch (shouldContactsBeMerged(contact, contactBeingChecked)) {
-    case "NONE":
-      continue;
-    case "PENDING":
-      contactBeingChecked.isMergePending = contact.isMergePending = true;
-      break;
-    case "MERGED":
-      contactBeingChecked.isMergePending = contact.isMergePending = false;
-    }
-    mergeTwoContacts(contact, contactBeingChecked);
-  }
-};
-shouldContactsBeMerged = function(c1, c2){
-  var i$, ref$, len$, key;
-  for (i$ = 0, len$ = (ref$ = mergeStrategy.directMerging).length; i$ < len$; ++i$) {
-    key = ref$[i$];
-    if (_.isArray(c1[key])) {
-      if (!_.isEmpty(_.intersection(c1[key], c2[key]))) {
-        return "MERGED";
-      }
-    } else {
-      if (_.isEqual(c1[key], c2[key])) {
-        return "MERGED";
-      }
-    }
-  }
-  for (i$ = 0, len$ = (ref$ = mergeStrategy.recommandMerging).length; i$ < len$; ++i$) {
-    key = ref$[i$];
-    if (_.isArray(c1[key])) {
-      if (!_.isEmpty(_.intersection(c1[key], c2[key]))) {
-        return "PENDING";
-      }
-    } else {
-      if (_.isEqual(c1[key], c2[key])) {
-        return "PENDING";
-      }
-    }
-  }
-  return "NONE";
-};
-mergeTwoContacts = function(c1, c2){
-  var mTo, mFrom, i$, ref$, len$, key;
-  mTo = selectMergeTo(c1, c2);
-  mFrom = mTo.cid === c1.cid ? c2 : c1;
-  mTo.mergedFrom || (mTo.mergedFrom = []);
-  mTo.mergedFrom.push(mFrom.cid);
-  mFrom.mergedTo = mTo.cid;
-  mFrom.actByUser = mTo.actByUser;
-  if (mTo.isMergePending) {
-    return null;
-  }
-  for (i$ = 0, len$ = (ref$ = _.keys(c1)).length; i$ < len$; ++i$) {
-    key = ref$[i$];
-    if (key == 'cid' || key == 'isMergePending' || key == 'mergedTo' || key == 'mergedFrom') {
-      continue;
-    }
-    if (_.isArray(c1[key])) {
-      mTo[key] = _.union(mTo[key], mFrom[key]);
-    } else {
-      if (mTo[key] !== mFrom[key]) {
-        throw new Error(mTo.names + " and " + mFrom.names + " contact merging CONFLICT for key: " + key + ", with different value: " + mTo[key] + ", " + mFrom[key]);
-      }
-    }
-  }
-  return mTo;
-};
-selectMergeTo = function(c1, c2){
-  return c1;
-};

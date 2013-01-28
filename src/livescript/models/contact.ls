@@ -1,4 +1,8 @@
-require! [async, '../util']
+/*
+ * Created by Wang, Qing. All rights reserved.
+ */
+ 
+require! [async, '../util', './Contact-Merger']
 
 create-contacts = !(db, user, callback) ->
   user.contacts-seq ||= 0
@@ -14,7 +18,7 @@ create-contacts = !(db, user, callback) ->
   throw new Error err if err
   # 注意，这里在identify-and-bind-contact-as-user和create-contacts-users之间，有可能新的User来create contacts，
   # 其contacts中有和当前用户相同的user，因此会造成user的重复。所以今后必须有独立进程定期清理合并user。
-  merge-contacts user.contacts
+  Contact-Merger.merge-contacts user.contacts
 
   if to-create-contact-users.length > 0 then
     <-! create-contacts-users db, to-create-contact-users, user   
@@ -49,15 +53,6 @@ bind-contact = !(db, contact, contact-user, owner, callback) ->
   throw new Error err if err
   callback!
 
-merge-contacts = !(contacts) ->
-  contacts-checked = []
-  for contact in contacts
-    uid = util.get-UUid!
-    contact.act-by-user = util.get-UUid!
-    check-and-merge-contacts contact, contacts-checked
-    contacts-checked.push contact # TODO：多次合并的逻辑还没有厘清。
-
-
 create-contacts-users = !(db, contacts, owner, callback) ->
   users = []
   for contact in contacts
@@ -76,55 +71,4 @@ create-contacts-users = !(db, contacts, owner, callback) ->
 create-cid = (uid, seq-no) ->
   uid + '-c-' + new Date!.get-time! + '-' + seq-no
 
-(exports ? this) <<< {create-contacts} 
-
-# --- ContactMerger ------- #
-# TODO：这里复杂的合并逻辑还没有完成：1）
-merge-strategy = require '../contacts-merging-strategy'
-_ = require 'underscore' 
-
-check-and-merge-contacts = !(contact-being-checked, contacts) ->
-  for contact in contacts
-    continue if contact.merged-to and !contact.is-merge-pending # 不会合并到已经被合并的用户
-    switch should-contacts-be-merged contact, contact-being-checked
-    case "NONE" then continue
-    case "PENDING" then contact-being-checked.is-merge-pending = contact.is-merge-pending = true
-    case "MERGED" then contact-being-checked.is-merge-pending = contact.is-merge-pending = false
-    merge-two-contacts contact, contact-being-checked
-
-should-contacts-be-merged = (c1, c2) ->
-  # TODO：加载contacts-merging-strategy
-  for key in merge-strategy.direct-merging
-    if _.is-array c1[key] then
-      return "MERGED" if !_.is-empty _.intersection c1[key], c2[key]
-    else
-      return "MERGED" if _.is-equal c1[key], c2[key]
-
-  for key in merge-strategy.recommand-merging
-    if _.is-array c1[key] then
-      return "PENDING" if !_.is-empty _.intersection c1[key], c2[key]
-    else
-      return "PENDING" if _.is-equal c1[key], c2[key]
-
-  "NONE"
-
-merge-two-contacts = (c1, c2) -> # 返回null表示PENDING合并，没有真正合并内容；否则返回合并之后的Contact，整合所有信息到这个Contact。
-  m-to = select-merge-to c1, c2 # 注意发现了与"PENDING"联系人相同的Cotact时，这里的m-to需要通盘考虑。
-  m-from = if m-to.cid is c1.cid then c2 else c1
-  m-to.merged-from ||= []
-  m-to.merged-from.push m-from.cid
-  m-from.merged-to = m-to.cid
-  m-from.act-by-user = m-to.act-by-user
-
-  if m-to.is-merge-pending then return null # "PENDING" 时，并不直接合并内容，而是等待用户处理后完成。
-  for key in _.keys c1
-    continue if key in ['cid', 'isMergePending', 'mergedTo', 'mergedFrom']
-    if _.is-array c1[key] then
-      m-to[key] = _.union m-to[key], m-from[key]
-    else
-      throw new Error "#{m-to.names} and #{m-from.names} contact merging CONFLICT for key: #{key}, with different value: #{m-to[key]}, #{m-from[key]}" if m-to[key] != m-from[key]
-
-  m-to
-
-select-merge-to = (c1, c2) ->
-  c1 # TODO: 这里需要比较两个联系人的最后更新时间、最后联系时间、联系次数、等等进行确定。又或者和合并一样，需要外置规则。
+(exports ? this) <<< {create-contacts}

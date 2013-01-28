@@ -3,6 +3,9 @@ if (typeof window == 'undefined' || window === null) {
 } else {
   prelude.installPrelude(window);
 }
+/*
+ * Created by Wang, Qing. All rights reserved.
+ */
 var fs, nodeUuid, getUUid, loadJson, ref$;
 fs = require('fs');
 nodeUuid = require('node-uuid');

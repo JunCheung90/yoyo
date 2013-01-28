@@ -1,3 +1,7 @@
+/*
+ * Created by Wang, Qing. All rights reserved.
+ */
+
 require! [restify, should,
 					'../../src/servers-init'.orm,
 					'../../src/orm-sync'.drop-create-orm]

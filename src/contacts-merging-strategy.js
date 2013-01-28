@@ -3,6 +3,9 @@ if (typeof window == 'undefined' || window === null) {
 } else {
   prelude.installPrelude(window);
 }
+/*
+ * Created by Wang, Qing. All rights reserved.
+ */
 var contactsMergingStrategy;
 contactsMergingStrategy = {
   directMerging: ['actByUser', 'emails'],

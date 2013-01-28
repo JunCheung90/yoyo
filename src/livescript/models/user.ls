@@ -1,3 +1,7 @@
+/*
+ * Created by Wang, Qing. All rights reserved.
+ */
+ 
 require! [async, '../util', './Contact']
 
 create-user-with-contacts = !(db, user-data, callback)->

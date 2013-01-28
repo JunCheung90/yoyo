@@ -3,6 +3,9 @@ if (typeof window == 'undefined' || window === null) {
 } else {
   prelude.installPrelude(window);
 }
+/*
+ * Created by Wang, Qing. All rights reserved.
+ */
 var restify, should, orm, dropCreateOrm, yoyoConfig, client, can;
 restify = require('restify');
 should = require('should');

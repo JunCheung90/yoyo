@@ -1,3 +1,7 @@
+/*
+ * Created by Wang, Qing. All rights reserved.
+ */
+ 
 require! ['should', 'async', 
           '../../src/models/User',
           '../../src/servers-init'.init-mongo-client, 
@@ -5,6 +9,8 @@ require! ['should', 'async',
           '../../src/util']
 
 [db, client] = [null null]
+
+multiple-times = 1000
 
 can = it # it在LiveScript中被作为缺省的参数，因此我们先置换为can
 
@@ -50,17 +56,29 @@ describe 'mongoDb版注册用户：合并联系人', !->
     <-! create-and-check-user 'zhaowu.json', '赵五'
     (err, found-users) <-! db.users.find({'name': '赵五'}).to-array
     found-users.length.should.eql 1
-    <-! are-contacts-merged-correct found-users[0].contacts
+    <-! are-contacts-merged-correct found-users[0].contacts, 1
     (err, all-users) <-! db.users.find().to-array
     all-users.length.should.eql 3
     done!
+
+  # can '对多个重复联系人正确合并。\n', !(done) ->
+  #   # 在初始数据的基础上，随机生成多个重复联系人，然后能够正确合并。
+  #   (non-repeat-contacts-amount) <-! create-and-check-user-with-mulitple-repeat-contacts 'zhaowu.json', '赵五'
+  #   (err, found-users) <-! db.users.find({'name': '赵五'}).to-array
+  #   found-users.length.should.eql 1
+  #   <-! are-contacts-merged-correct found-users[0].contacts, non-repeat-contacts-amount
+  #   # (err, all-users) <-! db.users.find().to-array
+  #   # all-users.length.should.eql 3
+  #   done!
+
+
 
   do
     (done) <-! after 
     <-! shutdown-mongo-client client
     done!
 
-!function create-and-check-user json-file-name, user-name, callback
+create-and-check-user = !(json-file-name, user-name, callback) ->
   # 这里用require，会导致第二次load json时，直接用的是缓存，而不是重新load！！
   user-data = util.load-json __dirname + "/../test-data/#{json-file-name}"
   (user) <-! User.create-user-with-contacts db, user-data
@@ -70,7 +88,7 @@ describe 'mongoDb版注册用户：合并联系人', !->
   console.log "\n\t成功创建了User：#{found-users[0].name}"
   callback! 
 
-!function check-user-contacts user-name, amount-of-has-contacts, amount-of-as-contacts, callback
+check-user-contacts = !(user-name, amount-of-has-contacts, amount-of-as-contacts, callback) ->
   (err, found-users) <-! db.users.find({name: user-name}).to-array
   found-users.length.should.eql 1
   found-user = found-users[0]
@@ -84,16 +102,27 @@ describe 'mongoDb版注册用户：合并联系人', !->
 
   callback!     
 
-!function are-contacts-merged-correct contacts, callback
+are-contacts-merged-correct = !(contacts, non-repeat-contacts-amount, callback) ->
   merged-result-contacts = filter is-merged-result-contact, contacts
-  merged-result-contacts.length.should.eql 1
+  merged-result-contacts.length.should.eql non-repeat-contacts-amount
 
-  result-contact = merged-result-contacts[0]
-  result-contact.merged-from.length.should.eql 1
+  # TODO: 检查merge细节正确
+  # result-contact = merged-result-contacts[0]
+  # result-contact.merged-from.length.should.eql 1
 
   callback!
 
-function is-merged-result-contact contact
+is-merged-result-contact = (contact) ->
   return contact.merged-from and not contact.merge-to
+
+create-and-check-user-with-mulitple-repeat-contacts = (json-file-name, user-name, callback)->
+  user-data = util.load-json __dirname + "/../test-data/#{json-file-name}"
+  non-repeat-contacts-amount = add-multiple-repeat-contacts user-data
+  (user) <-! User.create-user-with-contacts db, user-data
+  (err, found-users) <-! db.users.find({name: user-name}).to-array
+  found-users.length.should.eql 1
+  found-users[0].name.should.eql user-name
+  console.log "\n\t成功创建了User：#{found-users[0].name}"
+  callback non-repeat-contacts-amount 
 
 

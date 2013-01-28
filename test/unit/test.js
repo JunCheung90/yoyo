@@ -3,7 +3,10 @@ if (typeof window == 'undefined' || window === null) {
 } else {
   prelude.installPrelude(window);
 }
-var should, async, User, initMongoClient, shutdownMongoClient, util, ref$, db, client, can;
+/*
+ * Created by Wang, Qing. All rights reserved.
+ */
+var should, async, User, initMongoClient, shutdownMongoClient, util, ref$, db, client, multipleTimes, can, createAndCheckUser, checkUserContacts, areContactsMergedCorrect, isMergedResultContact, createAndCheckUserWithMulitpleRepeatContacts;
 should = require('should');
 async = require('async');
 User = require('../../src/models/User');
@@ -11,6 +14,7 @@ initMongoClient = require('../../src/servers-init').initMongoClient;
 shutdownMongoClient = require('../../src/servers-init').shutdownMongoClient;
 util = require('../../src/util');
 ref$ = [null, null], db = ref$[0], client = ref$[1];
+multipleTimes = 1000;
 can = it;
 describe('mongoDb版注册用户：识别用户，绑定用户（User）和联系人（Contact）', function(){
   before(function(done){
@@ -62,7 +66,7 @@ describe('mongoDb版注册用户：合并联系人', function(){
         'name': '赵五'
       }).toArray(function(err, foundUsers){
         foundUsers.length.should.eql(1);
-        areContactsMergedCorrect(foundUsers[0].contacts, function(){
+        areContactsMergedCorrect(foundUsers[0].contacts, 1, function(){
           db.users.find().toArray(function(err, allUsers){
             allUsers.length.should.eql(3);
             done();
@@ -77,7 +81,7 @@ describe('mongoDb版注册用户：合并联系人', function(){
     });
   });
 });
-function createAndCheckUser(jsonFileName, userName, callback){
+createAndCheckUser = function(jsonFileName, userName, callback){
   var userData;
   userData = util.loadJson(__dirname + ("/../test-data/" + jsonFileName));
   User.createUserWithContacts(db, userData, function(user){
@@ -90,8 +94,8 @@ function createAndCheckUser(jsonFileName, userName, callback){
       callback();
     });
   });
-}
-function checkUserContacts(userName, amountOfHasContacts, amountOfAsContacts, callback){
+};
+checkUserContacts = function(userName, amountOfHasContacts, amountOfAsContacts, callback){
   db.users.find({
     name: userName
   }).toArray(function(err, foundUsers){
@@ -114,15 +118,28 @@ function checkUserContacts(userName, amountOfHasContacts, amountOfAsContacts, ca
     }()));
     callback();
   });
-}
-function areContactsMergedCorrect(contacts, callback){
-  var mergedResultContacts, resultContact;
+};
+areContactsMergedCorrect = function(contacts, nonRepeatContactsAmount, callback){
+  var mergedResultContacts;
   mergedResultContacts = filter(isMergedResultContact, contacts);
-  mergedResultContacts.length.should.eql(1);
-  resultContact = mergedResultContacts[0];
-  resultContact.mergedFrom.length.should.eql(1);
+  mergedResultContacts.length.should.eql(nonRepeatContactsAmount);
   callback();
-}
-function isMergedResultContact(contact){
+};
+isMergedResultContact = function(contact){
   return contact.mergedFrom && !contact.mergeTo;
-}
+};
+createAndCheckUserWithMulitpleRepeatContacts = function(jsonFileName, userName, callback){
+  var userData, nonRepeatContactsAmount;
+  userData = util.loadJson(__dirname + ("/../test-data/" + jsonFileName));
+  nonRepeatContactsAmount = addMultipleRepeatContacts(userData);
+  return User.createUserWithContacts(db, userData, function(user){
+    db.users.find({
+      name: userName
+    }).toArray(function(err, foundUsers){
+      foundUsers.length.should.eql(1);
+      foundUsers[0].name.should.eql(userName);
+      console.log("\n\t成功创建了User：" + foundUsers[0].name);
+      callback(nonRepeatContactsAmount);
+    });
+  });
+};

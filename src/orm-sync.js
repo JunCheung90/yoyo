@@ -3,6 +3,9 @@ if (typeof window == 'undefined' || window === null) {
 } else {
   prelude.installPrelude(window);
 }
+/*
+ * Created by Wang, Qing. All rights reserved.
+ */
 var orm, user, phone, dropCreateOrm;
 orm = require('./servers-init').orm;
 user = require('./models/user');

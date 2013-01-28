@@ -1,3 +1,7 @@
+/*
+ * Created by Wang, Qing. All rights reserved.
+ */
+
 require! ['./servers-init'.orm, './models/user', './models/phone']
 
 drop-create-orm = !(callback) ->

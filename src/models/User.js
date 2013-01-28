@@ -3,6 +3,9 @@ if (typeof window == 'undefined' || window === null) {
 } else {
   prelude.installPrelude(window);
 }
+/*
+ * Created by Wang, Qing. All rights reserved.
+ */
 var async, util, Contact, createUserWithContacts, buildUserBasicInfo, createDefaultSystemAvatar, mergeSameUsers, createOrUpdateUserWithContacts, isPerson, asyncGetApiKeys, asyncGetImApiKey, asyncGetSnApiKey;
 async = require('async');
 util = require('../util');

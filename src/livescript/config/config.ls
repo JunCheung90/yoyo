@@ -1,3 +1,7 @@
+/*
+ * Created by Wang, Qing. All rights reserved.
+ */
+
 (exports ? this) <<< 
 	mongo:
 		host: \localhost
