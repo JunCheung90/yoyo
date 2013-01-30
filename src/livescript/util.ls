@@ -4,16 +4,21 @@
 
 require! ['fs', 'node-uuid']
 
-get-UUid = ->
-  node-uuid.v1!
+util =
+  get-UUid: ->
+    node-uuid.v1!
 
-load-json = (filename, encoding) ->
-  try
-    encoding ||= 'utf8'
-    contents = fs.read-file-sync filename, encoding
-    return JSON.parse contents
-  catch err
-    throw err
+  load-json: (filename, encoding) ->
+    try
+      encoding ||= 'utf8'
+      contents = fs.read-file-sync filename, encoding
+      return JSON.parse contents
+    catch err
+      throw err
+
+  to-camel-case: (str) ->
+    str.replace /-([a-z])/g, (g) ->
+      g[1].to-upper-case!
     
 
-(exports ? this) <<< {get-UUid, load-json}
+module.exports = util

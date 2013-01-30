@@ -58,13 +58,13 @@
 	],
 	"isRegistered": true,
 	"lastModifiedDate": "2013-01-09",
-	"mergeStatus": "NONE",
+	"isMergePending": false,
 	"mergedTo": null,
 	"mergedFrom": [],
 	"contacts": [
 		{
-			"cid": "uid-c-timestamp_of_add-seqno",
-			"uid": "uid_lisi",
+			"cid": "owner-uid-c-timestamp_of_add-seqno",
+			"actByUser": "uid_lisi",
 			"names": [
 				"李小四"
 			],
@@ -84,9 +84,15 @@
 			"tags": []
 		},
 		{
-			"mergeStatus": "NONE",
 			"mergedTo": null,
-			"mergedFrom": []
+			"mergedFrom": [],
+			"pendingMerges": [
+				{
+					"pendingMergeTo": null,
+					"pendingMergeFrom": [],
+					"userDecision": null
+				}
+			]
 		}
 	],
 	"asContactOf": [

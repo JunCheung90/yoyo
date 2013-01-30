@@ -6,7 +6,7 @@ if (typeof window == 'undefined' || window === null) {
 /*
  * Created by Wang, Qing. All rights reserved.
  */
-var should, async, User, initMongoClient, shutdownMongoClient, util, ref$, db, client, multipleTimes, can, createAndCheckUser, checkUserContacts, areContactsMergedCorrect, isMergedResultContact, createAndCheckUserWithMulitpleRepeatContacts;
+var should, async, User, initMongoClient, shutdownMongoClient, util, ref$, db, client, multipleTimes, can, createAndCheckUser, checkUserContacts, areContactsMergedCorrect, isMergedResultContact, createAndCheckUserWithMulitpleRepeatContacts, addMultipleRepeatContacts;
 should = require('should');
 async = require('async');
 User = require('../../src/models/User');
@@ -131,7 +131,7 @@ isMergedResultContact = function(contact){
 createAndCheckUserWithMulitpleRepeatContacts = function(jsonFileName, userName, callback){
   var userData, nonRepeatContactsAmount;
   userData = util.loadJson(__dirname + ("/../test-data/" + jsonFileName));
-  nonRepeatContactsAmount = addMultipleRepeatContacts(userData);
+  nonRepeatContactsAmount = addMultipleRepeatContacts(userData, multipleTimes);
   return User.createUserWithContacts(db, userData, function(user){
     db.users.find({
       name: userName
@@ -143,3 +143,4 @@ createAndCheckUserWithMulitpleRepeatContacts = function(jsonFileName, userName, 
     });
   });
 };
+addMultipleRepeatContacts = function(userData, multipleTimes){};

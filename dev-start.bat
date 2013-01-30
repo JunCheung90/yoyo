@@ -1,3 +1,4 @@
+start "mongoDB" /D %MONGO_HOME%\bin mongod.exe -f mongodb.conf
 start "node-inspector" node-inspector
 start "SOURCE CODE" /D .\src lsc -wcbdo . livescript
 start "YoYo SERVER" supervisor src\server.js

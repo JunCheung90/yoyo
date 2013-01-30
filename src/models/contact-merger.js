@@ -1,15 +1,11 @@
-if (typeof window == 'undefined' || window === null) {
-  require('prelude-ls').installPrelude(global);
-} else {
-  prelude.installPrelude(window);
-}
 /*
  * Created by Wang, Qing. All rights reserved.
  */
-var MergeStrategy, _, util, mergeContacts, checkAndMergeContacts, shouldContactsBeMerged, mergeTwoContacts, selectMergeTo;
+var MergeStrategy, _, util, Checkers, mergeContacts, checkAndMergeContacts, that, shouldContactsBeMerged, directMergeContacts, pendingMergeContacts, mergeContactsInfo, selectDistination;
 MergeStrategy = require('../contacts-merging-strategy');
 _ = require('underscore');
 util = require('../util');
+Checkers = require('./Checkers');
 mergeContacts = function(contacts){
   var checkedContacts, i$, len$, contact, uid;
   checkedContacts = [];
@@ -22,79 +18,108 @@ mergeContacts = function(contacts){
   }
 };
 checkAndMergeContacts = function(checkingContact, checkedContacts){
-  var i$, len$, contact;
+  var i$, len$, contact, isMerging, distination, source;
   for (i$ = 0, len$ = checkedContacts.length; i$ < len$; ++i$) {
     contact = checkedContacts[i$];
     if (contact.mergedTo) {
       continue;
     }
-    switch (shouldContactsBeMerged(contact, checkingContact)) {
-    case "NONE":
+    if (in$(contact.cid, (checkingContact != null ? checkingContact.notMergeWith : void 8) || [])) {
       continue;
-    case "PENDING":
-      checkingContact.isMergePending = contact.isMergePending = true;
-      break;
-    case "MERGED":
-      checkingContact.isMergePending = contact.isMergePending = false;
     }
-    mergeTwoContacts(contact, checkingContact);
+    isMerging = shouldContactsBeMerged(contact, checkingContact);
+    if (isMerging === "NONE") {
+      continue;
+    }
+    console.log("\ncontact: " + contact.names[0] + " and " + checkingContact + " should be " + isMerging + " merging.\n");
+    distination = selectDistination(contact, checkingContact);
+    source = distination === contact.cid ? checkingContact : contact;
+    if (isMerging === "DIRECT") {
+      directMergeContacts(source, distination);
+    }
+    if (isMerging === "PENDING") {
+      pendingMergeContacts(source, distination);
+    }
   }
 };
+that = this;
 shouldContactsBeMerged = function(c1, c2){
-  var i$, ref$, len$, key;
-  for (i$ = 0, len$ = (ref$ = MergeStrategy.directMerging).length; i$ < len$; ++i$) {
-    key = ref$[i$];
-    if (_.isArray(c1[key])) {
-      if (!_.isEmpty(_.intersection(c1[key], c2[key]))) {
-        return "MERGED";
-      }
-    } else {
-      if (_.isEqual(c1[key], c2[key])) {
-        return "MERGED";
+  var directMergeCheckingFields, pendingMergeCheckingFields, i$, len$, key, j$, ref$, len1$, checker;
+  if (c1.mergedTo || c1.mergedTo) {
+    return "NONE";
+  }
+  directMergeCheckingFields = _.keys(MergeStrategy.directMerging);
+  pendingMergeCheckingFields = _.keys(MergeStrategy.recommandMerging);
+  for (i$ = 0, len$ = directMergeCheckingFields.length; i$ < len$; ++i$) {
+    key = directMergeCheckingFields[i$];
+    for (j$ = 0, len1$ = (ref$ = MergeStrategy.directMerging[key]).length; j$ < len1$; ++j$) {
+      checker = ref$[j$];
+      checker = util.toCamelCase(checker);
+      if (Checkers[checker](c1[key], c2[key])) {
+        return "DIRECT";
       }
     }
   }
-  for (i$ = 0, len$ = (ref$ = MergeStrategy.recommandMerging).length; i$ < len$; ++i$) {
-    key = ref$[i$];
-    if (_.isArray(c1[key])) {
-      if (!_.isEmpty(_.intersection(c1[key], c2[key]))) {
-        return "PENDING";
-      }
-    } else {
-      if (_.isEqual(c1[key], c2[key])) {
+  for (i$ = 0, len$ = pendingMergeCheckingFields.length; i$ < len$; ++i$) {
+    key = pendingMergeCheckingFields[i$];
+    for (j$ = 0, len1$ = (ref$ = MergeStrategy.recommandMerging[key]).length; j$ < len1$; ++j$) {
+      checker = ref$[j$];
+      checker = util.toCamelCase(checker);
+      if (Checkers[checker](c1[key], c2[key])) {
         return "PENDING";
       }
     }
   }
   return "NONE";
 };
-mergeTwoContacts = function(c1, c2){
-  var mTo, mFrom, i$, ref$, len$, key;
-  mTo = selectMergeTo(c1, c2);
-  mFrom = mTo.cid === c1.cid ? c2 : c1;
-  mTo.mergedFrom || (mTo.mergedFrom = []);
-  mTo.mergedFrom.push(mFrom.cid);
-  mFrom.mergedTo = mTo.cid;
-  mFrom.actByUser = mTo.actByUser;
-  if (mTo.isMergePending) {
-    return null;
+directMergeContacts = function(source, distination){
+  var ref$;
+  distination.mergedFrom || (distination.mergedFrom = []);
+  distination.mergedFrom.push(source.cid);
+  source.mergedTo = distination.cid;
+  distination.actByUser || (distination.actByUser = soucre.actByUser);
+  if ((ref$ = source.pendingMergences) != null && ref$.length) {
+    updateSourcePendings(source, distionation);
   }
-  for (i$ = 0, len$ = (ref$ = _.keys(c1)).length; i$ < len$; ++i$) {
+  if ((ref$ = distination.pendingMergences) != null && ref$.length) {
+    updateDistioncationPendings(distination, source);
+  }
+  return mergeContactsInfo(source, distination);
+};
+pendingMergeContacts = function(source, distination){
+  source.pendingMergences || (source.pendingMergences = []);
+  source.pendingMergences.push = {
+    'pending-merge-to': distination.cid
+  };
+  distination.pendingMergences || (distination.pendingMergences = []);
+  distination.pendingMergences.push = {
+    'pending-merge-from': source.cid
+  };
+  return distination;
+};
+mergeContactsInfo = function(source, distination){
+  var i$, ref$, len$, key;
+  for (i$ = 0, len$ = (ref$ = _.keys(source)).length; i$ < len$; ++i$) {
     key = ref$[i$];
-    if (key == 'cid' || key == 'isMergePending' || key == 'mergedTo' || key == 'mergedFrom') {
+    if (key == 'cid' || key == 'mergedTo' || key == 'mergedFrom' || key == 'pendingMergences') {
       continue;
     }
-    if (_.isArray(c1[key])) {
-      mTo[key] = _.union(mTo[key], mFrom[key]);
+    if (_.isArray(source[key])) {
+      distination[key] = _.union(distination[key], source[key]);
     } else {
-      if (mTo[key] !== mFrom[key]) {
-        throw new Error(mTo.names + " and " + mFrom.names + " contact merging CONFLICT for key: " + key + ", with different value: " + mTo[key] + ", " + mFrom[key]);
+      if (distination[key] !== source[key]) {
+        throw new Error(distination.names + " and " + source.names + " contact merging CONFLICT for key: " + key + ", with different value: " + distination[key] + ", " + source[key]);
       }
     }
   }
-  return mTo;
+  return distination;
 };
-selectMergeTo = function(c1, c2){
+selectDistination = function(c1, c2){
   return c1;
 };
 (typeof exports != 'undefined' && exports !== null ? exports : this).mergeContacts = mergeContacts;
+function in$(x, arr){
+  var i = -1, l = arr.length >>> 0;
+  while (++i < l) if (x === arr[i] && i in arr) return true;
+  return false;
+}

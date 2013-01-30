@@ -1,8 +1,3 @@
-if (typeof window == 'undefined' || window === null) {
-  require('prelude-ls').installPrelude(global);
-} else {
-  prelude.installPrelude(window);
-}
 var couch, getContactById, storeContacts, mergeContacts, updateContactDoc, ref$;
 couch = require('../servers-init').couch;
 getContactById = function(contactId, callback){

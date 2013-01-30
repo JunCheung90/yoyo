@@ -117,7 +117,7 @@ is-merged-result-contact = (contact) ->
 
 create-and-check-user-with-mulitple-repeat-contacts = (json-file-name, user-name, callback)->
   user-data = util.load-json __dirname + "/../test-data/#{json-file-name}"
-  non-repeat-contacts-amount = add-multiple-repeat-contacts user-data
+  non-repeat-contacts-amount = add-multiple-repeat-contacts user-data, multiple-times
   (user) <-! User.create-user-with-contacts db, user-data
   (err, found-users) <-! db.users.find({name: user-name}).to-array
   found-users.length.should.eql 1
@@ -125,4 +125,5 @@ create-and-check-user-with-mulitple-repeat-contacts = (json-file-name, user-name
   console.log "\n\t成功创建了User：#{found-users[0].name}"
   callback non-repeat-contacts-amount 
 
-
+add-multiple-repeat-contacts = (user-data, multiple-times) ->
+  
