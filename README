@@ -1,6 +1,0 @@
-yoyo服务器技术探索。
-用mongoDB来做服务端。
-
-
-git clone https://github.com/geraldasd/yoyo.git
-npm install
