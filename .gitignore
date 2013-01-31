@@ -1,1 +1,3 @@
-?gsdata?/
+/_gsdata_/
+/**/*.js
+/**/node_modules/
