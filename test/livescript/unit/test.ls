@@ -12,9 +12,9 @@ _ = require 'underscore'
 
 [db, client] = [null null]
 
-multiple-times = 10
+multiple-times = 100
 
-repeat-rate = 1
+repeat-rate = 0.4
 
 can = it # it在LiveScript中被作为缺省的参数，因此我们先置换为can
 
@@ -32,7 +32,7 @@ can = it # it在LiveScript中被作为缺省的参数，因此我们先置换为
 
 #   can '创建User李四，李四有2个Contacts，作为1人的Contact。\n', !(done) ->
 #     <-! create-and-check-user 'lisi.json', '李四'
-#     check-user-contacts '李四', 2, 1, done
+#     check-user-contacts '李四', 2, 1, done 
 
 
 #   can '创建User赵五，赵五有3个Contacts，作为2人的Contacts。\n', !(done) ->
@@ -130,6 +130,8 @@ is-merged-result-contact = (contact) ->
 create-and-check-user-with-mulitple-repeat-contacts = (json-file-name, user-name, callback)->
   user-data = util.load-json __dirname + "/../test-data/#{json-file-name}"
   non-repeat-contacts-amount = add-multiple-repeat-contacts user-data, multiple-times, repeat-rate
+  console.log "\\\\\\\\\\\\\\\\\\\\\\\ user-data.contacts \\\\\\\\\\\\\\\\\\\\\\\\\\n"
+  show-contacts user-data.contacts
   (user) <-! User.create-user-with-contacts db, user-data
   (err, found-users) <-! db.users.find({name: user-name}).to-array
   found-users.length.should.eql 1
@@ -154,21 +156,23 @@ generate-random-contact = ->
   "names": [util.get-UUid!] 
 
 generate-repeat-contact = (seed-contacts)->
-  keys = ['ims']
+  dif-keys = ['phones', 'emails']
+  keys = ['ims', 'phones']
   contact = {}
-  seed = random-select seed-contacts
-  different-value-key = random-select keys
+  different-value-key = random-select dif-keys
   contact[different-value-key] = [Math.random! * 100000 + '']
-  repeat-value-key = random-select filter is-defined(seed), keys
+
+  repeat-value-key = random-select keys
+  seed = random-select filter is-defined(repeat-value-key), seed-contacts
   contact[repeat-value-key] = seed[repeat-value-key]
-  contact.names ||= ["repeat-contact-on-#{repeat-value-key}"]
+  contact.names ||= ["repeat-contact-on-#{repeat-value-key}"] 
   contact 
 
 random-select = (elements)->
   throw new Error "Can't' random select form #{elements}" if !elements
   elements[Math.floor(Math.random! * elements.length)]
 
-is-defined = (obj, key) -->
+is-defined = (key, obj) -->
   _.is-array obj[key] and obj[key].length > 0
 
 show-contacts = (contacts) ->
@@ -176,11 +180,11 @@ show-contacts = (contacts) ->
   extening-string!
   console.log "\n\nid \t name \t\t phone \t\t im \t\t m-to \t\t m-from\n"
   for contact in contacts
-    phone = if contact?.phones?.length then contact.phones[0] else ''
-    im = if contact?.ims?.length then contact.ims[0]?.account else ''
-    m-to = if contact?.merged-to then contact.merged-to.last-substring(5) else ''
-    m-from = if contact?.merged-from?.length then [f.last-substring(5) for f in contact.merged-from] else ''
-    console.log "#{contact.cid.last-substring(5)} \t #{contact.names[0].last-substring(5)} \t #{phone} \t #{im} \t\t #{m-to} \t#{m-from}" 
+    phone = if contact?.phones?.length and contact.phones[0] then contact.phones[0].last-substring(6) else ' '  * 6
+    im = if contact?.ims?.length then contact.ims[0]?.account?.last-substring(6) else ' '  * 6
+    m-to = if contact?.merged-to then contact.merged-to.last-substring(6) else ' '  * 6
+    m-from = if contact?.merged-from?.length then [f.last-substring(6) for f in contact.merged-from] else ' '  * 6
+    console.log "#{contact?.cid?.last-substring(6)} \t #{contact.names[0].last-substring(6)} \t #{phone} \t #{im} \t\t #{m-to} \t#{m-from}" 
 
 extening-string = !->
   String.prototype.last-substring = (position)->

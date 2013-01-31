@@ -6,15 +6,27 @@ if (typeof window == 'undefined' || window === null) {
 var _, Checkers;
 _ = require('underscore');
 Checkers = {
-  same: function(v1, v2){
-    var ref$;
-    if ((v1 != null ? (ref$ = v1[0]) != null ? ref$.account : void 8 : void 8) === 'zhangsan111') {
-      console.log("\n\n*************** v1: %j, v2: %j, result %j ***************\n\n", v1, v2, _.isEqual(v1, v2));
-    }
-    if (!v1 || !v2 || (_.isArray(v1) && v1.length === 0 && _.isArray(v2) && v2.length === 0)) {
+  same: function(a, b){
+    if (!a || !b || (_.isArray(a) && a.length === 0 && _.isArray(b) && b.length === 0)) {
       return false;
     }
-    return _.isEqual(v1, v2);
+    return _.isEqual(a, b);
+  },
+  oneSame: function(a, b){
+    var i$, len$, eA, j$, len1$, eB;
+    if (!a || !b) {
+      return false;
+    }
+    for (i$ = 0, len$ = a.length; i$ < len$; ++i$) {
+      eA = a[i$];
+      for (j$ = 0, len1$ = b.length; j$ < len1$; ++j$) {
+        eB = b[j$];
+        if (_.isEqual(eA, eB)) {
+          return true;
+        }
+      }
+    }
+    return false;
   },
   similarName: function(a, b){
     return false;

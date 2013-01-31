@@ -10,10 +10,10 @@ var contactsMergingStrategy;
 contactsMergingStrategy = {
   directMerging: {
     'actByUser': ['same'],
-    'emails': ['same'],
-    'phones': ['same'],
-    'ims': ['same'],
-    'sns': ['same']
+    'emails': ['one-same'],
+    'phones': ['one-same'],
+    'ims': ['one-same'],
+    'sns': ['one-same']
   },
   recommandMerging: {
     'names': ['similar-name'],

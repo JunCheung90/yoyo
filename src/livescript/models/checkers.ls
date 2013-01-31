@@ -1,19 +1,27 @@
 _ = require 'underscore'
 
 Checkers =
-  same: (v1, v2) ->
-    # console.log "\n\n*************** v1: %j, v2: %j, result %j ***************\n\n", v1, v2, _.is-equal(v1, v2) if _.is-array(v1) and v1.length is 0
-    console.log "\n\n*************** v1: %j, v2: %j, result %j ***************\n\n", v1, v2, _.is-equal(v1, v2) if v1?.0?.account is 'zhangsan111'
-    return false if !v1 or !v2 or (_.is-array(v1) and v1.length is 0 and _.is-array(v2) and v2.length is 0)
-    _.is-equal v1, v2
-    # if _.is-array v1 then
-    #   return false if !v1 or !v2
-    #   for e1 in v1
-    #     for e2 in v2
-    #       return true if v1 and v2 and _.is-equal v1, v2
+  same: (a, b) ->
+    # console.log "\n\n*************** a: %j, b: %j, result %j ***************\n\n", a, b, _.is-equal(a, b) if _.is-array(a) and a.length is 0
+    # console.log "\n\n*************** a: %j, b: %j, result %j ***************\n\n", a, b, _.is-equal(a, b) if a?.0?.account is 'zhangsan111'
+    return false if !a or !b or (_.is-array(a) and a.length is 0 and _.is-array(b) and b.length is 0)
+    _.is-equal a, b
+    # if _.is-array a then
+    #   return false if !a or !b
+    #   for e1 in a
+    #     for e2 in b
+    #       return true if a and b and _.is-equal a, b
     # else
-    #   return true if v1 and v2 and _.is-equal v1, v2
+    #   return true if a and b and _.is-equal a, b
     # false
+
+  one-same: (a, b) ->
+    return false if !a or !b 
+    # throw new Error "One of #{a} and #{b} is NOT an array!" if !_.is-array(a) or !_.is-array(b)
+    for e-a in a
+      for e-b in b
+        return true if _.is-equal e-a, e-b
+    false
 
   similar-name: (a, b) ->
     # TODO: NOT IMPLEMENTED YET

@@ -109,7 +109,7 @@ mergeContactsInfo = function(source, distination){
       continue;
     }
     if (_.isArray(source[key])) {
-      distination[key] = combine(distination[key], source[key]);
+      distination[key] = combine(source[key], distination[key]);
     } else {
       if (distination[key] !== source[key]) {
         throw new Error(distination.names + " and " + source.names + " contact merging CONFLICT for key: " + key + ", with different value: " + distination[key] + ", " + source[key]);
@@ -119,15 +119,14 @@ mergeContactsInfo = function(source, distination){
   return distination;
 };
 selectDistination = function(c1, c2){
-  return c2;
+  return c1;
 };
-combine = function(distination, source){
+combine = function(source, distination){
   var ref$, i$, len$, s, j$, len1$, d, exist;
-  if (source.length === 0) {
+  if (source.length === 0 && distination.length === 0) {
     return;
   }
   if ((ref$ = source[0]) != null && ref$.type) {
-    debugger;
     for (i$ = 0, len$ = source.length; i$ < len$; ++i$) {
       s = source[i$];
       for (j$ = 0, len1$ = distination.length; j$ < len1$; ++j$) {
@@ -143,6 +142,7 @@ combine = function(distination, source){
       exist = false;
     }
   } else {
+    debugger;
     distination = _.union(distination, source);
   }
   return distination;

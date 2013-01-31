@@ -15,8 +15,8 @@ shutdownMongoClient = require('../../src/servers-init').shutdownMongoClient;
 util = require('../../src/util');
 _ = require('underscore');
 ref$ = [null, null], db = ref$[0], client = ref$[1];
-multipleTimes = 10;
-repeatRate = 1;
+multipleTimes = 100;
+repeatRate = 0.4;
 can = it;
 describe('mongoDb版注册用户：简单合并联系人', function(){
   var allOriginalContacts, nonRepeatOriginalContacts;
@@ -120,6 +120,8 @@ createAndCheckUserWithMulitpleRepeatContacts = function(jsonFileName, userName, 
   var userData, nonRepeatContactsAmount;
   userData = util.loadJson(__dirname + ("/../test-data/" + jsonFileName));
   nonRepeatContactsAmount = addMultipleRepeatContacts(userData, multipleTimes, repeatRate);
+  console.log("\\\\\\\\\\\\\\\\\\\\\\\ user-data.contacts \\\\\\\\\\\\\\\\\\\\\\\\\\n");
+  showContacts(userData.contacts);
   return User.createUserWithContacts(db, userData, function(user){
     db.users.find({
       name: userName
@@ -161,13 +163,14 @@ generateRandomContact = function(){
   };
 };
 generateRepeatContact = function(seedContacts){
-  var keys, contact, seed, differentValueKey, repeatValueKey;
-  keys = ['ims'];
+  var difKeys, keys, contact, differentValueKey, repeatValueKey, seed;
+  difKeys = ['phones', 'emails'];
+  keys = ['ims', 'phones'];
   contact = {};
-  seed = randomSelect(seedContacts);
-  differentValueKey = randomSelect(keys);
+  differentValueKey = randomSelect(difKeys);
   contact[differentValueKey] = [Math.random() * 100000 + ''];
-  repeatValueKey = randomSelect(filter(isDefined(seed), keys));
+  repeatValueKey = randomSelect(keys);
+  seed = randomSelect(filter(isDefined(repeatValueKey), seedContacts));
   contact[repeatValueKey] = seed[repeatValueKey];
   contact.names || (contact.names = ["repeat-contact-on-" + repeatValueKey]);
   return contact;
@@ -178,11 +181,11 @@ randomSelect = function(elements){
   }
   return elements[Math.floor(Math.random() * elements.length)];
 };
-isDefined = curry$(function(obj, key){
+isDefined = curry$(function(key, obj){
   return _.isArray(obj[key]) && obj[key].length > 0;
 });
 showContacts = function(contacts){
-  var i$, len$, contact, lresult$, phone, ref$, im, mTo, mFrom, f, results$ = [];
+  var i$, len$, contact, lresult$, phone, ref$, im, ref1$, mTo, mFrom, f, results$ = [];
   if (!contacts) {
     return;
   }
@@ -191,11 +194,19 @@ showContacts = function(contacts){
   for (i$ = 0, len$ = contacts.length; i$ < len$; ++i$) {
     contact = contacts[i$];
     lresult$ = [];
-    phone = contact != null && ((ref$ = contact.phones) != null && ref$.length) ? contact.phones[0] : '';
-    im = contact != null && ((ref$ = contact.ims) != null && ref$.length) ? (ref$ = contact.ims[0]) != null ? ref$.account : void 8 : '';
-    mTo = contact != null && contact.mergedTo ? contact.mergedTo.lastSubstring(5) : '';
-    mFrom = contact != null && ((ref$ = contact.mergedFrom) != null && ref$.length) ? (fn$()) : '';
-    lresult$.push(console.log(contact.cid.lastSubstring(5) + " \t " + contact.names[0].lastSubstring(5) + " \t " + phone + " \t " + im + " \t\t " + mTo + " \t" + mFrom));
+    phone = (contact != null && ((ref$ = contact.phones) != null && ref$.length)) && contact.phones[0]
+      ? contact.phones[0].lastSubstring(6)
+      : '      ';
+    im = contact != null && ((ref$ = contact.ims) != null && ref$.length)
+      ? (ref$ = contact.ims[0]) != null ? (ref1$ = ref$.account) != null ? ref1$.lastSubstring(6) : void 8 : void 8
+      : '      ';
+    mTo = contact != null && contact.mergedTo
+      ? contact.mergedTo.lastSubstring(6)
+      : '      ';
+    mFrom = contact != null && ((ref$ = contact.mergedFrom) != null && ref$.length)
+      ? (fn$())
+      : '      ';
+    lresult$.push(console.log((contact != null ? (ref$ = contact.cid) != null ? ref$.lastSubstring(6) : void 8 : void 8) + " \t " + contact.names[0].lastSubstring(6) + " \t " + phone + " \t " + im + " \t\t " + mTo + " \t" + mFrom));
     results$.push(lresult$);
   }
   return results$;
@@ -203,7 +214,7 @@ showContacts = function(contacts){
     var i$, ref$, len$, results$ = [];
     for (i$ = 0, len$ = (ref$ = contact.mergedFrom).length; i$ < len$; ++i$) {
       f = ref$[i$];
-      results$.push(f.lastSubstring(5));
+      results$.push(f.lastSubstring(6));
     }
     return results$;
   }

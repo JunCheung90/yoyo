@@ -73,19 +73,18 @@ merge-contacts-info = (source, distination) -> # 合并除了merge状态的属�
   for key in _.keys source
     continue if key in ['cid', 'mergedTo', 'mergedFrom', 'pendingMergences']
     if _.is-array source[key] then
-      distination[key] = combine distination[key], source[key]
+      distination[key] = combine source[key], distination[key]
     else
       throw new Error "#{distination.names} and #{source.names} contact merging CONFLICT for key: #{key}, with different value: #{distination[key]}, #{source[key]}" if distination[key] != source[key]
 
   distination
 
 select-distination = (c1, c2) ->
-  c2 # TODO: 这里需要比较两个联系人的最后更新时间、最后联系时间、联系次数、等等进行确定。又或者和合并一样，需要外置规则。
+  c1 # TODO: 这里需要比较两个联系人的最后更新时间、最后联系时间、联系次数、等等进行确定。又或者和合并一样，需要外置规则。
 
-combine = (distination, source) ->
-  return if source.length is 0
+combine = (source, distination) ->
+  return if source.length is 0 and distination.length is 0
   if source[0]?.type # ims, sns
-    debugger
     for s in source
       for d in distination
         if _.is-equal s, d and s 
@@ -94,6 +93,7 @@ combine = (distination, source) ->
       distination.push s if !exist 
       exist = false
   else
+    debugger
     distination = _.union distination, source
   distination 
 
