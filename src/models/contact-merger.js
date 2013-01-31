@@ -1,19 +1,23 @@
+if (typeof window == 'undefined' || window === null) {
+  require('prelude-ls').installPrelude(global);
+} else {
+  prelude.installPrelude(window);
+}
 /*
  * Created by Wang, Qing. All rights reserved.
  */
-var MergeStrategy, _, util, Checkers, mergeContacts, checkAndMergeContacts, that, shouldContactsBeMerged, directMergeContacts, pendingMergeContacts, mergeContactsInfo, selectDistination;
+var MergeStrategy, _, util, Checkers, mergeContacts, checkAndMergeContacts, shouldContactsBeMerged, directMergeContacts, pendingMergeContacts, updatePendings, mergeContactsInfo, selectDistination, combine;
 MergeStrategy = require('../contacts-merging-strategy');
 _ = require('underscore');
 util = require('../util');
 Checkers = require('./Checkers');
 mergeContacts = function(contacts){
-  var checkedContacts, i$, len$, contact, uid;
+  var checkedContacts, i$, len$, contact;
   checkedContacts = [];
   for (i$ = 0, len$ = contacts.length; i$ < len$; ++i$) {
     contact = contacts[i$];
-    uid = util.getUUid();
-    contact.actByUser = util.getUUid();
     checkAndMergeContacts(contact, checkedContacts);
+    contact.actByUser || (contact.actByUser = util.getUUid());
     checkedContacts.push(contact);
   }
 };
@@ -31,9 +35,9 @@ checkAndMergeContacts = function(checkingContact, checkedContacts){
     if (isMerging === "NONE") {
       continue;
     }
-    console.log("\ncontact: " + contact.names[0] + " and " + checkingContact + " should be " + isMerging + " merging.\n");
     distination = selectDistination(contact, checkingContact);
-    source = distination === contact.cid ? checkingContact : contact;
+    source = distination.cid === contact.cid ? checkingContact : contact;
+    debugger;
     if (isMerging === "DIRECT") {
       directMergeContacts(source, distination);
     }
@@ -42,10 +46,9 @@ checkAndMergeContacts = function(checkingContact, checkedContacts){
     }
   }
 };
-that = this;
 shouldContactsBeMerged = function(c1, c2){
   var directMergeCheckingFields, pendingMergeCheckingFields, i$, len$, key, j$, ref$, len1$, checker;
-  if (c1.mergedTo || c1.mergedTo) {
+  if (c1.mergedTo || c2.mergedTo) {
     return "NONE";
   }
   directMergeCheckingFields = _.keys(MergeStrategy.directMerging);
@@ -73,18 +76,12 @@ shouldContactsBeMerged = function(c1, c2){
   return "NONE";
 };
 directMergeContacts = function(source, distination){
-  var ref$;
   distination.mergedFrom || (distination.mergedFrom = []);
   distination.mergedFrom.push(source.cid);
   source.mergedTo = distination.cid;
-  distination.actByUser || (distination.actByUser = soucre.actByUser);
-  if ((ref$ = source.pendingMergences) != null && ref$.length) {
-    updateSourcePendings(source, distionation);
-  }
-  if ((ref$ = distination.pendingMergences) != null && ref$.length) {
-    updateDistioncationPendings(distination, source);
-  }
-  return mergeContactsInfo(source, distination);
+  distination.actByUser || (distination.actByUser = source.actByUser);
+  mergeContactsInfo(source, distination);
+  return updatePendings(source, distination);
 };
 pendingMergeContacts = function(source, distination){
   source.pendingMergences || (source.pendingMergences = []);
@@ -97,6 +94,13 @@ pendingMergeContacts = function(source, distination){
   };
   return distination;
 };
+updatePendings = function(source, distination){
+  if (!source.pendingMergences) {
+    return;
+  }
+  distination.pendingMergences || (distination.pendingMergences = []);
+  distination.pendingMergences.concat(source.pendingMergences);
+};
 mergeContactsInfo = function(source, distination){
   var i$, ref$, len$, key;
   for (i$ = 0, len$ = (ref$ = _.keys(source)).length; i$ < len$; ++i$) {
@@ -105,7 +109,7 @@ mergeContactsInfo = function(source, distination){
       continue;
     }
     if (_.isArray(source[key])) {
-      distination[key] = _.union(distination[key], source[key]);
+      distination[key] = combine(distination[key], source[key]);
     } else {
       if (distination[key] !== source[key]) {
         throw new Error(distination.names + " and " + source.names + " contact merging CONFLICT for key: " + key + ", with different value: " + distination[key] + ", " + source[key]);
@@ -115,7 +119,33 @@ mergeContactsInfo = function(source, distination){
   return distination;
 };
 selectDistination = function(c1, c2){
-  return c1;
+  return c2;
+};
+combine = function(distination, source){
+  var ref$, i$, len$, s, j$, len1$, d, exist;
+  if (source.length === 0) {
+    return;
+  }
+  if ((ref$ = source[0]) != null && ref$.type) {
+    debugger;
+    for (i$ = 0, len$ = source.length; i$ < len$; ++i$) {
+      s = source[i$];
+      for (j$ = 0, len1$ = distination.length; j$ < len1$; ++j$) {
+        d = distination[j$];
+        if (_.isEqual(s, d) && s) {
+          exist = true;
+          break;
+        }
+      }
+      if (!exist) {
+        distination.push(s);
+      }
+      exist = false;
+    }
+  } else {
+    distination = _.union(distination, source);
+  }
+  return distination;
 };
 (typeof exports != 'undefined' && exports !== null ? exports : this).mergeContacts = mergeContacts;
 function in$(x, arr){
