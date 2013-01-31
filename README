@@ -1,3 +1,6 @@
-https://github.com/geraldasd/yoyo/
 yoyo服务器技术探索。
-尝试用mongoDB + Neo4j来做服务端。
+用mongoDB来做服务端。
+
+
+git clone https://github.com/geraldasd/yoyo.git
+npm install
