@@ -2,6 +2,9 @@
  * Created by Wang, Qing. All rights reserved.
  */
 
+require! ['./util']
+_ = require 'underscore'
+
 # 注意：这里还没有考虑用户输入误差的问题，例如电话输错了一位，或者少输入一位的情况。
 contacts-merging-strategy =
   direct-merging: # 这些字段的内容如果相同，则可以直接合并
@@ -18,4 +21,15 @@ contacts-merging-strategy =
     # same-owner-dif-provider：张老三、张大三；zhangsan@fake.com zansan
     'emails' : ['same-owner-dif-provider'] # 这项可能太强了，需要进一步考虑。
 
-module.exports = contacts-merging-strategy
+camel-case-checkers = ->
+    for key in _.keys contacts-merging-strategy.direct-merging
+        for value, i in contacts-merging-strategy.direct-merging[key]
+            contacts-merging-strategy.direct-merging[key][i] = util.to-camel-case value
+
+    for key in _.keys contacts-merging-strategy.recommand-merging
+        for value, i in contacts-merging-strategy.recommand-merging[key]
+            contacts-merging-strategy.recommand-merging[key][i] = util.to-camel-case value
+
+    contacts-merging-strategy
+
+module.exports = camel-case-checkers contacts-merging-strategy
