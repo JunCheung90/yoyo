@@ -53,7 +53,7 @@ create-contacts-users = !(db, contacts, owner, callback) ->
   for contact in contacts
     continue if contact.merged-to # 不论PENDING还是MERGED，被合并的用户只能创建一个用户。
     user = {}
-    user{phones, emails, ims, sns} = contact # TODO：这里需要考虑contact的信息是否应当抽取到user。此时如果是PENDING merge，MERGED-FROM的信息没有抽取。
+    user{phones, emails, ims, sns} = contact # contact所有信息抽取到user。参见http://my.ss.sysu.edu.cn/wiki/pages/viewpage.action?pageId=113049608
     user.uid = contact.act-by-user 
     user.is-registered = false
     user.as-contact-of ||= []

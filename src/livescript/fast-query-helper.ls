@@ -63,7 +63,9 @@ fqh =
     phones = [phone.phone-number for phone in user.phones]
     emails = user.emails or []
     (users) <-! fqh.query-users-on-phone-and-email db, phones, emails
-    callback users
+    throw new Error "#{users.length} existed repeat users found." if users.length > 1
+    is-direct-merge = true
+    callback users[0], is-direct-merge
 
   query-users-on-phone-and-email: (db, phones, emails, callback) ->
     query-statement = # 目前只是检查电话和email的重复，来判断用户重复。今后可能引进规则引擎。
