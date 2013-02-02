@@ -7,6 +7,7 @@ Merge-Strategy = require '../contacts-merging-strategy'
 _ = require 'underscore' 
 require! ['../util', './Checkers']
 
+
 merge-contacts = !(contacts) ->
   checked-contacts = []
   for contact in contacts
@@ -15,7 +16,6 @@ merge-contacts = !(contacts) ->
     checked-contacts.push contact 
 
 check-and-merge-contacts = !(checking-contact, checked-contacts) ->
-  # TODO：多次合并的逻辑还没有厘清。
   for contact in checked-contacts
     continue if contact.merged-to # 不合并到已经被合并的用户
     continue if contact.cid in (checking-contact?.not-merge-with || []) # 不合并用户之前已经拒绝的合并
@@ -24,11 +24,11 @@ check-and-merge-contacts = !(checking-contact, checked-contacts) ->
 
     distination = select-distination contact, checking-contact
     source = if distination.cid is contact.cid then checking-contact else contact
-    debugger
     direct-merge-contacts source, distination if is-merging is "DIRECT"
     pending-merge-contacts source, distination if is-merging is "PENDING" 
 
 should-contacts-be-merged = (c1, c2) ->
+  # TODO：改用较为高效的数据结构（hash-table、B-tree等）存储所有的可能项（email、phone、im、sn），进行是否合并的查询。
   return "NONE" if c1.merged-to or c2.merged-to # 不合并到已经合并的用户
 
   direct-merge-checking-fields = _.keys Merge-Strategy.direct-merging
@@ -36,12 +36,10 @@ should-contacts-be-merged = (c1, c2) ->
 
   for key in direct-merge-checking-fields 
     for checker in Merge-Strategy.direct-merging[key]
-      checker = util.to-camel-case checker
       return "DIRECT" if Checkers[checker] c1[key], c2[key]
 
   for key in pending-merge-checking-fields
     for checker in Merge-Strategy.recommand-merging[key]
-      checker = util.to-camel-case checker
       return "PENDING" if Checkers[checker] c1[key], c2[key]
 
   "NONE"
@@ -96,8 +94,5 @@ combine = (source, distination) ->
     debugger
     distination = _.union distination, source
   distination 
-
-
-
 
 (exports ? this) <<< {merge-contacts}   
