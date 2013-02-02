@@ -3,6 +3,7 @@
  */
  
 require! [async, '../util', './Contact-Merger']
+require! fqh: '../fast-query-helper'
 
 create-contacts = !(db, user, callback) ->
   user.contacts-seq ||= 0
@@ -30,13 +31,7 @@ identify-and-bind-contact-as-user = !(db, contact, owner, callback) -> # 回调�
   # TODO: 需要处理各种情况：1）电话号码相同也有可能不是同一个人（换电话了）；2）email比较肯定，很少会换；
   # 3）im会换；4）sn不清楚；5）这里还有数据本身有错误，用户记错了或在手机端处理时有错的情况，例如：将电话号码记错一位，少记一位等等。
   # 考虑使用规则引擎。
-  query-statement = 
-    $or:
-      * "phones.phoneNumber": $in: contact.phones or []
-      * emails: $in: contact.emails or []
-      ...
-  (err, contact-users) <-! db.users.find(query-statement).toArray
-  throw new Error err if err
+  (contact-users) <-! fqh.get-existed-contact-users db, contact
   contact-user-amount = contact-users?.length or 0
   switch contact-user-amount
   case 0 then callback 0 # 没有找到已存在的用户
@@ -49,7 +44,7 @@ bind-contact = !(db, contact, contact-user, owner, callback) ->
   contact.act-by-user = contact-user.uid
   contact-user.as-contact-of ||= []
   contact-user.as-contact-of.push owner.uid
-  (err, result) <-! db.users.save contact-user
+  (err, result) <-! db.users.save contact-user # 性能：这里可以考虑放入数组，最后一起存储（注意，有不一致的风险）
   throw new Error err if err
   callback!
 
