@@ -27,9 +27,10 @@ user = # yoyo server端数据
       is-active: true
       api-key: 'AOL可能给出的api key'
   sns:
-    * sn-name: '豆瓣'
+    * type: '豆瓣'
       account-name: '张三豆'
-      api-key: 'xxxx' # 服务端授权后得到的key，用以从SN获取信息。
+      account-id: '1213213' # acount-name和account-id两者必须有一个
+      api-key: 'xxxx' # 社交平台端授权后得到的key，用以从SN获取信息，由手机客户端上传
     ...
   addresses:
     '广州 大学城 中山大学 至善园 307'
