@@ -6,7 +6,7 @@ require! ['fs', 'node-uuid']
 
 util =
   get-UUid: ->
-    node-uuid.v1!
+    node-uuid.v4!
 
   load-json: (filename, encoding) ->
     try
@@ -19,6 +19,6 @@ util =
   to-camel-case: (str) ->
     str.replace /-([a-z])/g, (g) ->
       g[1].to-upper-case!
-    
+  
 
 module.exports = util

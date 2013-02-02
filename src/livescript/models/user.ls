@@ -11,7 +11,13 @@ create-user-with-contacts = !(db, user-data, callback)->
   build-user-basic-info user
   (user) <-! merge-same-users db, user
   <-! create-or-update-user-with-contacts db, user  
-  callback user
+  (err, result) <-! db.users.save user
+  throw new Error err if err
+  if user.is-person 
+    async-get-api-keys db, user
+    callback user
+  else
+    callback user
 
 build-user-basic-info = !(user)->
   current = new Date!.get-time!
@@ -56,13 +62,8 @@ create-or-update-user-with-contacts = !(db, user, callback) ->
   user.contacted-by-strangers ||= []  
   if user.is-person ||= is-person user # 人类
     <-! Contact.create-contacts db, user # 联系人更新（识别为user，或创建为user）后，方回调。
-    (err, result) <-! db.users.save user
-    throw new Error err if err
-    async-get-api-keys db, user
     callback user
   else # 单位
-    (err, result) <-! db.users.save user
-    throw new Error err if err
     callback user
 
 is-person = (user) ->

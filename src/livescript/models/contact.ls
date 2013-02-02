@@ -44,7 +44,7 @@ bind-contact = !(db, contact, contact-user, owner, callback) ->
   contact.act-by-user = contact-user.uid
   contact-user.as-contact-of ||= []
   contact-user.as-contact-of.push owner.uid
-  (err, result) <-! db.users.save contact-user # 性能：这里可以考虑放入数组，最后一起存储（注意，有不一致的风险）
+  (err, result) <-! db.users.save contact-user # 这里可以考虑改为update提高效率。
   throw new Error err if err
   callback!
 
