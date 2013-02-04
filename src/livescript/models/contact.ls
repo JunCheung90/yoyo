@@ -10,11 +10,11 @@ create-contacts = !(db, user, callback) ->
   to-create-contact-users = []
   (err) <-! async.for-each user.contacts, !(contact, next) -> # 为了性能异步并发
     (!(contact) ->
-        contact.cid = create-cid user.uid, ++user.contacts-seq
-        (contact-user-amount) <-! identify-and-bind-contact-as-user db, contact, user
-        throw new Error "#{contact} refers to more than one user: #{contact-user}" if contact-user-amount > 1
-        to-create-contact-users.push contact if contact-user-amount is 0
-        next!   
+      contact.cid = create-cid user.uid, ++user.contacts-seq
+      (contact-user-amount) <-! identify-and-bind-contact-as-user db, contact, user
+      throw new Error "#{contact} refers to more than one user: #{contact-user}" if contact-user-amount > 1
+      to-create-contact-users.push contact if contact-user-amount is 0
+      next!   
     )(contact)
   throw new Error err if err
   # 注意，这里在identify-and-bind-contact-as-user和create-contacts-users之间，有可能新的User来create contacts，

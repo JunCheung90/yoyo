@@ -2,18 +2,18 @@
  * Created by Wang, Qing. All rights reserved.
  */
  
-require! [async, '../util', './Contact']
-require! fqh: '../fast-query-helper'
+require! [async, '../util', './Contact', './User-Merger']
 
 create-user-with-contacts = !(db, user-data, callback)->
   # 如果系统中此用户尚未注册过，则新建user。
   user = {} <<< user-data
   build-user-basic-info user
-  (existed-user, merged-user) <-! merge-same-users db, user
-  <-! create-or-update-user-with-contacts db, merged-user  
+  (old-user, new-user) <-! User-Merger.merge-same-users db, user
+  merged-user = new-user or old-user # 仅有old-user，是将新user识别为了old-user；仅有new-user是新建了一个独立的user
+  <-! create-or-update-user-contacts db, merged-user  
   (err, result) <-! db.users.save merged-user
   throw new Error err if err
-  db.users.save existed-user if existed-user # 注意：异步更新已有的user，不用等更新完成。可能会导致数据不一致的错误。
+  db.users.save old-user if old-user and new-user # 当new-user和old-user需要pending-merge时，两个users都要存储。
   if merged-user.is-person 
     async-get-api-keys db, merged-user
     callback merged-user
@@ -36,34 +36,7 @@ build-user-basic-info = !(user)->
 create-default-system-avatar = (user) ->
   #TODO:
  
-# TODO：将这部分merge users的逻辑抽取到user-merger
-merge-same-users = !(db, user, callback) -> 
-  # 算法参见 http://my.ss.sysu.edu.cn/wiki/pages/viewpage.action?pageId=113049608
-  (existed-user, is-direct-merge) <-! fqh.get-existed-repeat-users db, user 
-  if existed-user
-    if is-direct-merge
-      combine-users-info existed-user, user
-      re-evaluate-user-pending-mergences db, existed-user if existed-user?.pending-merges?.length # 是否应该回调？
-      callback null, existed-user # 彻底合并了，只需要更新一个user了。
-    else
-      existed-user.pending-merges ||= []
-      existed-user.pending-merges.push {'pending-merge-from': user.uid, 'is-accepted': false}
-      user.pending-merges ||= []
-      user.pending-merges.push {'pending-merge-to': existed-user.uid, 'is-accepted': false}
-      callback existed-user, user
-  else
-    callback null, user
-
-combine-users-info = (old-user, new-user) ->
-  # 这里的逻辑要更新，考虑各种复杂的信息合并情况。
-  # 这里的exist-user，以前并未注册，只是他人通讯录中出现过而已。
-  old-user <<< new-user
-
-re-evaluate-user-pending-mergences = (db, existed-user) ->
-  #TODO:
-  console.log 'NOT IMPLEMENTED YET'
-
-create-or-update-user-with-contacts = !(db, user, callback) ->
+create-or-update-user-contacts = !(db, user, callback) ->
   user.as-contact-of ||= []
   user.contacted-strangers ||= []
   user.contacted-by-strangers ||= []  

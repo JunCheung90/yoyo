@@ -12,7 +12,6 @@ merge-contacts = !(contacts) ->
   checked-contacts = []
   for contact in contacts
     check-and-merge-contacts contact, checked-contacts 
-    contact.act-by-user ||= util.get-UUid!
     checked-contacts.push contact 
 
 check-and-merge-contacts = !(checking-contact, checked-contacts) ->
