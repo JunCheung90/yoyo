@@ -46,7 +46,7 @@ describe 'mongoDb版注册用户：识别用户，绑定用户（User）和联�
     check-user-contacts '张三', 2, 2, done 
 
   do
-    (done) <-! after 
+    (done) <-! after
     <-! shutdown-mongo-client client
     done!
 
