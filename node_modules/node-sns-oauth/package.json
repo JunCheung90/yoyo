@@ -1,0 +1,19 @@
+{
+   "name":      "node-sns-oauth",
+   "main":      "./index.js",
+   "version":   "0.0.1",
+   "description": "tbc..",
+   "author":    "geraldlrh@gmail.com",
+   "repository": {
+    "type":   "git",
+    "url":    "git://github.com/geraldasd/node-sns-oauth.git"
+  },
+  "engines": {
+    "node":   ">= 0.8.17"
+  },
+  "keywords": [
+    "node",
+    "sns",
+    "oauth2.0"
+  ]
+}
