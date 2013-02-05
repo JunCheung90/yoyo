@@ -1,6 +1,7 @@
+# TODO reject , 分开平台，last-modified, 一次返回多少条, 
 social-network-update = # yoyo server端数据
   owner-id: 'uid-of-zhangsan'
-  authorize-to: ['uid-of-lisi', 'uid2'] # 授权可以访问sn更新的联系人列表
+  authorize-to: ['uid-of-lisi', 'uid2'] # 授权可以访问sn更新的联系人列表. 
   updates:
     * type: '豆瓣'
       update-time: 'UTC'

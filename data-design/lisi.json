@@ -32,8 +32,10 @@
 	],
 	"sn": [
 		{
-			"snName": "豆瓣",
+			"type": "豆瓣",
 			"accountName": "李四豆",
+			"accountId": "12232332",
+			"appKey": "fd13dfafadfadfdfll.cd"
 		}
 	],
 	"addresses": [
