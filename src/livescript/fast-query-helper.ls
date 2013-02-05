@@ -60,7 +60,8 @@ fqh =
         _map[im-str] = [user.uid]
 
   get-existed-repeat-users: (db, user, callback) ->
-    phones = [phone.phone-number for phone in user.phones]
+    phones = []
+    phones = [phone.phone-number for phone in user.phones] if user?.phones?.length
     emails = user.emails or []
     (users) <-! fqh.query-users-on-phone-and-email db, phones, emails
     throw new Error "#{users.length} existed repeat users found." if users.length > 1

@@ -10,6 +10,7 @@ create-user-with-contacts = !(db, user-data, callback)->
   build-user-basic-info user
   (old-user, new-user) <-! User-Merger.merge-same-users db, user
   merged-user = new-user or old-user # 仅有old-user，是将新user识别为了old-user；仅有new-user是新建了一个独立的user
+  merged-user.uid ||= util.get-UUid!
   <-! create-or-update-user-contacts db, merged-user  
   (err, result) <-! db.users.save merged-user
   throw new Error err if err
@@ -22,10 +23,8 @@ create-user-with-contacts = !(db, user-data, callback)->
 
 build-user-basic-info = !(user)->
   current = new Date!.get-time!
-  user.uid = util.get-UUid!
   user.is-registered = true
   user.last-modified-date = current
-  user.is-merge-pending = false
   user.merge-to = null
   user.merge-from = []
 

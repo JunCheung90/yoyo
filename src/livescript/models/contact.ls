@@ -2,68 +2,41 @@
  * Created by Wang, Qing. All rights reserved.
  */
  
-require! [async, '../util', './Contact-Merger']
+require! [async, '../util', './User-Merger']
 require! fqh: '../fast-query-helper'
+_ = require 'underscore'
 
-create-contacts = !(db, user, callback) ->
-  user.contacts-seq ||= 0
-  to-create-contact-users = []
-  (err) <-! async.for-each user.contacts, !(contact, next) -> # 为了性能异步并发
+create-contacts = !(db, owner, callback) ->
+  owner.contacts-seq ||= 0
+  to-create-contact-users = {}
+  (err) <-! async.for-each owner.contacts, !(contact, next) -> # 为了性能异步并发
     (!(contact) ->
-      contact.cid = create-cid user.uid, ++user.contacts-seq
-      (contact-user-amount) <-! identify-and-bind-contact-as-user db, contact, user
-      throw new Error "#{contact} refers to more than one user: #{contact-user}" if contact-user-amount > 1
-      to-create-contact-users.push contact if contact-user-amount is 0
+      contact.cid = create-cid owner.uid, ++owner.contacts-seq
+      (old-user, new-user) <-! User-Merger.merge-contacts db, contact, owner, to-create-contact-users
+      if old-user
+        do
+          <-! db.users.save old-user # 性能：现在为异步，可改为同步（性能会降低）。注意这里用了异步，可能会有数据一致性问题。
+      to-create-contact-users[contact.cid] = new-user if new-user
       next!   
     )(contact)
   throw new Error err if err
   # 注意，这里在identify-and-bind-contact-as-user和create-contacts-users之间，有可能新的User来create contacts，
   # 其contacts中有和当前用户相同的user，因此会造成user的重复。所以今后必须有独立进程定期清理合并user。
-  Contact-Merger.merge-contacts user.contacts
-
-  if to-create-contact-users.length > 0 then
-    <-! create-contacts-users db, to-create-contact-users, user   
-    callback!
+  # Contact-Merger.merge-contacts user.contacts
+  to-create-users = _.values to-create-contact-users
+  clean-merge-to-and-from to-create-users
+  clean-merge-to-and-from owner.contacts
+  if to-create-users.length > 0 then
+    (err, users) <-! db.users.insert to-create-users
+    throw new Error err if err
+    callback!  
   else
     callback! 
 
-identify-and-bind-contact-as-user = !(db, contact, owner, callback) -> # 回调返回找到并bind的用户个数。如果找到唯一用户，则将contact bind到这个用户上。
-  # TODO: 需要处理各种情况：1）电话号码相同也有可能不是同一个人（换电话了）；2）email比较肯定，很少会换；
-  # 3）im会换；4）sn不清楚；5）这里还有数据本身有错误，用户记错了或在手机端处理时有错的情况，例如：将电话号码记错一位，少记一位等等。
-  # 考虑使用规则引擎。
-  (contact-users) <-! fqh.get-existed-contact-users db, contact
-  contact-user-amount = contact-users?.length or 0
-  switch contact-user-amount
-  case 0 then callback 0 # 没有找到已存在的用户
-  case 1 then  
-    <-! bind-contact db, contact, contact-users[0], owner # 性能考虑：这里可以考虑改为不用同步，直接就callback了，不等bind-contact。
-    callback 1
-  default callback contact-user-amount
-
-bind-contact = !(db, contact, contact-user, owner, callback) -> 
-  contact.act-by-user = contact-user.uid
-  contact-user.as-contact-of ||= []
-  contact-user.as-contact-of.push owner.uid
-  (err, result) <-! db.users.save contact-user # 这里可以考虑改为update提高效率。
-  throw new Error err if err
-  callback!
-
-create-contacts-users = !(db, contacts, owner, callback) ->
-  users = []
-  for contact in contacts
-    continue if contact.merged-to # 不论PENDING还是MERGED，被合并的用户只能创建一个用户。
-    user = {}
-    user{phones, emails, ims, sns} = contact # contact所有信息抽取到user。参见http://my.ss.sysu.edu.cn/wiki/pages/viewpage.action?pageId=113049608
-    user.uid = contact.act-by-user 
-    user.is-registered = false
-    user.as-contact-of ||= []
-    user.as-contact-of.push owner.uid
-    users.push user
-  (err, users) <-! db.users.insert users
-  throw new Error err if err
-  callback!
-
 create-cid = (uid, seq-no) ->
   uid + '-c-' + new Date!.get-time! + '-' + seq-no
+
+clean-merge-to-and-from = !(users) ->
+# TODO：由于contacts是异步创建的，merge-to和from的关系会比较混乱，需要厘清
 
 (exports ? this) <<< {create-contacts}
