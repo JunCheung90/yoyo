@@ -38,6 +38,21 @@ util =
   is-late: (t-str1, t-str2) ->
     !is-early t-str1, t-str2
 
+  insert-multiple-docs: (db, collection, docs, callback) ->
+    <-! manipulate-multiple-docs db, collection, docs, 'insert' 
+    callback!
+
+  update-multiple-docs: (db, collection, docs, callback) ->
+    <-! manipulate-multiple-docs db, collection, docs, 'update' 
+    callback!
     
+manipulate-multiple-docs = (db, collection, docs, action, callback) ->
+  if docs.length > 0 then
+    (err, docs) <-! db[collection][action] docs
+    throw new Error err if err
+    callback!  
+  else
+    callback! 
+
 
 module.exports = util
