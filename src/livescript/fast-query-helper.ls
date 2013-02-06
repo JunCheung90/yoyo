@@ -59,7 +59,7 @@ fqh =
       else
         _map[im-str] = [user.uid]
 
-  get-existed-repeat-users: (db, user, callback) ->
+  get-existed-repeat-user: (db, user, callback) ->
     phones = []
     phones = [phone.phone-number for phone in user.phones] if user?.phones?.length
     emails = user.emails or []

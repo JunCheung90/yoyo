@@ -14,7 +14,7 @@ fqh = require '../../src/fast-query-helper'
 
 multiple-times = 100 
 
-repeat-rate = 0.2
+repeat-rate = 0.2 
 
 can = it # it在LiveScript中被作为缺省的参数，因此我们先置换为can
 
@@ -105,9 +105,9 @@ check-user-contacts = !(user-name, amount-of-has-contacts, amount-of-as-contacts
   found-user = found-users[0]
   found-user.contacts.length.should.eql amount-of-has-contacts
   # console.log "\n\t找回的User：#{user-name}有#{found-user.contacts.length}个联系人：%j", [[name for name in contact.names] for  contact in found-user.contacts]
-
-  found-user.as-contact-of.length.should.eql amount-of-as-contacts
-  console.log "\n\t找回的User：#{user-name}作为#{found-user.as-contact-of.length}个联系人"
+  found-user-amount-of-as-contacts = found-user?.as-contact-of?.length or 0
+  found-user-amount-of-as-contacts.should.eql amount-of-as-contacts
+  console.log "\n\t找回的User：#{user-name}作为#{found-user-amount-of-as-contacts}个联系人"
 
   console.log "\n\t找回的User：#{user-name}有#{found-user.sns.length}个SN：%j" [{sn.sn-name, sn.account-name} for sn in found-user.sns]
 

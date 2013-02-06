@@ -3,23 +3,22 @@
  */
  
 require! [async, '../util', './Contact', './User-Merger']
+require! common: './user-contact-common'
 
 create-user-with-contacts = !(db, user-data, callback)->
   # 如果系统中此用户尚未注册过，则新建user。
   user = {} <<< user-data
   build-user-basic-info user
-  (old-user, new-user) <-! User-Merger.merge-same-users db, user
-  merged-user = new-user or old-user # 仅有old-user，是将新user识别为了old-user；仅有new-user是新建了一个独立的user
-  merged-user.uid ||= util.get-UUid!
-  <-! create-or-update-user-contacts db, merged-user  
-  (err, result) <-! db.users.save merged-user
+  (old-user, new-user) <-! User-Merger.create-user-then-merge-with-existed-user db, user
+  # 仅有new-user时，说明没有发现old-user需要合并；仅有old-user，说明user已经被合并到了old-user；new-user、old-user两者都有，说明发生了pending合并。
+  contacts-owner = new-user or old-user # contacts将添加到的user是将新user识别为了old-user；仅有new-user是新建了一个独立的user
+  contacts-owner.uid ||= util.get-UUid!
+  <-! create-or-update-user-contacts db, contacts-owner  
+  (err, result) <-! db.users.save contacts-owner
   throw new Error err if err
-  db.users.save old-user if old-user and new-user # 当new-user和old-user需要pending-merge时，两个users都要存储。
-  if merged-user.is-person 
-    async-get-api-keys db, merged-user
-    callback merged-user
-  else
-    callback merged-user
+  db.users.save old-user if old-user and new-user # 当new-user和old-user需要pending-merge时，会同时有两个users要存储。
+  <-! get-api-keys db, contacts-owner
+  callback contacts-owner
 
 build-user-basic-info = !(user)->
   current = new Date!.get-time!
@@ -36,13 +35,17 @@ create-default-system-avatar = (user) ->
   #TODO:
  
 create-or-update-user-contacts = !(db, user, callback) ->
-  user.as-contact-of ||= []
-  user.contacted-strangers ||= []
-  user.contacted-by-strangers ||= []  
   if user.is-person ||= is-person user # 人类
     <-! Contact.create-contacts db, user # 联系人更新（识别为user，或创建为user）后，方回调。
     callback user
   else # 单位
+    callback user
+
+get-api-keys = !(db, user, callback) ->
+  if user.is-person 
+    async-get-api-keys db, user
+    callback user
+  else
     callback user
 
 is-person = (user) ->
@@ -73,4 +76,8 @@ async-get-sn-api-key = !(sn, callback) ->
   # TODO: 
   callback!
 
-(exports ? this) <<< {create-user-with-contacts}  
+add-user-mergence-info = (old-user, new-user) ->
+  common.add-mergence-info old-user, new-user, 'uid'
+
+
+(exports ? this) <<< {create-user-with-contacts, add-user-mergence-info}  
