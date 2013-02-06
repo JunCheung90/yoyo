@@ -90,6 +90,38 @@ describe 'mongoDb版注册用户：简单合并联系人', !->
     <-! shutdown-mongo-client client
     done!
 
+describe 'mongoDb版有趣信息: 通话记录统计' ->
+  do
+    (done) <-! before
+    (mongo-client, mongo-db) <-! init-mongo-client
+    [db, client] := [mongo-db, mongo-client]
+    <-! db.drop-collection 'users'
+    <-! db.drop-collection 'call-log-statistic'
+    done!
+
+  can "张三通话次数统计，有4个打进，3个打出，2个未接\n" !(done) ->
+    check-call-log-count '', 4, 3, 2, done
+
+  can "张三通话时间统计，打进（206s），打出（649s）\n" !(done) ->
+    check-call-log-duration '', 206, 649, done
+
+  can "张三对李四通话次数统计，有3个打进，2个打出，1个未接\n" !(done) ->
+    check-call-log-count '李四', 3, 2, 1, done
+
+  can "张三对李四通话时间统计，打进106s，打出49s\n" !(done) ->
+    check-call-log-duration '李四', 106, 46, done
+
+  can "张三对赵五通话次数统计，有1个打进，1个打出，1个未接\n" !(done) ->
+    check-call-log-count '赵五', 1, 2, 1, done
+
+  can "张三对赵五通话时间统计，打进100s，打出600s\n" !(done) ->
+    check-call-log-duration '赵五', 100, 600, done
+
+  do
+    (done) <-! after
+    <-! shutdown-mongo-client client
+    done!
+
 create-and-check-user = !(json-file-name, user-name, callback) ->
   # 这里用require，会导致第二次load json时，直接用的是缓存，而不是重新load！！
   user-data = util.load-json __dirname + "/../test-data/#{json-file-name}"
@@ -192,3 +224,16 @@ show-contacts = (contacts) ->
 extening-string = !->
   String.prototype.last-substring = (position)->
     @substring(@length - position, @length)
+
+!function check-call-log-count user-name, in-count, out-count, miss-count, callback
+  query-statement = {}
+  if user-name is not ''
+    query-statement <<< {name: user-name}
+  (err, call-log-statistic-infos) <-! db.call-log-statistic.find(query-statement).to-array
+  call-log-statistic-infos.length.should.eql 1
+  call-log-statistic-info = call-log-statistic-infos[0]
+
+  call-log-statistic-info.in-count.should.eql in-count
+  call-log-statistic-info.out-count.should.eql out-count
+  call-log-statistic-info.miss-count.should.eql miss-count
+  callback!
