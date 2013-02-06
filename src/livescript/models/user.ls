@@ -52,7 +52,10 @@ is-person = (user) ->
   true
 
 persist-all-users = !(db, to-create-users, to-update-users, current-user, perhaps-old-user, callback) ->
-  to-create-users.push current-user
+  if current-user._id # is old user, need update
+    to-update-users.push current-user 
+  else
+    to-create-users.push current-user
   to-update-users.push perhaps-old-user if perhaps-old-user
   (err, result) <-! util.update-multiple-docs db, 'users', to-update-users
   (err, result) <-! util.insert-multiple-docs db, 'users', to-create-users 

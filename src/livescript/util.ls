@@ -2,7 +2,7 @@
  * Created by Wang, Qing. All rights reserved.
  */
 
-require! ['fs', 'node-uuid']
+require! [fs, 'node-uuid', async]
 _ = require 'underscore'
 
 util =
@@ -39,20 +39,27 @@ util =
     !is-early t-str1, t-str2
 
   insert-multiple-docs: (db, collection, docs, callback) ->
-    <-! manipulate-multiple-docs db, collection, docs, 'insert' 
-    callback!
+    if docs?.length > 0 then
+      (err, docs) <-! db[collection].insert docs
+      throw new Error err if err
+      callback!  
+    else
+      callback! 
 
   update-multiple-docs: (db, collection, docs, callback) ->
-    <-! manipulate-multiple-docs db, collection, docs, 'update' 
-    callback!
-    
-manipulate-multiple-docs = (db, collection, docs, action, callback) ->
-  if docs.length > 0 then
-    (err, docs) <-! db[collection][action] docs
-    throw new Error err if err
-    callback!  
-  else
-    callback! 
+    if docs?.length > 0 then
+      (err) <-! async.for-each docs, !(doc, next) ->
+        (err, docs) <-! db[collection].save doc
+        throw new Error err if err
+        next!
+      throw new Error err if err
+      callback!
+    else
+      callback! 
 
+  union: (set-a, set-b) ->
+    set-a = set-a or []
+    set-b = set-b or []
+    _.union set-a, set-b
 
 module.exports = util

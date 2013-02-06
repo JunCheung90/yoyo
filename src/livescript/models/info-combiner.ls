@@ -20,17 +20,17 @@ combine-users-names = !(old-user, new-user) ->
   if !old-user.name
     old-user.name = new-user.name
   else
-    old-user.nicknames = _.union old-user.nicknames, new-user.name if new-user.name
-  old-user.nicknames = _.union old-user.nicknames, new-user.nicknames
+    old-user.nicknames = util.union old-user.nicknames, new-user.name if new-user.name
+  old-user.nicknames = util.union old-user.nicknames, new-user.nicknames
 
 combine-avatars = !(old-user, new-user) ->
-  old-user.avatars = _.union old-user.avatars, new-user.avatars
+  old-user.avatars = util.union old-user.avatars, new-user.avatars
 
 combine-addresses = !(old-user, new-user) ->
-  old-user.addresses = _.union old-user.addresses, new-user.addresses
+  old-user.addresses = util.union old-user.addresses, new-user.addresses
 
 combine-tags = !(old-user, new-user) ->
-  old-user.tags = _.union old-user.tags, new-user.tags
+  old-user.tags = util.union old-user.tags, new-user.tags
 
 combine-commnication-channels = !(old-user, new-user) ->
   combine-user-phones old-user, new-user
@@ -66,7 +66,7 @@ combine-phone-in-using-time = !(old-phone, new-phone) ->
   old-phone.end-using-time = new-phone.end-using-time if new-phone.end-using-time and util.is-late new-phone.end-using-time, old-phone.end-using-time
 
 combine-emails = !(old, _new) ->
-  old.emails = _.union old.emails, _new.emails
+  old.emails = util.union old.emails, _new.emails
   
 combine-ims = !(old, _new) ->
   # is-active字段没有处理。
@@ -89,7 +89,7 @@ combine-relations = !(old-user, new-user) ->
   combine-contacts old-user, new-user
   # console.log "\n\n*************** old-user: #{old-user.name}, old-as: #{old-user.as-contact-of}, new-user: #{new-user.name}, new-as: #{new-user.as-contact-of}***************\n\n"
   if new-user?.as-contact-of?.length
-    old-user.as-contact-of = _.union old-user.as-contact-of, new-user.as-contact-of
+    old-user.as-contact-of = util.union old-user.as-contact-of, new-user.as-contact-of
   combine-strangers old-user, new-user
 
 combine-contacts = !(old-user, new-user) ->
@@ -97,8 +97,8 @@ combine-contacts = !(old-user, new-user) ->
     (old-user-contacts-map, new-contact) <-! combine-on-collection old-user, new-user, 'contacts', 'cid'
 
 combine-strangers = !(old-user, new-user) ->
-  old-user.contacted-strangers = _.union old-user.contacted-strangers, new-user.contacted-strangers
-  old-user.contacted-by-strangers = _.union old-user.contacted-by-strangers, new-user.contacted-by-strangers
+  old-user.contacted-strangers = util.union old-user.contacted-strangers, new-user.contacted-strangers
+  old-user.contacted-by-strangers = util.union old-user.contacted-by-strangers, new-user.contacted-by-strangers
 
 combine-users-mergences = !(old-user, new-user) ->
   combine-mergences old-user, new-user
@@ -106,8 +106,8 @@ combine-users-mergences = !(old-user, new-user) ->
 combine-mergences = !(old, _new) ->
   if _new?.pending-merges?.length
     _new.merged-to = old.uid
-    old.merged-from = _.union old.merged-from, _new.merged-from
-    old.merged-from = _.union old.merged-from, _new.uid
+    old.merged-from = util.union old.merged-from, _new.merged-from
+    old.merged-from = util.union old.merged-from, _new.uid
     old-pending-merge-tos = [pm.pending-merge-to for pm in old.pending-merges when !pm.is-accepted and pm.pending-merge-to]
     old-pending-merge-froms = [pm.pending-merge-from for pm in old.pending-merges when !pm.is-accepted and pm.pending-merge-from]
     for pending-merge in _new?.pending-merges
@@ -136,10 +136,10 @@ combine-contacts-info = !(old-contact, new-contact) ->
   combine-ims old-contact, new-contact
 
 combine-contacts-names = !(old-contact, new-contact) ->
-  old-contact.names = _.union old-contact.names, new-contact.names
+  old-contact.names = util.union old-contact.names, new-contact.names
 
 combine-contacts-phones = !(old-contact, new-contact) ->
-  old-contact.phones = _.union old-contact.phones, new-contact.phones
+  old-contact.phones = util.union old-contact.phones, new-contact.phones
 
 combine-contacts-mergences = !(old-contact, new-contact) ->
   combine-mergences old-contact, new-contact

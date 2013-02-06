@@ -9,5 +9,6 @@ user-contact-common =
     _new.merged-to = old[linker]
     old.merged-from ||= []
     old.merged-from.push _new[linker]
+    # pending mergence不转移，用户确认时，再做相应调整。
 
 module.exports = user-contact-common
