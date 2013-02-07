@@ -11,7 +11,10 @@ init-mongo-client = !(callback) -> #mongo-client, db are used to return
 	(err, client) <-! mongo-client.open
 	db = mongo-client.db(mongo.db)
 	db.users = db.collection 'users'
+<<<<<<< HEAD
 	db.call-logs = db.collection 'call-log-statistic'
+=======
+>>>>>>> fqi
 	# <- fqi.init-communication-channels-maps db
 	callback mongo-client, db
 

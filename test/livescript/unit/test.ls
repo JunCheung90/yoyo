@@ -6,16 +6,15 @@ require! ['should', 'async',
           '../../src/models/User',
           '../../src/servers-init'.init-mongo-client, 
           '../../src/servers-init'.shutdown-mongo-client,
-          '../../src/util']
+          '../../src/util', '../test-helper']
 
-_ = require 'underscore'
-fqi = require '../../src/fast-query-index'
+fqh = require '../../src/fast-query-helper'
 
 [db, client] = [null null]
 
-multiple-times = 100
+multiple-times = 100 
 
-repeat-rate = 0.4
+repeat-rate = 0.2 
 
 can = it # it在LiveScript中被作为缺省的参数，因此我们先置换为can
 
@@ -25,7 +24,7 @@ describe 'mongoDb版注册用户：识别用户，绑定用户（User）和联�
     (mongo-client, mongo-db) <-! init-mongo-client
     [db, client] := [mongo-db, mongo-client]
     <-! db.drop-collection 'users' 
-    <- fqi.init-communication-channels-maps db
+    <- fqh.init-communication-channels-maps db
     done! 
 
   can '创建User张三，张三有2个Contacts，作为0人的Contact。\n', !(done) ->
@@ -56,7 +55,7 @@ describe 'mongoDb版注册用户：简单合并联系人', !->
     (mongo-client, mongo-db) <-! init-mongo-client
     [db, client] := [mongo-db, mongo-client]
     <-! db.drop-collection 'users'
-    <- fqi.init-communication-channels-maps db
+    <- fqh.init-communication-channels-maps db
     done! 
 
   all-original-contacts = 3 # zhaowu.json中有3个联系人，2个不重复。
@@ -65,7 +64,7 @@ describe 'mongoDb版注册用户：简单合并联系人', !->
   can '创建User赵五。赵五的联系人两个Contacts（张大三、张老三）合并为一。\n', !(done) ->
     <-! create-and-check-user 'zhaowu.json', '赵五'
     (err, found-users) <-! db.users.find({'name': '赵五'}).to-array
-    found-users.length.should.eql 1
+    found-users.length.should.eql 1 
     <-! are-contacts-merged-correct found-users[0].contacts, non-repeat-original-contacts
     (err, all-users) <-! db.users.find().to-array
     all-users.length.should.eql 3
@@ -75,7 +74,7 @@ describe 'mongoDb版注册用户：简单合并联系人', !->
   can '对多个重复联系人正确合并。\n', !(done) ->
     # 在初始数据的基础上，随机生成多个重复联系人，然后能够正确合并。
     <-! db.drop-collection 'users' # 不要重复创建赵五这个联系人。
-    (non-repeat-contacts-amount) <-! create-and-check-user-with-mulitple-repeat-contacts 'zhaowu.json', '赵五'
+    (non-repeat-contacts-amount) <-! test-helper.create-and-check-user-with-mulitple-repeat-contacts db, 'zhaowu.json', '赵五', multiple-times, repeat-rate
     (err, found-users) <-! db.users.find({'name': '赵五'}).to-array
     found-users.length.should.eql 1
     found-users[0].contacts.length.should.eql all-original-contacts + multiple-times
@@ -138,18 +137,18 @@ check-user-contacts = !(user-name, amount-of-has-contacts, amount-of-as-contacts
   found-user = found-users[0]
   found-user.contacts.length.should.eql amount-of-has-contacts
   # console.log "\n\t找回的User：#{user-name}有#{found-user.contacts.length}个联系人：%j", [[name for name in contact.names] for  contact in found-user.contacts]
-
-  found-user.as-contact-of.length.should.eql amount-of-as-contacts
-  console.log "\n\t找回的User：#{user-name}作为#{found-user.as-contact-of.length}个联系人"
+  found-user-amount-of-as-contacts = found-user?.as-contact-of?.length or 0
+  found-user-amount-of-as-contacts.should.eql amount-of-as-contacts
+  console.log "\n\t找回的User：#{user-name}作为#{found-user-amount-of-as-contacts}个联系人"
 
   console.log "\n\t找回的User：#{user-name}有#{found-user.sns.length}个SN：%j" [{sn.sn-name, sn.account-name} for sn in found-user.sns]
 
   callback!      
 
 are-contacts-merged-correct = !(contacts, non-repeat-contacts-amount, callback) ->
-  # show-contacts contacts
+  # test-helper.show-contacts contacts
   merged-result-contacts = filter is-merged-result-contact, contacts
-  # show-contacts merged-result-contacts
+  # test-helper.show-contacts merged-result-contacts
   merged-result-contacts.length.should.eql non-repeat-contacts-amount
 
 
@@ -160,6 +159,7 @@ are-contacts-merged-correct = !(contacts, non-repeat-contacts-amount, callback) 
   callback!
 
 is-merged-result-contact = (contact) ->
+<<<<<<< HEAD
   return !contact.merged-to
 
 create-and-check-user-with-mulitple-repeat-contacts = (json-file-name, user-name, callback)->
@@ -237,3 +237,6 @@ extening-string = !->
   call-log-statistic-info.out-count.should.eql out-count
   call-log-statistic-info.miss-count.should.eql miss-count
   callback!
+=======
+  return !contact.merged-to
+>>>>>>> fqi

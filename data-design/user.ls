@@ -42,7 +42,13 @@ user = # yoyo server端数据
   is-merge-pending: false # 为true时，下面merge处于pending，需要用户来确认或者拒绝。为false时：或为未曾合并的用户（merge-to && merge-from == false），或为合并完成后的用户。
   # 两个user A、B合并时，如果A合并到B（因为B更常用），合并后则A：{merge-to: b_uid, merge-from} B：{merge-to: null, merge-from: [a_uid]}。
   merged-to: null 
-  merged-from: [] # 这里有可能是多个merge后的结果
+  merged-from: [] # 这里有可能是多个merge后的结果, 包括了所有信息的最初来源。如果A merge到了B，B又merge到了C，则在C的merged-from里面有A也有B。但是，A的merge-to仍然记录为B。
+  pending-merges: # 等待系统在未来确定，或者由后台人工accept，或者reject的pending merges
+    * pending-merge-to: null# 该user推荐合并到的user
+      pending-merge-from: null # 该user推荐合并的user，每次pending都是两个user的合并。
+      is-accepted: null # null undefiend 还没有决策 | true | false
+    ...
+  not-merge-with: [] # 记录拒绝合并的情况，避免多次推荐
   #----------- relations ----------#
   contacts: # 当前用户的联系人
     * cid: 'owner-uid-c-timestamp_of_add-seqno'
@@ -64,7 +70,7 @@ user = # yoyo server端数据
       pending-merges: # 等待用户accept，或者reject的pending merges
         * pending-merge-to: null# 该Contact推荐合并到的contact
           pending-merge-from: null # 该Contact推荐合并contact，每次pending都是两个contact的合并。
-          is-user-accepted: null # null undefiend 为用户还没有决策 | true | false
+          is-accepted: null # null undefiend 为用户还没有决策 | true | false
         ...
       not-merge-with: [] # 记录用户拒绝合并的情况，避免多次向用户推荐
 
