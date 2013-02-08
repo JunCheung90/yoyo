@@ -62,10 +62,10 @@ check-and-merge-contacts = !(checking-contact, checked-contacts, owner) ->
 
 # ----------------------------------↓ 性能热点 ↓---------------------------------------------- #
 # 占用了30% 左右的执行时间
-should-contacts-be-merged = (-> # 使用闭包，避免重复计算direct-merge-checkers和pending-merge-checkers，改善了性能：之前（885ms），之后（760ms），提升了14%。
+should-contacts-be-merged = (-> # 使用闭包，避免重复计算direct-merge-checkers，改善了性能。
   # TODO：改用较为高效的数据结构（hash-table、B-tree等）存储所有的可能项（email、phone、im、sn），进行是否合并的查询。
     direct-merge-checkers =  _.keys Merge-Strategy.direct-merging
-    pending-merge-checkers = _.keys Merge-Strategy.pending-merging
+    # pending-merge-checkers = _.keys Merge-Strategy.pending-merging
     # [double-first-checkers, double-second-checkers] = get-double-checks!
     (c1, c2, owner) ->
       return "NONE" if c1.merged-to or c2.merged-to # 不合并到已经合并的用户
@@ -73,27 +73,31 @@ should-contacts-be-merged = (-> # 使用闭包，避免重复计算direct-merge-
         for field in Merge-Strategy.direct-merging[checker]
           return "DIRECT" if Checkers[checker] c1[field], c2[field] 
           
-      for check in Merge-Strategy.double-check
-        for field in check.first-check.fields
-          if Checkers[check.first-check.checker] c1[field], c2[field]
-            if Checkers[check.second-check.checker] c1, c2, field, owner
-              return "DIRECT" 
-            else
-              result = check.second-check.false-result
-              continue if result is 'NOT_DECIDED'
-              return result
+      result = double-check Merge-Strategy.double-check-direct-merging, c1, c2, owner, 'DIRECT'
+      return result if result is not 'NOT_DECIDED'
 
-        return "NONE"
-
-      for checker in pending-merge-checkers
-        for field in Merge-Strategy.pending-merging[checker]
-          return "DIRECT" if Checkers[checker] c1[field], c2[field]
-
-      "NONE"
+      result = double-check Merge-Strategy.recommand-merging, c1, c2, owner, 'PENDING'
+      result = 'NONE' if result is 'NOT_DECIDED'
+      result
 
     )() 
   
 # ---------------------------------↑ 性能热点 ↑----------------------------------------------- #
+
+double-check = (checks, c1, c2, owner, result-of-pass-second-check)->
+  # 返回 'DIRECT' | 'PENDING' | 'NONE' | 'NOT_DECIDED' 其中second-check.false-result 包括了除'DIRECT'之外的3种，@see contacts-merging-strategy
+  for check in checks
+    for field in check.first-check.fields
+      if Checkers[check.first-check.checker] c1[field], c2[field]
+        if Checkers[check.second-check.checker] c1, c2, field, owner
+          return result-of-pass-second-check 
+        else
+          result = check.second-check.false-result
+          continue if result is 'NOT_DECIDED'
+          return result
+
+  return 'NOT_DECIDED'
+
 
 get-double-checks = ->
   for check in Merge-Strategy.double-check-direct-merging

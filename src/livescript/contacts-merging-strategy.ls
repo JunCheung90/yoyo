@@ -11,7 +11,7 @@ contacts-merging-strategy =
     'is-same': ['actByUser']
     'is-one-same': ['emails', 'sns'] # 顺序对性能有较大影响。将最有可能重复的排在最前面。
 
-  double-check: # 1st和2nd check都为真，direct merge；first为假，none merge；fist真，second假，按照false-result取值返回
+  double-check-direct-merging: # 1st和2nd check都为真，direct merge；first为假，none merge；fist真，second假，按照false-result取值返回
     * first-check:
         checker: 'is-one-same'
         fields: ['phones', 'ims']
@@ -20,24 +20,31 @@ contacts-merging-strategy =
         false-result: 'NONE' # NONE | PENDING | NOT_DECIDED   不合并 | 推荐合并 | 不确定（看下一个）
     ...
 
-  recommand-merging: # 这些字段的内容如果相似，则推荐合并
-    # 每个key定义了需要进行的检查，只要有一个检查为true，则推荐合并。
-    'is-similar-name': ['name']
-    'is-same-owner-dif-provider' : ['emails'] # 这项可能太强了，需要进一步考虑。
+  recommand-merging: 
+    * first-check:
+        checker: 'is-one-similar'
+        fields: ['names']
+      second-check:
+        checker: 'is-communication-log-unoverlapped' # name相似，通讯历史互不重叠，应该推荐合并。
+        false-result: 'NONE' # NONE | PENDING | NOT_DECIDED   不合并 | 推荐合并 | 不确定（看下一个）
+    ...
 
 convert-checkers-to-camel-case = ->
-  real-strategy = {direct-merging:{}, double-check:[], pending-merging:{}}
+  real-strategy = {direct-merging:{}, double-check-direct-merging:[], recommand-merging:[]}
   for key in _.keys contacts-merging-strategy.direct-merging
     real-strategy.direct-merging[util.to-camel-case key] = contacts-merging-strategy.direct-merging[key]
-  
-  for key in _.keys contacts-merging-strategy.recommand-merging
-    real-strategy.pending-merging[util.to-camel-case key] = contacts-merging-strategy.recommand-merging[key]
 
-  for check in contacts-merging-strategy.double-check
-    check.first-check.checker = util.to-camel-case check.first-check.checker
-    check.second-check.checker = util.to-camel-case check.second-check.checker
-    real-strategy.double-check.push check
+  conver-double-checkers real-strategy, util.to-camel-case 'double-check-direct-merging'
+  conver-double-checkers real-strategy, util.to-camel-case 'recommand-merging'
   
   real-strategy
+
+conver-double-checkers = (real-strategy, key) ->
+  for check in contacts-merging-strategy[key]
+    check.first-check.checker = util.to-camel-case check.first-check.checker
+    check.second-check.checker = util.to-camel-case check.second-check.checker
+    real-strategy[key].push check
+  
+
 
 module.exports = convert-checkers-to-camel-case contacts-merging-strategy 

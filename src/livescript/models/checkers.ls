@@ -23,7 +23,7 @@ Checkers =
         return true if _.is-equal e-a, e-b
     false
 
-  is-similar-name: (a, b) ->
+  is-one-similar: (a, b) ->
     # TODO: NOT IMPLEMENTED YET
     false 
 
