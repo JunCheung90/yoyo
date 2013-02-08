@@ -2,8 +2,12 @@ require! ['../src/util', '../src/models/User']
 _ = require 'underscore'
 
 helper =
-  create-and-check-user-with-mulitple-repeat-contacts: (db, json-file-name, user-name, multiple-times, repeat-rate, callback)->
-    user-data = util.load-json __dirname + "/test-data/#{json-file-name}"
+  create-and-check-user: !(db, json-file-name, user-name, callback) ->
+    helper.create-and-check-user-with-mulitple-repeat-contacts db, json-file-name, user-name, 0, 0, callback
+
+  create-and-check-user-with-mulitple-repeat-contacts: !(db, json-file-name, user-name, multiple-times, repeat-rate, callback)->
+    # 这里用require，会导致第二次load json时，直接用的是缓存，而不是重新load！！
+    user-data = helper.load-user-data json-file-name
     non-repeat-contacts-amount = add-multiple-repeat-contacts user-data, multiple-times, repeat-rate
     # console.log "\\\\\\\\\\\\\\\\\\\\\\\ user-data.contacts \\\\\\\\\\\\\\\\\\\\\\\\\\n"
     # show-contacts user-data.contacts
@@ -13,6 +17,9 @@ helper =
     found-users[0].name.should.eql user-name
     console.log "\n\t成功创建了User：#{found-users[0].name}"
     callback non-repeat-contacts-amount 
+
+  load-user-data: (json-file-name) ->
+    util.load-json __dirname + "/test-data/#{json-file-name}"
 
   show-contacts: (contacts) ->
     return if !contacts
@@ -25,6 +32,31 @@ helper =
       m-from = if contact?.merged-from?.length then [f.last-substring(6) for f in contact.merged-from] else ' '  * 6
       console.log "#{contact?.cid?.last-substring(6)} \t #{contact.names[0].last-substring(6)} \t #{phone} \t #{im} \t #{m-to} \t#{m-from}" 
 
+
+  are-contacts-merged-correct: !(contacts, non-repeat-contacts-amount, callback) ->
+    # test-helper.show-contacts contacts
+    merged-result-contacts = filter is-merged-result-contact, contacts
+    # test-helper.show-contacts merged-result-contacts
+    merged-result-contacts.length.should.eql non-repeat-contacts-amount
+    # TODO: 检查merge细节正确
+    # result-contact = merged-result-contacts[0]
+    # result-contact.merged-from.length.should.eql 1
+
+    callback!
+
+  check-user-contacts: !(db, user-name, amount-of-has-contacts, amount-of-as-contacts, callback) ->
+    (err, found-users) <-! db.users.find({name: user-name}).to-array
+    found-users.length.should.eql 1
+    found-user = found-users[0]
+    found-user.contacts.length.should.eql amount-of-has-contacts
+    # console.log "\n\t找回的User：#{user-name}有#{found-user.contacts.length}个联系人：%j", [[name for name in contact.names] for  contact in found-user.contacts]
+    found-user-amount-of-as-contacts = found-user?.as-contact-of?.length or 0
+    found-user-amount-of-as-contacts.should.eql amount-of-as-contacts
+    console.log "\n\t找回的User：#{user-name}作为#{found-user-amount-of-as-contacts}个联系人"
+
+    console.log "\n\t找回的User：#{user-name}有#{found-user.sns.length}个SN：%j" [{sn.sn-name, sn.account-name} for sn in found-user.sns]
+
+    callback!      
 
 add-multiple-repeat-contacts = (user-data, multiple-times, repeat-rate) ->
   seed-contacts = JSON.parse JSON.stringify user-data.contacts # Deep Clone
@@ -65,5 +97,9 @@ is-defined = (key, obj) -->
 extening-string = !->
   String.prototype.last-substring = (position)->
     @substring(@length - position, @length)
+
+is-merged-result-contact = (contact) ->
+  return !contact.merged-to
+
 
 module.exports = helper

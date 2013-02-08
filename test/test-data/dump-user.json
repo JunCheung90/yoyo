@@ -1,0 +1,37 @@
+{
+  "name": "张三",
+  "phones": [
+    {
+      "phoneNumber": "34567890",
+      "isActive": true
+    }
+  ],
+  "emails": [
+    "zhangsan@fake.com"
+  ],
+  "ims": [
+    {
+      "type": "QQ",
+      "account": "zhangsan111",
+      "isActive": true
+    },
+    {
+      "type": "AOL",
+      "account": "zhangsan222",
+      "isActive": true
+    }
+  ],
+  "sns": [
+    {
+      "snName": "豆瓣",
+      "accountName": "张三豆"
+    }
+  ],
+  "addresses": [
+    "广州 大学城 中山大学 至善园 307"
+  ],
+  "tags": [
+    "设计师"
+  ],
+  "contacts": []
+}
