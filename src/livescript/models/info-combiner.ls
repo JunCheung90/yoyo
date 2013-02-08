@@ -103,6 +103,7 @@ combine-strangers = !(old-user, new-user) ->
 combine-users-mergences = !(old-user, new-user) ->
   combine-mergences old-user, new-user
 
+$C = util.to-camel-case 
 combine-mergences = !(old, _new) ->
   if _new?.pending-merges?.length
     _new.merged-to = old.uid
@@ -113,18 +114,18 @@ combine-mergences = !(old, _new) ->
     for pending-merge in _new?.pending-merges
       continue if is-accepted 
       if pending-merge.pending-merge-to and pending-merge.pending-merge-to not in old-pending-merge-tos
-        old.pending-merges.push {'pending-merge-to': pending-merge.pending-merge-to, 'is-accepted': false}
+        old.pending-merges.push {($C 'pending-merge-to'): pending-merge.pending-merge-to, ($C 'is-accepted'): false}
       if pending-merge.pending-merge-from  and pending-merge.pending-merge-from not in old-pending-merge-froms
-        old.pending-merges.push {'pending-merge-from': pending-merge.pending-merge-from, 'is-accepted': false}
+        old.pending-merges.push {($C 'pending-merge-from'): pending-merge.pending-merge-from, ($C 'is-accepted'): false}
 
 add-users-pending-merges = !(old-user, new-user) ->
-  add-pending-merges old-user, new-user
+  add-pending-merges old-user, new-user, 'uid'
 
-add-pending-merges = !(old, _new) ->
+add-pending-merges = !(old, _new, id-name) ->
   old.pending-merges ||= []
-  old.pending-merges.push {'pending-merge-from': _new.uid, 'is-accepted': false}
+  old.pending-merges.push {($C 'pending-merge-to'): _new[id-name], ($C 'is-accepted'): false}
   _new.pending-merges ||= []
-  _new.pending-merges.push {'pending-merge-to': old.uid, 'is-accepted': false}
+  _new.pending-merges.push {($C 'pending-merge-from'): old[id-name], ($C 'is-accepted'): false}
 
 
 combine-contacts-info = !(old-contact, new-contact) ->
@@ -145,7 +146,7 @@ combine-contacts-mergences = !(old-contact, new-contact) ->
   combine-mergences old-contact, new-contact
 
 add-contacts-pending-merges = !(old-contact, new-contact) ->
-  add-pending-merges old-contact, new-contact
+  add-pending-merges old-contact, new-contact, 'cid'
 
 module.exports = 
   combine-users-info: combine-users-info
