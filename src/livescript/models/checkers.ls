@@ -31,4 +31,8 @@ Checkers =
     # TODO: NOT IMPLEMENTED YET
     false
 
+  is-communication-log-unoverlapped: (c1, c2, same-field, contacts-owner)->
+    # TODO: 检查这里两个联系人c1, c2，看看其与contacts-owner的通讯记录有无交叠
+    true
+
 module.exports = Checkers 

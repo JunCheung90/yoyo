@@ -25,7 +25,7 @@ describe '联系人合并逻辑全面测试：', !->
     <-! initial-test-environment
     done! 
   describe '直接合并（direct-merging）逻辑测试', !->
-    describe '合并phones测试（emails逻辑相似，不单独测试）', !->
+    describe 'phones测试', !->
       can 'phones有一个相同（均非空）时，进行合并。\n', !(done) ->
         contact-lisi1 = {"names": ["李小四"], "phones":["123", "234"]}
         contact-lisi2 = {"names": ["李四"], "phones":["345", "234"]}
@@ -65,7 +65,7 @@ describe '联系人合并逻辑全面测试：', !->
         should-amount-of-from-eql found-user.contacts, 0
         done!
 
-    describe '合并ims测试（sns逻辑相似，不单独测试）', !->
+    describe 'ims测试（sns逻辑相似，不单独测试）', !->
       can 'ims有一个相同（均非空）时，进行合并。\n', !(done) ->
         contact-lisi1 = {"names": ["李小四"], "ims":[{"type": "QQ", "account": "lisi111"}, {"type": "AOL", "account": "lisi111"}]}
         contact-lisi2 = {"names": ["李四"], "ims":[{"type": "QQ", "account": "lisi111"}, {"type": "飞信", "account": "lisi222"}]}

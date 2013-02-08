@@ -26,7 +26,7 @@ contact-merger =
     checked-contacts = []
     for contact in contacts
       contact.cid = Contact.create-cid owner.uid, ++owner.contacts-seq
-      check-and-merge-contacts contact, checked-contacts 
+      check-and-merge-contacts contact, checked-contacts, owner 
       checked-contacts.push contact 
 
 
@@ -48,11 +48,11 @@ select-distination = (c1, c2) ->
   c1 # TODO: 这里需要比较两个联系人的最后更新时间、最后联系时间、联系次数、等等进行确定。又或者和合并一样，需要外置规则。
 
 
-check-and-merge-contacts = !(checking-contact, checked-contacts) ->
+check-and-merge-contacts = !(checking-contact, checked-contacts, owner) ->
   for contact in checked-contacts
     continue if contact.merged-to # 不合并到已经被合并的用户
     continue if contact.cid in (checking-contact?.not-merge-with || []) # 不合并用户之前已经拒绝的合并
-    is-merging = should-contacts-be-merged contact, checking-contact
+    is-merging = should-contacts-be-merged contact, checking-contact, owner
     continue if is-merging is "NONE"
 
     distination = select-distination contact, checking-contact
@@ -66,11 +66,24 @@ should-contacts-be-merged = (-> # 使用闭包，避免重复计算direct-merge-
   # TODO：改用较为高效的数据结构（hash-table、B-tree等）存储所有的可能项（email、phone、im、sn），进行是否合并的查询。
     direct-merge-checkers =  _.keys Merge-Strategy.direct-merging
     pending-merge-checkers = _.keys Merge-Strategy.pending-merging
-    (c1, c2) ->
+    # [double-first-checkers, double-second-checkers] = get-double-checks!
+    (c1, c2, owner) ->
       return "NONE" if c1.merged-to or c2.merged-to # 不合并到已经合并的用户
       for checker in direct-merge-checkers
         for field in Merge-Strategy.direct-merging[checker]
           return "DIRECT" if Checkers[checker] c1[field], c2[field] 
+          
+      for check in Merge-Strategy.double-check
+        for field in check.first-check.fields
+          if Checkers[check.first-check.checker] c1[field], c2[field]
+            if Checkers[check.second-check.checker] c1, c2, field, owner
+              return "DIRECT" 
+            else
+              result = check.second-check.false-result
+              continue if result is 'NOT_DECIDED'
+              return result
+
+        return "NONE"
 
       for checker in pending-merge-checkers
         for field in Merge-Strategy.pending-merging[checker]
@@ -81,6 +94,12 @@ should-contacts-be-merged = (-> # 使用闭包，避免重复计算direct-merge-
     )() 
   
 # ---------------------------------↑ 性能热点 ↑----------------------------------------------- #
+
+get-double-checks = ->
+  for check in Merge-Strategy.double-check-direct-merging
+    first-checkers = util.union first-checkers check.first-checker
+    second-checkers = util.union second-checkers check.second-checker
+  [first-checkers, second-checkers]
 
 direct-merge-contacts = (source, distination) ->
   Info-Combiner.combine-contacts-info distination, source
