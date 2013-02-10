@@ -1,20 +1,3 @@
-<<<<<<< HEAD
-require! ['should', 'async', 
-          '../../bin/models/User',
-          '../../bin/servers-init'.init-mongo-client, 
-          '../../bin/servers-init'.shutdown-mongo-client,
-          '../../bin/util', '../test-helper']
-require! fqh: '../../bin/fast-query-helper', helper: './test-merging-helper'
-
-helper =
-  initial-test-environment: (callback) ->
-    (mongo-client, mongo-db) <-! init-mongo-client
-    <-! mongo-db.drop-collection 'users'
-    user-data = test-helper.load-user-data 'dump-user.json'
-    callback mongo-db, mongo-client, user-data
-
-  should-found-one-user-named: !(db, username, callback) ->
-=======
 require! ['should', 
           '../../bin/servers-init'.init-mongo-client, 
           '../../bin/servers-init'.shutdown-mongo-client, '../test-helper']
@@ -30,7 +13,6 @@ helper =
     callback mongo-db, mongo-client, user-data
 
   should-found-one-user-named: !(username, callback) ->
->>>>>>> temp
     (err, found-users) <-! db.users.find({name: username}).to-array
     found-users.length.should.eql 1
     found-user = found-users[0]
