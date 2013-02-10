@@ -2,19 +2,13 @@
  * Created by Wang, Qing. All rights reserved.
  */
  
-require! ['should', 'async', 
-          '../../src/models/User',
-          '../../src/servers-init'.init-mongo-client, 
-          '../../src/servers-init'.shutdown-mongo-client,
-          '../../src/util', '../test-helper']
-
-fqh = require '../../src/fast-query-helper'
+require! ['should', 
+          '../../bin/models/User',
+          '../../bin/servers-init'.shutdown-mongo-client]
+_ = require 'underscore'
+_(global).extend require './test-merging-helper'
 
 [db, client, user-data] = [null null null]
-
-multiple-times = 100 
-
-repeat-rate = 0.2 
 
 can = it # it在LiveScript中被作为缺省的参数，因此我们先置换为can
 
@@ -144,51 +138,15 @@ describe '联系人合并逻辑全面测试：', !->
         distination.pending-merges[0].pending-merge-from.should.eql source.cid
         source.pending-merges[0].pending-merge-to.should.eql distination.cid
         done!
-
+ 
   do
     (done) <-! after-each 
     <-! shutdown-mongo-client client
     done!
 
 
-initial-test-environment = (callback) ->
-  (mongo-client, mongo-db) <-! init-mongo-client
-  [db, client] := [mongo-db, mongo-client]
-  <-! db.drop-collection 'users'
-  user-data := test-helper.load-user-data 'dump-user.json'
+initial-test-environment = !(callback) ->
+  (mongo-db, mongo-client, data) <- initial-environment
+  [db, client, user-data] := [mongo-db, mongo-client, data]
   callback!
 
-should-found-one-user-named = !(username, callback) ->
-  (err, found-users) <-! db.users.find({name: username}).to-array
-  found-users.length.should.eql 1
-  found-user = found-users[0]
-  found-user.name.should.eql username
-  callback found-user
-
-should-one-contact-is-to = (contacts) ->
-  should-amount-of-to-eql contacts, 1
-  
-should-one-contact-is-from = (contacts) ->
-  should-amount-of-from-eql contacts, 1
-
-should-amount-of-to-eql = (contacts, amount-of-to) ->
-  tos = filter (.merged-to), contacts 
-  tos.length.should.eql amount-of-to
-
-should-amount-of-from-eql = (contacts, amount-of-from) ->
-  froms = filter (.merged-from), contacts 
-  froms.length.should.eql amount-of-from
-
-get-the-merged-contact = (contacts) ->
-  merged-contacts = filter (.merged-from), contacts 
-  merged-contacts[0]
-
-should-amount-of-contacts-has-pending-mergences-eql = (contacts, amount) ->
-  pending-merge-contacts = filter (.pending-merges.length), contacts
-  pending-merge-contacts.length.should.eql amount
-
-get-pending-merging-contacts = (contacts) ->
-  for contact in contacts
-    source = contact if contact?.pending-merges[0].pending-merge-to
-    distination = contact if contact?.pending-merges[0].pending-merge-from
-  [source, distination]

@@ -4,7 +4,7 @@
 
 require! [restify, './config/config'.mongo, 
           'mongodb'.MongoClient, 'mongodb'.Server]
-fqi = require './fast-query-index'
+fqh = require './fast-query-helper'
 
 init-mongo-client = !(callback) -> #mongo-client, db are used to return
   mongo-client = new MongoClient new Server mongo.host, mongo.port
@@ -12,7 +12,7 @@ init-mongo-client = !(callback) -> #mongo-client, db are used to return
   db = mongo-client.db(mongo.db)
   db.users = db.collection 'users'
   db.call-logs = db.collection 'call-log-statistic'
-  # <- fqi.init-communication-channels-maps db
+  # <- fqh.init-communication-channels-maps db
   callback mongo-client, db
 
 shutdown-mongo-client = !(mongo-client, callback) ->
