@@ -1,4 +1,4 @@
-require! ['../src/util', '../src/models/User']
+require! ['../bin/util', '../bin/models/User']
 _ = require 'underscore'
 
 helper =

@@ -1,0 +1,79 @@
+{
+    "name": "赵五",
+    "phones": [
+        {
+            "phoneNumber": "23456789",
+            "isActive": true
+        }
+    ],
+    "emails": [
+        "zhaowu@fake.com"
+    ],
+    "ims": [
+        {
+            "type": "QQ",
+            "account": "zhaowu111",
+            "isActive": true
+        },
+        {
+            "type": "AOL",
+            "account": "zhaowu222",
+            "isActive": true
+        }
+    ],
+    "sns": [
+        {
+            "snName": "豆瓣",
+            "accountName": "赵五豆"
+        }
+    ],
+    "addresses": [
+        "广州 大学城 中山大学 至善园 508"
+    ],
+    "tags": [
+        "程序员 设计师"
+    ],
+    "contacts": [
+        {
+            "names": [
+                "张大三"
+            ],
+            "phones": [
+                "34567890"
+            ],
+            "emails": [],
+            "ims": [
+                {
+                    "type": "QQ",
+                    "account": "zhangsan111"
+                }
+            ],
+            "sns": [],
+            "tags": []
+        },
+        {
+            "names": [
+                "张老三"
+            ],
+            "phones": [
+                "34567890"
+            ],
+            "emails": [],
+            "ims": [],
+            "sns": [],
+            "tags": []
+        },
+        {
+            "names": [
+                "李大四"
+            ],
+            "phones": [
+                "23456789"
+            ],
+            "emails": [],
+            "ims": [],
+            "sns": [],
+            "tags": []
+        }
+    ]
+}

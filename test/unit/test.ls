@@ -3,12 +3,12 @@
  */
  
 require! ['should', 'async', 
-          '../../src/models/User',
-          '../../src/servers-init'.init-mongo-client, 
-          '../../src/servers-init'.shutdown-mongo-client,
-          '../../src/util', '../test-helper']
+          '../../bin/models/User',
+          '../../bin/servers-init'.init-mongo-client, 
+          '../../bin/servers-init'.shutdown-mongo-client,
+          '../../bin/util', '../test-helper']
 
-fqh = require '../../src/fast-query-helper'
+fqh = require '../../bin/fast-query-helper'
 
 [db, client] = [null null]
 

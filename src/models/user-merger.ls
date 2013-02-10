@@ -32,4 +32,4 @@ re-evaluate-user-pending-mergences = !(db, existed-user) ->
   #TODO:
   console.log 'NOT IMPLEMENTED YET'
 
-module.exports = user-merger  
+module.exports = user-merger 
