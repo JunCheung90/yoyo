@@ -1,7 +1,6 @@
 require! ['should', 
           '../../bin/servers-init'.init-mongo-client, 
-          '../../bin/servers-init'.shutdown-mongo-client, 
-          '../test-helper']
+          '../../bin/servers-init'.shutdown-mongo-client, '../test-helper']
 
 db = null
 
