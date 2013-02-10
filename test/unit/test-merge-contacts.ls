@@ -2,6 +2,7 @@
  * Created by Wang, Qing. All rights reserved.
  */
  
+<<<<<<< HEAD:test/unit/test-merge-contacts.ls
 require! ['should', 'async', 
           '../../bin/models/User',
           '../../bin/servers-init'.init-mongo-client, 
@@ -11,6 +12,17 @@ require! fqh: '../../bin/fast-query-helper', h: './test-merging-helper'
 
 [db, client, user-data] = [null null null]
 
+=======
+require! ['should', 
+          '../../bin/models/User',
+          '../../bin/servers-init'.shutdown-mongo-client]
+_ = require 'underscore'
+_(global).extend require './test-merging-helper'
+
+[db, client, user-data] = [null null null]
+
+
+>>>>>>> temp:test/unit/test-merge-contacts.ls
 can = it # it在LiveScript中被作为缺省的参数，因此我们先置换为can
 
 describe '联系人合并逻辑全面测试：', !->
@@ -139,14 +151,23 @@ describe '联系人合并逻辑全面测试：', !->
         distination.pending-merges[0].pending-merge-from.should.eql source.cid
         source.pending-merges[0].pending-merge-to.should.eql distination.cid
         done!
-
+ 
   do
     (done) <-! after-each 
     <-! shutdown-mongo-client client
     done!
 
+<<<<<<< HEAD:test/unit/test-merge-contacts.ls
 initial-test-environment = (callback)->
   (mongo-db, mongo-client, data) <-! h.initial-test-environment
   [db, client, user-data] := [mongo-db, mongo-client, data]
   callback!
  
+=======
+
+initial-test-environment = !(callback) ->
+  (mongo-db, mongo-client, data) <- initial-environment
+  [db, client, user-data] := [mongo-db, mongo-client, data]
+  callback!
+
+>>>>>>> temp:test/unit/test-merge-contacts.ls
