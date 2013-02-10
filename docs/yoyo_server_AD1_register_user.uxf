@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="11.5.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.umlet.element.custom.InitialState</type>
+    <coordinates>
+      <x>230</x>
+      <y>120</y>
+      <w>20</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>i</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.Text</type>
+    <coordinates>
+      <x>370</x>
+      <y>20</y>
+      <w>230</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>*yoyo安装注册活动图*</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>210</x>
+      <y>110</y>
+      <w>50</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>30;70;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>600</x>
+      <y>110</y>
+      <w>110</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>整理注册数据
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.Text</type>
+    <coordinates>
+      <x>760</x>
+      <y>100</y>
+      <w>170</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>用户：SN数据比较关键
+联系人：群组信息、头像
+电话历史、短信历史
+其它通讯历史</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>600</x>
+      <y>460</y>
+      <w>200</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>注册（恢复）yoyo用户
+--
+生成新的yoyo用户
+或识别合并到已有yoyo用户</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>170</x>
+      <y>180</y>
+      <w>200</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>客户端清理contacts数据
+--
+根据策略标出疑似无用垃圾
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>600</x>
+      <y>560</y>
+      <w>270</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>生成yoyo用户的contacts
+服务端合并contacts （2）
+--
+1、生成每个contact的yoyo用户
+   或识别合并到已有yoyo用户
+2、绑定contact和user
+3、合并指向相同user的contacts
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>140</x>
+      <y>270</y>
+      <w>230</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>客户端合并contacts
+--
+按照策略找出疑似，合并结果为：
+1、直接合并：依然会上传到服务器
+2、推荐合并</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>600</x>
+      <y>190</y>
+      <w>260</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>服务端再次清理无用垃圾
+--
+1、确定需要移除的垃圾
+（无联系信息，或明显错误联系信息）
+2、清理结果为：
+2.1 直接移除：进入垃圾箱，可找回
+2.2 推荐移除：用户决定
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.Text</type>
+    <coordinates>
+      <x>130</x>
+      <y>110</y>
+      <w>100</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>yoyo安装完成
+第一次运行</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>230</x>
+      <y>390</y>
+      <w>140</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>上传注册数据</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>600</x>
+      <y>340</y>
+      <w>210</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>服务端合并contacts （1）
+--
+按照策略进一步合并：
+1、再次判定原有推荐合并
+2、发现新的合并</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>600</x>
+      <y>840</y>
+      <w>230</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>生成新的yoyo通讯录
+--
+1、保存旧通讯录
+2、去除、合并联系人
+3、更新联系人信息：
+    有趣信息、分组、头像、SN更新</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>600</x>
+      <y>710</y>
+      <w>200</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>挖掘联系人有趣信息
+--
+1、根据合并后的通讯录归纳、
+   挖掘有趣信息
+2、确定推荐排名
+3、更新群组信息
+4、确定yoyo头像</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>810</x>
+      <y>710</y>
+      <w>170</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>（独立进程）
+获取联系人SN更新
+--
+1、yoyo自动刷新
+    获取用户SN更新
+2、查询已获取的SN更新</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>140</x>
+      <y>730</y>
+      <w>230</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>展示yoyo有趣信息
+--
+1、给出诱惑、传播链接（短信 等）</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>600</x>
+      <y>970</y>
+      <w>140</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>返回yoyo通讯录</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>70</x>
+      <y>620</y>
+      <w>300</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>展示合并联系人结果
+--
+1、统计结果：直接合并、推荐合并、清理无用
+2、操作办法：如何恢复、如何接受/拒绝合并</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>170</x>
+      <y>490</y>
+      <w>200</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>展示教程
+--
+1、启动页面（yoyo、slogan）
+2、九宫格拨号演示
+3、SN观察演示
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>150</x>
+      <y>830</y>
+      <w>220</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>展示SN更新
+--
+1、统计结果：联系人SN更新的量</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>140</x>
+      <y>920</y>
+      <w>230</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>用户可开始使用yoyo
+--
+1、默认进入通讯九宫格（友讯）
+2、可切换至SN更新九宫格（友情）</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>210</x>
+      <y>200</y>
+      <w>50</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>30;70;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>260</x>
+      <y>320</y>
+      <w>50</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>30;70;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>260</x>
+      <y>550</y>
+      <w>50</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>30;70;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>260</x>
+      <y>660</y>
+      <w>50</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>30;70;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>260</x>
+      <y>760</y>
+      <w>50</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>30;70;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>260</x>
+      <y>850</y>
+      <w>50</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>30;70;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.FinalState</type>
+    <coordinates>
+      <x>280</x>
+      <y>1030</y>
+      <w>20</w>
+      <h>20</h>
+    </coordinates>
+    <panel_attributes>i</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>260</x>
+      <y>960</y>
+      <w>50</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>30;70;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>620</x>
+      <y>130</y>
+      <w>50</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>30;60;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>670</x>
+      <y>280</y>
+      <w>50</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>30;60;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>670</x>
+      <y>400</y>
+      <w>50</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>30;60;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>670</x>
+      <y>500</y>
+      <w>50</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>30;60;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>670</x>
+      <y>650</y>
+      <w>50</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>30;60;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>670</x>
+      <y>780</y>
+      <w>50</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>30;60;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>670</x>
+      <y>910</y>
+      <w>50</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>30;60;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>820</x>
+      <y>650</y>
+      <w>50</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>30;60;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>800</x>
+      <y>780</y>
+      <w>120</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>30;80;100;80;100;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>340</x>
+      <y>110</y>
+      <w>280</w>
+      <h>320</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>260;30;70;30;70;300;30;300</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>340</x>
+      <y>490</y>
+      <w>280</w>
+      <h>510</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-</panel_attributes>
+    <additional_attributes>30;30;210;30;210;490;260;490</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.Systemborder</type>
+    <coordinates>
+      <x>50</x>
+      <y>60</y>
+      <w>400</w>
+      <h>1010</h>
+    </coordinates>
+    <panel_attributes>topcenter:yoyo手机客户端
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.Systemborder</type>
+    <coordinates>
+      <x>450</x>
+      <y>60</y>
+      <w>550</w>
+      <h>1010</h>
+    </coordinates>
+    <panel_attributes>topcenter:yoyo服务器
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
