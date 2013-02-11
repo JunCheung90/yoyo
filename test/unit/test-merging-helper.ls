@@ -1,4 +1,4 @@
-require! ['should', 
+require! ['should', '../../bin/database'
           '../../bin/servers-init'.init-mongo-client, 
           '../../bin/servers-init'.shutdown-mongo-client, '../test-helper']
 
@@ -6,11 +6,11 @@ db = null
 
 helper =
   initial-environment: (callback) ->
-    (mongo-client, mongo-db) <-! init-mongo-client
-    <-! mongo-db.drop-collection 'users'
+    <-! init-mongo-client
+    db := database.db
+    <-! db.drop-collection 'users'
     user-data = test-helper.load-user-data 'dump-user.json'
-    db := mongo-db
-    callback mongo-db, mongo-client, user-data
+    callback user-data
 
   should-find-one-user-named: !(username, callback) ->
     (found-user) <-! should-find-one-user-with-cretiria {'name': username}
@@ -71,14 +71,6 @@ helper =
   should-be-pending-merge-pair: (a, b, attr) ->
     a.should.have.property('pendingMerges')
     a.pending-merges.length.should.be.greater-than 0
-    # a.should.have.pending-merges.with.length.be.great-than 0
-    # b?.pending-merges?.length
-    #   [a-to, a-from] = helper.get-pending-tos-and-froms a.pending-merges
-    #   b[attr] in a-to or b[attr] in a-from
-    # else
-    #   should.
-    # [1,2].should.have.length
-    # [1,2].length.should.be.greater-than 3
 
   get-pending-tos-and-froms: (pending-merges) ->
     pending-to = [p.pending-merge-to for p in pending-merges when p.pending-merge-to]

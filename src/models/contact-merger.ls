@@ -9,9 +9,9 @@ require! ['../util', './Checkers', './Info-Combiner', './User-Merger', './Contac
 contact-merger =
  # 算法参见 http://my.ss.sysu.edu.cn/wiki/pages/viewpage.action?pageId=113049608
  # 要先merge contact，然后再根据这个merge来新建user才对！
-  merge-contact-act-by-user-with-users-AND-merge-itself-within-contacts-of-the-same-owner: !(db, contact, owner, callback) ->
+  merge-contact-act-by-user-with-users-AND-merge-itself-within-contacts-of-the-same-owner: !(contact, owner, callback) ->
     contact-user = Contact.create-contact-user contact
-    (old-user, new-user) <-! User-Merger.create-user-then-merge-with-existed-user db, contact-user
+    (old-user, new-user) <-! User-Merger.create-user-then-merge-with-existed-user contact-user
     contact-act-by-user = new-user or old-user
     Contact.bind-contact-with-user contact, contact-act-by-user, owner
     if old-user # existing old user act as the contact, hence perhaps being repeat contacts 

@@ -1,17 +1,19 @@
-require! ['../bin/util', '../bin/models/User']
+require! ['../bin/util', '../bin/database', '../bin/models/User']
 _ = require 'underscore'
 
 helper =
-  create-and-check-user: !(db, json-file-name, user-name, callback) ->
-    helper.create-and-check-user-with-mulitple-repeat-contacts db, json-file-name, user-name, 0, 0, callback
+  create-and-check-user: !(json-file-name, user-name, callback) ->
+    helper.create-and-check-user-with-mulitple-repeat-contacts json-file-name, user-name, 0, 0, callback
 
-  create-and-check-user-with-mulitple-repeat-contacts: !(db, json-file-name, user-name, multiple-times, repeat-rate, callback)->
+  create-and-check-user-with-mulitple-repeat-contacts: !(json-file-name, user-name, multiple-times, repeat-rate, callback)->
     # 这里用require，会导致第二次load json时，直接用的是缓存，而不是重新load！！
     user-data = helper.load-user-data json-file-name
     non-repeat-contacts-amount = add-multiple-repeat-contacts user-data, multiple-times, repeat-rate
     # console.log "\\\\\\\\\\\\\\\\\\\\\\\ user-data.contacts \\\\\\\\\\\\\\\\\\\\\\\\\\n"
     # show-contacts user-data.contacts
-    (user) <-! User.create-user-with-contacts db, user-data
+
+    db = database.get-db!
+    (user) <-! User.create-user-with-contacts user-data
     (err, found-users) <-! db.users.find({name: user-name}).to-array
     found-users.length.should.eql 1
     found-users[0].name.should.eql user-name
@@ -44,7 +46,8 @@ helper =
 
     callback!
 
-  check-user-contacts: !(db, user-name, amount-of-has-contacts, amount-of-as-contacts, callback) ->
+  check-user-contacts: !(user-name, amount-of-has-contacts, amount-of-as-contacts, callback) ->
+    db = database.get-db!
     (err, found-users) <-! db.users.find({name: user-name}).to-array
     found-users.length.should.eql 1
     found-user = found-users[0]

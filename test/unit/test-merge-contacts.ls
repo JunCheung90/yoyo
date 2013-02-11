@@ -3,12 +3,12 @@
  */
  
 require! ['should', 
-          '../../bin/models/User',
+          '../../bin/models/User', '../../bin/database',
           '../../bin/servers-init'.shutdown-mongo-client]
 _ = require 'underscore'
 _(global).extend require './test-merging-helper'
 
-[db, client, user-data] = [null null null]
+user-data = null
 
 
 can = it # it在LiveScript中被作为缺省的参数，因此我们先置换为can
@@ -25,8 +25,8 @@ describe '联系人合并逻辑全面测试：', !->
         contact-lisi2 = {"names": ["李四"], "phones":["345", "234"]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
-        (user) <-! User.create-user-with-contacts db, user-data
-        (found-user) <-! should-found-one-user-named '张三'
+        (user) <-! User.create-user-with-contacts user-data
+        (found-user) <-! should-find-one-user-named '张三'
         found-user.contacts.length.should.eql 2
         should-one-contact-is-to found-user.contacts
         should-one-contact-is-from found-user.contacts
@@ -40,8 +40,8 @@ describe '联系人合并逻辑全面测试：', !->
         contact-lisi2 = {"names": ["李四"], "phones":[]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
-        (user) <-! User.create-user-with-contacts db, user-data
-        (found-user) <-! should-found-one-user-named '张三'
+        (user) <-! User.create-user-with-contacts user-data
+        (found-user) <-! should-find-one-user-named '张三'
         found-user.contacts.length.should.eql 2
         should-amount-of-to-eql found-user.contacts, 0
         should-amount-of-from-eql found-user.contacts, 0
@@ -52,8 +52,8 @@ describe '联系人合并逻辑全面测试：', !->
         contact-lisi2 = {"names": ["李四"], "phones":["1", "4"]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
-        (user) <-! User.create-user-with-contacts db, user-data
-        (found-user) <-! should-found-one-user-named '张三'
+        (user) <-! User.create-user-with-contacts user-data
+        (found-user) <-! should-find-one-user-named '张三'
         found-user.contacts.length.should.eql 2
         should-amount-of-to-eql found-user.contacts, 0
         should-amount-of-from-eql found-user.contacts, 0
@@ -65,8 +65,8 @@ describe '联系人合并逻辑全面测试：', !->
         contact-lisi2 = {"names": ["李四"], "ims":[{"type": "QQ", "account": "lisi111"}, {"type": "飞信", "account": "lisi222"}]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
-        (user) <-! User.create-user-with-contacts db, user-data
-        (found-user) <-! should-found-one-user-named '张三'
+        (user) <-! User.create-user-with-contacts user-data
+        (found-user) <-! should-find-one-user-named '张三'
         found-user.contacts.length.should.eql 2
         should-one-contact-is-to found-user.contacts
         should-one-contact-is-from found-user.contacts
@@ -80,8 +80,8 @@ describe '联系人合并逻辑全面测试：', !->
         contact-lisi2 = {"names": ["李四"], "ims":[]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
-        (user) <-! User.create-user-with-contacts db, user-data
-        (found-user) <-! should-found-one-user-named '张三'
+        (user) <-! User.create-user-with-contacts user-data
+        (found-user) <-! should-find-one-user-named '张三'
         found-user.contacts.length.should.eql 2
         should-amount-of-to-eql found-user.contacts, 0
         should-amount-of-from-eql found-user.contacts, 0
@@ -92,8 +92,8 @@ describe '联系人合并逻辑全面测试：', !->
         contact-lisi2 = {"names": ["李四"], "ims":[{"type": "QQ", "account": "lisi222"}, {"type": "飞信", "account": "lisi222"}]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
-        (user) <-! User.create-user-with-contacts db, user-data
-        (found-user) <-! should-found-one-user-named '张三'
+        (user) <-! User.create-user-with-contacts user-data
+        (found-user) <-! should-find-one-user-named '张三'
         found-user.contacts.length.should.eql 2
         should-amount-of-to-eql found-user.contacts, 0
         should-amount-of-from-eql found-user.contacts, 0
@@ -104,8 +104,8 @@ describe '联系人合并逻辑全面测试：', !->
         contact-lisi2 = {"names": ["李四"], "ims":[{"type": "AOL", "account": "lisi111"}]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
-        (user) <-! User.create-user-with-contacts db, user-data
-        (found-user) <-! should-found-one-user-named '张三'
+        (user) <-! User.create-user-with-contacts user-data
+        (found-user) <-! should-find-one-user-named '张三'
         found-user.contacts.length.should.eql 2
         should-amount-of-to-eql found-user.contacts, 0
         should-amount-of-from-eql found-user.contacts, 0
@@ -116,8 +116,8 @@ describe '联系人合并逻辑全面测试：', !->
         contact-lisi2 = {"names": ["李四"], "ims":[{"type": "QQ", "account": "lisi222"}]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
-        (user) <-! User.create-user-with-contacts db, user-data
-        (found-user) <-! should-found-one-user-named '张三'
+        (user) <-! User.create-user-with-contacts user-data
+        (found-user) <-! should-find-one-user-named '张三'
         found-user.contacts.length.should.eql 2
         should-amount-of-to-eql found-user.contacts, 0
         should-amount-of-from-eql found-user.contacts, 0
@@ -130,8 +130,8 @@ describe '联系人合并逻辑全面测试：', !->
         contact-lisi2 = {"names": ["李四"], "phones":["345"]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
-        (user) <-! User.create-user-with-contacts db, user-data
-        (found-user) <-! should-found-one-user-named '张三'
+        (user) <-! User.create-user-with-contacts user-data
+        (found-user) <-! should-find-one-user-named '张三'
         found-user.contacts.length.should.eql 2
         should-amount-of-contacts-has-pending-mergences-eql found-user.contacts, 2
         [source, distination] = get-pending-merging-contacts found-user.contacts
@@ -141,12 +141,12 @@ describe '联系人合并逻辑全面测试：', !->
  
   do
     (done) <-! after-each 
-    <-! shutdown-mongo-client client
+    <-! shutdown-mongo-client
     done!
 
 
 initial-test-environment = !(callback) ->
-  (mongo-db, mongo-client, data) <- initial-environment
-  [db, client, user-data] := [mongo-db, mongo-client, data]
+  (data) <- initial-environment
+  user-data := data
   callback!
 

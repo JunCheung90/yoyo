@@ -2,9 +2,9 @@ require! fqh: '../fast-query-helper'
 require! ['./User', './Info-Combiner', '../util']
 
 user-merger =
-  create-user-then-merge-with-existed-user: !(db, user, callback) -> 
+  create-user-then-merge-with-existed-user: !(user, callback) -> 
     # 算法参见 http://my.ss.sysu.edu.cn/wiki/pages/viewpage.action?pageId=113049608
-    (existed-user, is-direct-merge) <-! fqh.get-existed-repeat-user db, user 
+    (existed-user, is-direct-merge) <-! fqh.get-existed-repeat-user user 
     if existed-user
       throw new Error "Can't merge a user: #{user.name} to an existed-user: #{existed-user.name} already being merged to others #{existed-user.merged-to}" if existed-user.merged-to
       throw new Error "Can't merge a already mereged user: #{user.name}, merged-to: #{user.merged-to} to an existed-user: #{existed-user.name}" if user.merged-to
@@ -22,7 +22,7 @@ direct-merge-users = (old-user, new-user, callback) ->
   Info-Combiner.combine-users-mergences  old-user, new-user if new-user.uid # new-user为已有用户，否则是希望新建的用户。对于希望新建的用户如果要merge到其它用户，不用新建，直接copy信息就好了。
   User.add-user-mergence-info old-user, new-user
   util.event.emit 'user-info-updated', old-user, callback
-  # User.re-evaluate-user-pending-mergences db, old-user if old-user?.pending-merges?.length # 是否应该回调?
+  # User.re-evaluate-user-pending-mergences old-user if old-user?.pending-merges?.length # 是否应该回调?
   
 
 pendings-merge-users = (old-user, new-user, callback) ->

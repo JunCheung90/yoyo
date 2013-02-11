@@ -2,7 +2,7 @@
  * Created by Wang, Qing. All rights reserved.
  */
 
-require! [fs, 'node-uuid', async]
+require! [fs, 'node-uuid', async, './database']
 _ = require 'underscore'
 
 util =
@@ -26,7 +26,7 @@ util =
   create-map-on-attribute: (obj-array, attr)->
     map = {} 
     if _.is-array obj-array
-      for obj in obj-array
+      for obj in obj-array  
         continue if !obj[attr]
         map[obj[attr]] ||= []
         map[obj[attr]].push obj
@@ -40,7 +40,8 @@ util =
   is-late: (t-str1, t-str2) ->
     !is-early t-str1, t-str2
 
-  insert-multiple-docs: (db, collection, docs, callback) ->
+  insert-multiple-docs: (collection, docs, callback) ->
+    db = database.get-db!
     if docs?.length > 0 then
       (err, docs) <-! db[collection].insert docs
       throw new Error err if err
@@ -48,7 +49,8 @@ util =
     else
       callback! 
 
-  update-multiple-docs: (db, collection, docs, callback) ->
+  update-multiple-docs: (collection, docs, callback) ->
+    db = database.get-db!
     if docs?.length > 0 then
       (err) <-! async.for-each docs, !(doc, next) ->
         (err, docs) <-! db[collection].save doc

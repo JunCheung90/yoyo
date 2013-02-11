@@ -7,21 +7,21 @@ require! common: './user-contact-common'
 
 # ！！！注意，在async-create-unsaved-contacts-users和save-contacts-users之间，有可能新的User来create contacts，
 # 其contacts中有和当前用户相同的user，因此会造成user的重复。所以今后必须有独立进程定期清理合并user。
-create-contacts = !(db, contacts-owner, callback) ->
-  (to-create-users, to-update-users) <-! async-create-unsaved-contacts-users db, contacts-owner
+create-contacts = !(contacts-owner, callback) ->
+  (to-create-users, to-update-users) <-! async-create-unsaved-contacts-users contacts-owner
   # 异步create时，判断merge-to和merge-from会有问题，需要整理。
   clean-merge-to-and-from contacts-owner.contacts 
   clean-merge-to-and-from to-create-users
   callback to-create-users, to-update-users
 
-async-create-unsaved-contacts-users = !(db, owner, callback) ->
+async-create-unsaved-contacts-users = !(owner, callback) ->
   to-create-contact-users = []
   to-update-contact-users = []
   create-and-merge-contacts-before-create-users owner, owner.contacts
   merged-contacts = get-merged-contacts owner.contacts
   (err) <-! async.for-each merged-contacts, !(contact, next) -> # 为了性能异步并发
     (!(contact) -> merge-contact-act-by-user-with-users-AND-merge-itself-within-contacts-of-the-same-owner \
-      db, contact, owner, to-create-contact-users, to-update-contact-users, next
+      contact, owner, to-create-contact-users, to-update-contact-users, next
     )(contact)
   throw new Error err if err
   callback to-create-contact-users, to-update-contact-users
@@ -33,8 +33,8 @@ get-merged-contacts = (contacts) ->
     merged-contacts = []
 
 merge-contact-act-by-user-with-users-AND-merge-itself-within-contacts-of-the-same-owner = \
-(db, contact, owner, to-create-contact-users, to-update-contact-users, callback) ->
-  (old-contact-user, new-contact-user) <-! Contact-Merger.merge-contact-act-by-user-with-users-AND-merge-itself-within-contacts-of-the-same-owner db, contact, owner
+(contact, owner, to-create-contact-users, to-update-contact-users, callback) ->
+  (old-contact-user, new-contact-user) <-! Contact-Merger.merge-contact-act-by-user-with-users-AND-merge-itself-within-contacts-of-the-same-owner contact, owner
   to-update-contact-users.push old-contact-user if old-contact-user
   to-create-contact-users.push new-contact-user if new-contact-user
   callback!   

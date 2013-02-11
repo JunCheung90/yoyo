@@ -3,12 +3,12 @@
  */
  
 require! ['should', 
-          '../../bin/models/User',
+          '../../bin/models/User', '../../bin/database',
           '../../bin/servers-init'.shutdown-mongo-client]
 _ = require 'underscore'
 _(global).extend require './test-merging-helper'
 
-[db, client, user-data] = [null null null]
+user-data = null
 
 can = it # it在LiveScript中被作为缺省的参数，因此我们先置换为can
 
@@ -37,22 +37,22 @@ describe 're-evaluate-user-pending-mergences测试：', !->
  
   do
     (done) <-! after-each 
-    <-! shutdown-mongo-client client
+    <-! shutdown-mongo-client
     done!
 
 
 initial-test-environment = !(callback) ->
-  (mongo-db, mongo-client, data) <- initial-environment
-  [db, client, user-data] := [mongo-db, mongo-client, data]
+  (data) <- initial-environment
+  user-data := data
   callback!
 
 create-zhangsan-with-pending-merging-contacts-lisi-and-lixiaosi = !(callback) ->
     contact-lisi1 = {"names": ["李小四"], "phones":["123", "234"]}
     contact-lisi2 = {"names": ["李大四"], "phones":["345"]}
     user-data.contacts ++= [contact-lisi1, contact-lisi2]
-    (user) <-! User.create-user-with-contacts db, user-data
+    (user) <-! User.create-user-with-contacts user-data
     callback user
 
 create-li-si-with-phones-of-both-li-da-si-and-li-xiao-si = !(callback) ->
-  (user) <-! User.create-user-with-contacts db, {name: '李四', phones: [{phone-number:'123'}, {phone-number:'345'}]}
+  (user) <-! User.create-user-with-contacts {name: '李四', phones: [{phone-number:'123'}, {phone-number:'345'}]}
   callback user
