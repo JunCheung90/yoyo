@@ -65,16 +65,21 @@ helper =
       distination = contact if contact?.pending-merges[0].pending-merge-from
     [source, distination]
 
-  should-be-pending-merge-users-pair: (a, b) ->
-    should-be-pending-merge-pair a, b, 'uid'
-
-  should-be-pending-merge-pair: (a, b, attr) ->
-    a.should.have.property('pendingMerges')
-    a.pending-merges.length.should.be.greater-than 0
-
   get-pending-tos-and-froms: (pending-merges) ->
     pending-to = [p.pending-merge-to for p in pending-merges when p.pending-merge-to]
     pending-from = [p.pending-merge-from for p in pending-merges when p.pending-merge-from]
     [pending-to, pending-from]
+
+  should-be-a-pair-of-pending-merge-users: !(source, distination) ->
+    should-be-pending-merge-pair source, distination,'uid'
+
+  should-be-a-pair-of-pending-merge-contacts: !(source, distination) ->
+    should-be-pending-merge-pair source, distination,'cid'
+
+  should-be-pending-merge-pair: !(source, distination, id-attr) ->
+    if source.pending-merges[0].pending-merge-from
+      [soure, distination] = [distination, source]
+    distination.pending-merges[0].pending-merge-from.should.eql source[id-attr]
+    source.pending-merges[0].pending-merge-to.should.eql distination[id-attr]
 
 module.exports = helper

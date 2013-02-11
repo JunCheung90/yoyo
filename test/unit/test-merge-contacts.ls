@@ -125,18 +125,22 @@ describe '联系人合并逻辑全面测试：', !->
 
   describe '推荐合并（pending-merging）逻辑测试', !->
     describe 'names测试', !->
-      can 'names有一个类似时（李小四 vs. 李四），推荐合并。\n', !(done) ->
+      can 'names有一个类似时（李小四 vs. 李大四），推荐合并联系人，并推荐合并对应联系人用户。\n', !(done) ->
         contact-lisi1 = {"names": ["李小四"], "phones":["123", "234"]}
-        contact-lisi2 = {"names": ["李四"], "phones":["345"]}
+        contact-lisi2 = {"names": ["李大四"], "phones":["345"]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
         (user) <-! User.create-user-with-contacts user-data
-        (found-user) <-! should-find-one-user-named '张三'
-        found-user.contacts.length.should.eql 2
-        should-amount-of-contacts-has-pending-mergences-eql found-user.contacts, 2
-        [source, distination] = get-pending-merging-contacts found-user.contacts
-        distination.pending-merges[0].pending-merge-from.should.eql source.cid
-        source.pending-merges[0].pending-merge-to.should.eql distination.cid
+        (users) <-! should-find-all-users-amount-be 3
+        (zhangsan) <-! should-find-one-user-named '张三'
+        zhangsan.contacts.should.have.length 2
+        should-amount-of-contacts-has-pending-mergences-eql zhangsan.contacts, 2
+        [source, distination] = get-pending-merging-contacts zhangsan.contacts
+        should-be-a-pair-of-pending-merge-contacts source, distination
+
+        (li-da-si) <-! should-find-one-user-with-nickname '李四'
+        (li-xiao-si) <-! should-find-one-user-with-nickname '李小四'
+        should-be-a-pair-of-pending-merge-users li-da-si, li-xiao-si
         done!
  
   do
@@ -144,9 +148,7 @@ describe '联系人合并逻辑全面测试：', !->
     <-! shutdown-mongo-client
     done!
 
-
 initial-test-environment = !(callback) ->
   (data) <- initial-environment
   user-data := data
   callback!
-

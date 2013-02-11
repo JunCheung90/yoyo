@@ -27,7 +27,7 @@ create-user-with-contacts = !(user-data, callback)->
   callback contacts-owner
 
 build-user-basic-info = !(user)->
-  current = new Date!.get-time!
+  current = new Date!.get-time! 
   user.is-registered = true
   user.last-modified-date = current
   user.merge-to = null
@@ -41,11 +41,11 @@ create-default-system-avatar = (user) ->
   #TODO:
  
 create-or-update-user-contacts = !(user, callback) ->
-  if user.is-person ||= is-person user # 人类
+  if user.is-person ||= is-person user and user?.contacts?.length # 人类，有联系人
     (to-create-users, to-update-users) <-! Contact.create-contacts user # 联系人更新（识别为user，或创建为user）后，方回调。
     callback to-create-users, to-update-users
   else # 单位
-    callback null, null
+    callback [], []
 
 get-api-keys = !(user, callback) ->
   if user.is-person 
@@ -102,9 +102,9 @@ re-evaluate-user-pending-mergences = !(user, callback) ->
   #TODO:
   db = database.get-db!
   console.log 'NOT IMPLEMENTED YET'
-  callback!
+  callback user
 
 
 
 (exports ? this) <<< {create-user-with-contacts, add-user-mergence-info,\
- re-evaluate-user-pending-mergences, update-user}  
+ re-evaluate-user-pending-mergences, update-user}

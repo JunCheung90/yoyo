@@ -81,7 +81,6 @@ fqh =
     throw new Error err if err
     callback users
     
-
   get-existed-contact-users: (contact, callback) ->
     phones = contact.phones or []
     emails = contact.emails or []

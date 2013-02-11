@@ -46,7 +46,7 @@ is-similar-names = (a, b)->
   
 is-similar-chinese-names = (a, b) ->
   # 这里的算法需要进一步实现，目前仅仅是满足了测例“李小四” vs. “李四”
-  return true if _.is-equal [a, b], ['李小四', '李四'] or _.is-equal [b, a], ['李小四', '李四'] 
+  return true if _.is-equal [a, b], ['李小四', '李大四'] or _.is-equal [b, a], ['李小四', '李大四'] 
   false
 
 

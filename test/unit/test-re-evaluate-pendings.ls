@@ -24,12 +24,12 @@ describe 're-evaluate-user-pending-mergences测试：', !->
         (user) <- create-zhangsan-with-pending-merging-contacts-lisi-and-lixiaosi
         (li-da-si) <-! should-find-one-user-with-nickname '李大四'
         (li-xiao-si) <-! should-find-one-user-with-nickname '李小四'
-        should-be-pending-merge-users-pair li-da-si, li-xiao-si
         
         (li-si) <-! create-li-si-with-phones-of-both-li-da-si-and-li-xiao-si
         (users) <-! should-find-all-users-amount-be 3
         (li-da-si) <-! should-find-one-user-with-nickname '李大四'
         (li-xiao-si) <-! should-find-one-user-with-nickname '李小四'
+        # should-be-a-pair-of-pending-merge-users li-da-si, li-xiao-si
         # should-be-merged-pair li-da-si, li-xiao-si
         # should-has-not-pending-merges li-da-si
         # should-has-not-pending-merges li-xiao-si

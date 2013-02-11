@@ -9,6 +9,7 @@ require! common: './user-contact-common'
 # 其contacts中有和当前用户相同的user，因此会造成user的重复。所以今后必须有独立进程定期清理合并user。
 create-contacts = !(contacts-owner, callback) ->
   (to-create-users, to-update-users) <-! async-create-unsaved-contacts-users contacts-owner
+  remove-contacts-volatile-pending-merges contacts-owner.contacts 
   # 异步create时，判断merge-to和merge-from会有问题，需要整理。
   clean-merge-to-and-from contacts-owner.contacts 
   clean-merge-to-and-from to-create-users
@@ -19,9 +20,10 @@ async-create-unsaved-contacts-users = !(owner, callback) ->
   to-update-contact-users = []
   create-and-merge-contacts-before-create-users owner, owner.contacts
   merged-contacts = get-merged-contacts owner.contacts
+  contact-user-creator = contact-user-creator-factory!
   (err) <-! async.for-each merged-contacts, !(contact, next) -> # 为了性能异步并发
-    (!(contact) -> merge-contact-act-by-user-with-users-AND-merge-itself-within-contacts-of-the-same-owner \
-      contact, owner, to-create-contact-users, to-update-contact-users, next
+    (!(contact) -> merge-contact-act-by-user-with-existed-users \
+      contact, owner, to-create-contact-users, to-update-contact-users, contact-user-creator, next
     )(contact)
   throw new Error err if err
   callback to-create-contact-users, to-update-contact-users
@@ -32,9 +34,10 @@ get-merged-contacts = (contacts) ->
   else
     merged-contacts = []
 
-merge-contact-act-by-user-with-users-AND-merge-itself-within-contacts-of-the-same-owner = \
-(contact, owner, to-create-contact-users, to-update-contact-users, callback) ->
-  (old-contact-user, new-contact-user) <-! Contact-Merger.merge-contact-act-by-user-with-users-AND-merge-itself-within-contacts-of-the-same-owner contact, owner
+merge-contact-act-by-user-with-existed-users = \
+(contact, owner, to-create-contact-users, to-update-contact-users, contact-user-creator, callback) ->
+  contact-user = create-contact-user contact, contact-user-creator
+  (old-contact-user, new-contact-user) <-! Contact-Merger.merge-contact-act-by-user-with-existed-users contact, contact-user, owner
   to-update-contact-users.push old-contact-user if old-contact-user
   to-create-contact-users.push new-contact-user if new-contact-user
   callback!   
@@ -52,16 +55,40 @@ clean-merge-to-and-from = !(users) ->
 add-contact-mergence-info = (old-contact, new-contact) ->
   common.add-mergence-info old-contact, new-contact, 'cid'
 
-create-contact-user = (contact) ->
-  user = {} <<< contact{emails, ims, sns}
-  user.uid = util.get-UUid! 
-  user.is-registered = false
-  user.nicknames = contact.names
-  if contact?.phones?.length
-    user.phones = []
-    for phone in contact.phones
-      user.phones.push {phone-number: phone}
+$C = util.to-camel-case 
+create-contact-user = (contact, contact-user-creator) ->
+  user = contact-user-creator contact
+  if has-volatile-pendign-merge contact
+    user.pending-merges ||= []
+    debugger
+    for p in contact.__pending-merges
+      if p.pending-merge-to
+        user-p-to = contact-user-creator p.pending-merge-to
+        user-p-to.pending-merges ||= []
+        user.pending-merges.push {($C 'pending-merge-to'): user-p-to.uid, ($C 'is-accepted'): false}
+        user-p-to.pending-merges.push {($C 'pending-merge-from'): user.uid, ($C 'is-accepted'): false}
+      # else if p.pending-merge-from
+      #   user-p-from = contact-user-creator p.pending-merge-from
+      #   user-p-from.pending-merges ||= []
+      #   user.pending-merges.push {($C 'pending-merge-from'): user-p-from.uid, ($C 'is-accepted'): false}
+      #   user-p-from.pending-merges.push {($C 'pending-merge-to'): user.uid, ($C 'is-accepted'): false}
   user
+
+contact-user-creator-factory = -> 
+  contact-user-map = {}
+  (contact) ->
+    user = contact-user-map[contact.cid]
+    if !user
+      user = {} <<< contact{emails, ims, sns}
+      user.uid = util.get-UUid! 
+      user.is-registered = false
+      user.nicknames = contact.names
+      if contact?.phones?.length
+        user.phones = []
+        for phone in contact.phones
+          user.phones.push {phone-number: phone}
+      contact-user-map[contact.cid] = user
+    user
 
 bind-contact-with-user = !(contact, user, owner) ->
   contact.act-by-user = user.uid
@@ -86,6 +113,24 @@ get-contact = (contacts, cid) ->
   for contact in contacts
     return contact if contact.cid is cid
 
+# volatile pending merge用来帮助生成对应的user，并加上pending merge。在持久化时必须去掉。
+add-volatile-pending-merge = !(source, distination) ->
+  source.__pending-merges ||= []
+  distination.__pending-merges ||= []
+  source.__pending-merges.push {($C 'pending-merge-to'): distination}
+  distination.__pending-merges.push {($C 'pending-merge-from'): source}
+
+remove-contacts-volatile-pending-merges = !(contacts) ->
+  for contact in contacts
+    remove-volatile-pending-merge contact
+
+remove-volatile-pending-merge = !(contact) ->
+  delete contact.__pending-merges
+
+has-volatile-pendign-merge = (contact) ->
+  contact?.__pending-merges?.length
+
 (exports ? this) <<< \
 {create-contacts, add-contact-mergence-info, get-merge-to-contact,
-create-contact-user, bind-contact-with-user, create-cid}
+create-contact-user, bind-contact-with-user, create-cid, \
+add-volatile-pending-merge, remove-volatile-pending-merge}
