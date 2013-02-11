@@ -24,7 +24,6 @@ describe 'mongoDb版注册用户：识别用户，绑定用户（User）和联�
     (mongo-client, mongo-db) <-! init-mongo-client
     [db, client] := [mongo-db, mongo-client]
     <-! db.drop-collection 'users' 
-    <- fqh.init-communication-channels-maps db
     done! 
 
   can '创建User张三，张三有2个Contacts，作为0人的Contact。\n', !(done) ->

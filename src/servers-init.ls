@@ -3,7 +3,7 @@
  */
 
 require! [restify, './config/config'.mongo, 
-          'mongodb'.MongoClient, 'mongodb'.Server]
+          'mongodb'.MongoClient, 'mongodb'.Server, './util', './models/User']
 fqh = require './fast-query-helper'
 
 init-mongo-client = !(callback) -> #mongo-client, db are used to return
@@ -13,6 +13,7 @@ init-mongo-client = !(callback) -> #mongo-client, db are used to return
   db.users = db.collection 'users'
   db.call-logs = db.collection 'call-log-statistic'
   # <- fqh.init-communication-channels-maps db
+  util.event.on 'user-info-updated', User.re-evaluate-user-pending-mergences
   callback mongo-client, db
 
 shutdown-mongo-client = !(mongo-client, callback) ->

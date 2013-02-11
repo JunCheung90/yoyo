@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="11.5.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>120</x>
+      <y>230</y>
+      <w>170</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>a、b无合并
+--
+没有merge-to/from
+也没有pending merges</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>320</x>
+      <y>370</y>
+      <w>130</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>a、b直接Merge
+--
+b直接合并到a
+-.
+a有merge-from
+b有merge-to</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>590</x>
+      <y>550</y>
+      <w>140</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>a、b真正合并了
+--
+b被舍弃，不再出现在
+contacts列表里面
+-.
+a的merge-from也
+清除了b
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>400</x>
+      <y>550</y>
+      <w>170</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>a、b不能够合并
+--
+a、b各自回到独立
+-.
+a、b的not-merge-with
+记录了对方
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>420</x>
+      <y>350</y>
+      <w>306</w>
+      <h>220</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+用户使用A若干次
+或者若干时间后
+（可配置策略）</panel_attributes>
+    <additional_attributes>230;200;230;50;30;50</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>120</x>
+      <y>560</y>
+      <w>170</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>a、b推荐合并
+--
+推荐合并B到A
+-.
+a、b的pending-merges
+有一条相关记录
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>250</x>
+      <y>430</y>
+      <w>142</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+ 用户确认合并</panel_attributes>
+    <additional_attributes>80;30;80;150;40;150</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>260</x>
+      <y>570</y>
+      <w>160</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+用户拒绝合并</panel_attributes>
+    <additional_attributes>140;50;30;50</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>340</x>
+      <y>430</y>
+      <w>142</w>
+      <h>140</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+  用户反悔合并</panel_attributes>
+    <additional_attributes>80;120;80;80;80;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>420</x>
+      <y>380</y>
+      <w>172</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+用户重新合并</panel_attributes>
+    <additional_attributes>30;50;110;50;110;170</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>260</x>
+      <y>230</y>
+      <w>162</w>
+      <h>160</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+用户手动合并</panel_attributes>
+    <additional_attributes>100;140;100;50;30;50</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>70</x>
+      <y>280</y>
+      <w>158</w>
+      <h>300</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+服务端推荐合并
+（a、b不同User）
+fg=blue
+</panel_attributes>
+    <additional_attributes>80;280;80;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>140</x>
+      <y>280</y>
+      <w>200</w>
+      <h>154</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+服务端直接合并
+（a、b同一个User）
+fg=blue</panel_attributes>
+    <additional_attributes>180;110;90;110;90;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.Text</type>
+    <coordinates>
+      <x>670</x>
+      <y>80</y>
+      <w>270</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>*Contacts与对应Users的合并状态变迁图*</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>860</x>
+      <y>280</y>
+      <w>170</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>A、B无合并
+--
+没有merge-to/from
+也没有pending merges
+fg=blu</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>820</x>
+      <y>330</y>
+      <w>130</w>
+      <h>250</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+自动推荐合并
+
+fg=blue</panel_attributes>
+    <additional_attributes>70;230;70;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1000</x>
+      <y>250</y>
+      <w>290</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+审核直接合并
+fg=red</panel_attributes>
+    <additional_attributes>270;50;30;50</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>1270</x>
+      <y>270</y>
+      <w>130</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>A、B直接Merge
+--
+B直接合并到A
+-.
+A有merge-from
+B有merge-to</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>1260</x>
+      <y>570</y>
+      <w>170</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>A、B不能够合并
+--
+A、B各自回到独立
+-.
+A、B的not-merge-with
+记录了对方
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.State</type>
+    <coordinates>
+      <x>850</x>
+      <y>560</y>
+      <w>170</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>A、B推荐合并
+--
+推荐合并B到A
+-.
+A、B的pending-merges
+有一条相关记录
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.Text</type>
+    <coordinates>
+      <x>930</x>
+      <y>420</y>
+      <w>230</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>1、User信息更新时：
+  1.1 用户更新自己的信息
+  1.2 从Contact信息中抽取上来
+·
+2、YoYo运营数据维护时：
+  1.1 自动数据维护程序整理用户
+fg=blue
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1290</x>
+      <y>330</y>
+      <w>142</w>
+      <h>260</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+·
+·
+
+
+
+审核取消合并
+fg=red</panel_attributes>
+    <additional_attributes>80;240;80;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>1230</x>
+      <y>330</y>
+      <w>142</w>
+      <h>260</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+审核重新合并
+fg=red</panel_attributes>
+    <additional_attributes>80;30;80;240</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>990</x>
+      <y>550</y>
+      <w>290</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+审核否定合并
+fg=red</panel_attributes>
+    <additional_attributes>270;50;30;50</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>910</x>
+      <y>270</y>
+      <w>622</w>
+      <h>450</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+审核肯定合并
+fg=red</panel_attributes>
+    <additional_attributes>490;30;560;30;560;430;30;430;30;380</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>390</x>
+      <y>210</y>
+      <w>950</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>lt=.&gt;</panel_attributes>
+    <additional_attributes>930;60;930;30;30;30;30;160</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.Text</type>
+    <coordinates>
+      <x>1050</x>
+      <y>330</y>
+      <w>260</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>fg=red
+*                   审核合并*
+*用户永远不会自动直接合并*
+一定要经由审核（可以是管理员操作，
+也可以是yoyo独立进程)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>160</x>
+      <y>620</y>
+      <w>740</w>
+      <h>170</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.</panel_attributes>
+    <additional_attributes>720;30;720;150;30;150;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>700</x>
+      <y>550</y>
+      <w>170</w>
+      <h>94</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.
+用户手动合并的
+a、b不同User
+fg=gray
+</panel_attributes>
+    <additional_attributes>150;50;30;50</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.Systemborder</type>
+    <coordinates>
+      <x>800</x>
+      <y>130</y>
+      <w>720</w>
+      <h>720</h>
+    </coordinates>
+    <panel_attributes>topcenter:*User（在服务端）*</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.Systemborder</type>
+    <coordinates>
+      <x>90</x>
+      <y>130</y>
+      <w>710</w>
+      <h>720</h>
+    </coordinates>
+    <panel_attributes>topcenter:*Contact （在客户端）*
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

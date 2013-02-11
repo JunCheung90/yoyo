@@ -14,7 +14,6 @@ _(global).extend require './test-merging-helper'
 can = it # it在LiveScript中被作为缺省的参数，因此我们先置换为can
 
 describe '联系人合并逻辑全面测试：', !->
-  dump-user-name = '张三'   
   do
     (done) <-! before-each
     <-! initial-test-environment

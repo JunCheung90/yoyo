@@ -43,10 +43,10 @@ user = # yoyo server端数据
   # 两个user A、B合并时，如果A合并到B（因为B更常用），合并后则A：{merge-to: b_uid, merge-from} B：{merge-to: null, merge-from: [a_uid]}。
   merged-to: null 
   merged-from: [] # 这里有可能是多个merge后的结果, 包括了所有信息的最初来源。如果A merge到了B，B又merge到了C，则在C的merged-from里面有A也有B。但是，A的merge-to仍然记录为B。
-  pending-merges: # 等待系统在未来确定，或者由后台人工accept，或者reject的pending merges
+  pending-merges: # 等待系统在未来确定，或者由后台人工accept，或者reject的pending merges。
     * pending-merge-to: null# 该user推荐合并到的user
       pending-merge-from: null # 该user推荐合并的user，每次pending都是两个user的合并。
-      is-accepted: null # null undefiend 还没有决策 | true | false
+      is-accepted: null # null undefiend 还没有决策 | true | false TODO：这里是否多余，是不是accepted就取消，rejected就记录到not-merge-with？
     ...
   not-merge-with: [] # 记录拒绝合并的情况，避免多次推荐
   #----------- relations ----------#

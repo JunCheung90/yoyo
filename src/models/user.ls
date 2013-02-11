@@ -5,6 +5,13 @@
 require! [async, '../util', './Contact', './User-Merger']
 require! common: './user-contact-common'
 
+update-user = !(db, user, callback) ->
+  # TODO：将save逻辑抽取到caller
+  throw new Error "user: #{user.username} should be a persisted user!" if not user._id
+  re-evaluate-user-pending-mergences db, user
+  (err, result) <-! util.update-multiple-docs db, 'users', [user]
+  callback!
+
 create-user-with-contacts = !(db, user-data, callback)->
   # 如果系统中此用户尚未注册过，则新建user。
   user = {} <<< user-data
@@ -63,6 +70,7 @@ persist-all-users = !(db, to-create-users, to-update-users, current-user, perhap
   callback!
   
 async-get-api-keys = !(db, user)-> # 异步方法，完成之后会存储user。
+  return if not user?.ims?.length
   (err) <-! async.for-each user.ims, !(im, next) ->
     (api-key) <-! async-get-im-api-key im
     im.api-key = api-key
@@ -89,5 +97,12 @@ async-get-sn-api-key = !(sn, callback) ->
 add-user-mergence-info = (old-user, new-user) ->
   common.add-mergence-info old-user, new-user, 'uid'
 
+re-evaluate-user-pending-mergences = !(user, callback) ->
+  #TODO:
+  console.log 'NOT IMPLEMENTED YET'
+  callback!
 
-(exports ? this) <<< {create-user-with-contacts, add-user-mergence-info}  
+
+
+(exports ? this) <<< {create-user-with-contacts, add-user-mergence-info,\
+ re-evaluate-user-pending-mergences, update-user}  

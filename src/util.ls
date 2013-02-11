@@ -6,6 +6,8 @@ require! [fs, 'node-uuid', async]
 _ = require 'underscore'
 
 util =
+  event: new (require('events').EventEmitter)
+  
   get-UUid: ->
     node-uuid.v4!
 

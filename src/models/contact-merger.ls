@@ -22,12 +22,13 @@ contact-merger =
       callback null, new-user 
 
   merge-contacts: !(owner, contacts) ->
-    owner.contacts-seq ||= 0
-    checked-contacts = []
-    for contact in contacts
-      contact.cid = Contact.create-cid owner.uid, ++owner.contacts-seq
-      check-and-merge-contacts contact, checked-contacts, owner 
-      checked-contacts.push contact 
+    if contacts
+      owner.contacts-seq ||= 0
+      checked-contacts = []
+      for contact in contacts
+        contact.cid = Contact.create-cid owner.uid, ++owner.contacts-seq
+        check-and-merge-contacts contact, checked-contacts, owner 
+        checked-contacts.push contact 
 
 
 # merge-contacts-act-by-same-saved-user-in-same-contacts-book = !(owner, old-user, new-user, contact) ->

@@ -18,13 +18,19 @@ async-create-unsaved-contacts-users = !(db, owner, callback) ->
   to-create-contact-users = []
   to-update-contact-users = []
   create-and-merge-contacts-before-create-users owner, owner.contacts
-  merged-contacts = filter (-> !it.merged-to), owner.contacts
+  merged-contacts = get-merged-contacts owner.contacts
   (err) <-! async.for-each merged-contacts, !(contact, next) -> # 为了性能异步并发
     (!(contact) -> merge-contact-act-by-user-with-users-AND-merge-itself-within-contacts-of-the-same-owner \
       db, contact, owner, to-create-contact-users, to-update-contact-users, next
     )(contact)
   throw new Error err if err
   callback to-create-contact-users, to-update-contact-users
+
+get-merged-contacts = (contacts) ->
+  if contacts?.length
+    merged-contacts = filter (-> !it.merged-to), contacts 
+  else
+    merged-contacts = []
 
 merge-contact-act-by-user-with-users-AND-merge-itself-within-contacts-of-the-same-owner = \
 (db, contact, owner, to-create-contact-users, to-update-contact-users, callback) ->
