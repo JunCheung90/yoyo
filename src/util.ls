@@ -40,7 +40,7 @@ util =
   is-late: (t-str1, t-str2) ->
     !is-early t-str1, t-str2
 
-  insert-multiple-docs: (collection, docs, callback) ->
+  insert-multiple-docs: !(collection, docs, callback) ->
     db = database.get-db!
     if docs?.length > 0 then
       (err, docs) <-! db[collection].insert docs
@@ -49,7 +49,7 @@ util =
     else
       callback! 
 
-  update-multiple-docs: (collection, docs, callback) ->
+  update-multiple-docs: !(collection, docs, callback) ->
     db = database.get-db!
     if docs?.length > 0 then
       (err) <-! async.for-each docs, !(doc, next) ->

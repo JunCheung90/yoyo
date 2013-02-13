@@ -27,7 +27,19 @@ helper =
     found-users.should.have.length amount
     callback found-users
 
-  should-find-one-user-with-nickname: !(nickname, callback) ->
+  should-find-not-merged-users: !(amount, callback) ->
+    (err, found-users) <-! db.users.find({}).to-array
+    not-merged-users = filter (-> !it.merged-to), found-users
+    not-merged-users.should.have.length amount
+    callback not-merged-users
+
+  should-find-a-user-named: !(name, callback) ->
+    (found-users) <-! should-find-users {'name':name}, 1
+    found-user = found-users[0]
+    found-user.name.should.eql name
+    callback found-user
+
+  should-find-a-user-with-nickname: !(nickname, callback) ->
     (found-users) <-! should-find-users {'nicknames':nickname}, 1
     found-user = found-users[0]
     found-user.nicknames.should.include nickname

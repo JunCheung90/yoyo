@@ -18,17 +18,20 @@ describe 're-evaluate-user-pending-mergences测试：', !->
     <-! initial-test-environment
     done! 
   describe 'user信息更新之后，进行re-evaluation：', !->
-    describe '建立user张三时，产生了pending-merge的contact user李大四、李小四。\
-              新建（注册）用户李四（同时有李小四和李大四的电话），导致李大四、李小四user合并，它们的pending merge消失', !->
+    describe '''建立user张三时，产生了pending-merge的contact user李大四、李小四。
+              新建（注册）用户李四（同时有李小四和李大四的电话），此时，李四会直
+              接merge到李大四或者李小四。并且merge的目的地会标志为is-updated。
+              在运行了User.re-evaluated-mergences之后，李大四和李小四会合并，
+              它们的pending merge消失。''', !->
       can '两个user李四、李小四，李小四更新了电话号码（李四有的）之后。\n', !(done) ->
         (user) <- create-zhangsan-with-pending-merging-contacts-lisi-and-lixiaosi
-        (li-da-si) <-! should-find-one-user-with-nickname '李大四'
-        (li-xiao-si) <-! should-find-one-user-with-nickname '李小四'
+        (li-da-si) <-! should-find-a-user-with-nickname '李大四'
+        (li-xiao-si) <-! should-find-a-user-with-nickname '李小四'
         
         (li-si) <-! create-li-si-with-phones-of-both-li-da-si-and-li-xiao-si
         (users) <-! should-find-all-users-amount-be 3
-        (li-da-si) <-! should-find-one-user-with-nickname '李大四'
-        (li-xiao-si) <-! should-find-one-user-with-nickname '李小四'
+        (li-da-si) <-! should-find-a-user-with-nickname '李大四'
+        (li-xiao-si) <-! should-find-a-user-with-nickname '李小四'
         # should-be-a-pair-of-pending-merge-users li-da-si, li-xiao-si
         # should-be-merged-pair li-da-si, li-xiao-si
         # should-has-not-pending-merges li-da-si

@@ -2,7 +2,7 @@
  * Created by Wang, Qing. All rights reserved.
  */
  
-require! [async, '../util', './Contact-Merger']
+require! [async, '../util', './Contact-Merger', './User']
 require! common: './user-contact-common'
 
 # ！！！注意，在async-create-unsaved-contacts-users和save-contacts-users之间，有可能新的User来create contacts，
@@ -60,7 +60,6 @@ create-contact-user = (contact, contact-user-creator) ->
   user = contact-user-creator contact
   if has-volatile-pendign-merge contact
     user.pending-merges ||= []
-    debugger
     for p in contact.__pending-merges
       if p.pending-merge-to
         user-p-to = contact-user-creator p.pending-merge-to
@@ -80,6 +79,7 @@ contact-user-creator-factory = ->
     user = contact-user-map[contact.cid]
     if !user
       user = {} <<< contact{emails, ims, sns}
+      User.build-user-basic-info user
       user.uid = util.get-UUid! 
       user.is-registered = false
       user.nicknames = contact.names

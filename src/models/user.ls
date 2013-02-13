@@ -8,7 +8,7 @@ require! common: './user-contact-common'
 update-user = !(user, callback) ->
   # TODO：将save逻辑抽取到caller
   throw new Error "user: #{user.username} should be a persisted user!" if not user._id
-  re-evaluate-user-pending-mergences user
+  user-info-updated-handler user
   (err, result) <-! util.update-multiple-docs 'users', [user]
   callback!
 
@@ -30,12 +30,12 @@ build-user-basic-info = !(user)->
   current = new Date!.get-time! 
   user.is-registered = true
   user.last-modified-date = current
-  user.merge-to = null
-  user.merge-from = []
+  user.merged-to = null
+  user.merged-from = []
 
   user.avatars = [create-default-system-avatar user] if not user?.avatar?.length
   user.current-avatar = user.avatars[0]
-  [phone.start-using-time = current for phone in user.phones]
+  [phone.start-using-time = current for phone in user.phones] if user?.phones?.length
 
 create-default-system-avatar = (user) ->
   #TODO:
@@ -98,13 +98,11 @@ async-get-sn-api-key = !(sn, callback) ->
 add-user-mergence-info = (old-user, new-user) ->
   common.add-mergence-info old-user, new-user, 'uid'
 
-re-evaluate-user-pending-mergences = !(user, callback) ->
+# user-info-updated-handler = !(user, time) ->
   #TODO:
-  db = database.get-db!
-  console.log 'NOT IMPLEMENTED YET'
-  callback user
+  # db = database.get-db!
+  # debugger
+  # user.is-updated = true
+  # console.log "用户#{user.name}的信息在#{time}发生了更新。"
 
-
-
-(exports ? this) <<< {create-user-with-contacts, add-user-mergence-info,\
- re-evaluate-user-pending-mergences, update-user}
+(exports ? this) <<< {create-user-with-contacts, add-user-mergence-info, update-user, build-user-basic-info}

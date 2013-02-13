@@ -37,13 +37,12 @@ user = # yoyo server端数据
     ...
   tags: ['程序员'] # 用户给自己的标签，或者系统发掘出用户的特征。
   #----------- status ----------#
+  is-updated: false # 用户的数据是否发生了更新，如果为true，需要重新评估mergences。
   is-registered: true
   last-modified-date: '2013-01-09'
-  is-merge-pending: false # 为true时，下面merge处于pending，需要用户来确认或者拒绝。为false时：或为未曾合并的用户（merge-to && merge-from == false），或为合并完成后的用户。
-  # 两个user A、B合并时，如果A合并到B（因为B更常用），合并后则A：{merge-to: b_uid, merge-from} B：{merge-to: null, merge-from: [a_uid]}。
   merged-to: null 
   merged-from: [] # 这里有可能是多个merge后的结果, 包括了所有信息的最初来源。如果A merge到了B，B又merge到了C，则在C的merged-from里面有A也有B。但是，A的merge-to仍然记录为B。
-  pending-merges: # 等待系统在未来确定，或者由后台人工accept，或者reject的pending merges。
+  pending-merges: # 等待系统在未来确定，或者由后台人工accept，或者reject的pending merges。yoyo对于User只会pending merge，已经存在的User其最终Merge一定是由人来决定的。
     * pending-merge-to: null# 该user推荐合并到的user
       pending-merge-from: null # 该user推荐合并的user，每次pending都是两个user的合并。
       is-accepted: null # null undefiend 还没有决策 | true | false TODO：这里是否多余，是不是accepted就取消，rejected就记录到not-merge-with？

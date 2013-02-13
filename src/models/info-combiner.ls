@@ -1,5 +1,6 @@
 require! '../util'
 _ = require 'underscore'
+$C = util.to-camel-case 
 
 combine-users-info = !(old-user, new-user) -> 
   # 这里的逻辑要更新，考虑各种复杂的信息合并情况。
@@ -40,10 +41,13 @@ combine-commnication-channels = !(old-user, new-user) ->
 
 combine-user-phones = !(old-user, new-user) ->
   if new-user?.phones?.length
-    (old-user-phones-map, new-phone) <-! combine-on-collection old-user, new-user, 'phones', 'phone-number'
-    old-phone = old-user-phones-map[new-phone.phone-number][0]
-    throw new Error "Merging users: #{old-user.name} and #{new-user.name} are different on 'is-active' on the phone #{new-phone.phone-number}" if new-phone.is-active is not old-phone.is-active
-    combine-phone-in-using-time old-phone, new-phone
+    (old-user-phones-map, new-primary-phone) <-! combine-on-collection old-user, new-user, 'phones', ($C 'phone-number')
+    old-primary-phone = old-user-phones-map[new-primary-phone.phone-number][0]
+    check-active-phone old-primary-phone, new-primary-phone
+
+check-active-phone = !(old-phone, new-phone) ->
+  throw new Error "Merging users: #{old-user.name} and #{new-user.name} are different on 'is-active' on the phone #{new-phone.phone-number}" if new-phone.is-active is not old-phone.is-active
+  combine-phone-in-using-time old-phone, new-phone
 
 combine-on-collection = !(old-user, new-user, collection, distingusih-attr, conflict-handler) ->
   old-elements-map = util.create-map-on-attribute old-user[collection], distingusih-attr
@@ -103,16 +107,18 @@ combine-strangers = !(old-user, new-user) ->
 combine-users-mergences = !(old-user, new-user) ->
   combine-mergences old-user, new-user
 
-$C = util.to-camel-case 
 combine-mergences = !(old, _new) ->
+  _new.merged-to = old.uid
+  console.log "\n\n*************** merged-from: %j ***************\n\n" old.merged-from
+  old.merged-from ||= []
+  old.merged-from = util.union old.merged-from, _new.merged-from
+  old.merged-from = util.union old.merged-from, _new.uid  
+  console.log "\n\n*************** merged-from: %j ***************\n\n" old.merged-from
   if _new?.pending-merges?.length
-    _new.merged-to = old.uid
-    old.merged-from = util.union old.merged-from, _new.merged-from
-    old.merged-from = util.union old.merged-from, _new.uid
     old-pending-merge-tos = [pm.pending-merge-to for pm in old.pending-merges when !pm.is-accepted and pm.pending-merge-to]
     old-pending-merge-froms = [pm.pending-merge-from for pm in old.pending-merges when !pm.is-accepted and pm.pending-merge-from]
     for pending-merge in _new?.pending-merges
-      continue if is-accepted 
+      continue if pending-merge.is-accepted 
       if pending-merge.pending-merge-to and pending-merge.pending-merge-to not in old-pending-merge-tos
         old.pending-merges.push {($C 'pending-merge-to'): pending-merge.pending-merge-to, ($C 'is-accepted'): false}
       if pending-merge.pending-merge-from  and pending-merge.pending-merge-from not in old-pending-merge-froms
