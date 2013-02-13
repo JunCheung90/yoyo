@@ -46,7 +46,7 @@ combine-user-phones = !(old-user, new-user) ->
     check-active-phone old-primary-phone, new-primary-phone
 
 check-active-phone = !(old-phone, new-phone) ->
-  throw new Error "Merging users: #{old-user.name} and #{new-user.name} are different on 'is-active' on the phone #{new-phone.phone-number}" if new-phone.is-active is not old-phone.is-active
+  # throw new Error "Merging users: #{old-user.name} and #{new-user.name} are different on 'is-active' on the phone #{new-phone.phone-number}" if new-phone.is-active is not old-phone.is-active
   combine-phone-in-using-time old-phone, new-phone
 
 combine-on-collection = !(old-user, new-user, collection, distingusih-attr, conflict-handler) ->
@@ -109,11 +109,9 @@ combine-users-mergences = !(old-user, new-user) ->
 
 combine-mergences = !(old, _new) ->
   _new.merged-to = old.uid
-  console.log "\n\n*************** merged-from: %j ***************\n\n" old.merged-from
   old.merged-from ||= []
   old.merged-from = util.union old.merged-from, _new.merged-from
   old.merged-from = util.union old.merged-from, _new.uid  
-  console.log "\n\n*************** merged-from: %j ***************\n\n" old.merged-from
   if _new?.pending-merges?.length
     old-pending-merge-tos = [pm.pending-merge-to for pm in old.pending-merges when !pm.is-accepted and pm.pending-merge-to]
     old-pending-merge-froms = [pm.pending-merge-from for pm in old.pending-merges when !pm.is-accepted and pm.pending-merge-from]
