@@ -23,7 +23,6 @@
     "mysql": "~2.0.0-alpha5",
     "restify": "~1.4.4",
     "tick": "~0.0.1",  
-    "jake": "~0.5.8"
   },
   "scripts": {
     "test": "mocha"
