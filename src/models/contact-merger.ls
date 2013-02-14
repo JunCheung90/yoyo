@@ -29,6 +29,17 @@ contact-merger =
         check-and-merge-contacts contact, checked-contacts, owner 
         checked-contacts.push contact 
 
+  direct-merge-contacts: !(source, distination) ->
+    Info-Combiner.combine-contacts-info distination, source
+    Info-Combiner.combine-contacts-mergences distination, source
+    Contact.add-contact-mergence-info distination, source
+    common.update-pending-merges source, distination
+
+  pending-merge-contacts: !(source, distination) ->
+    Info-Combiner.add-contacts-pending-merges distination, source
+    Contact.add-volatile-pending-merge source, distination
+  
+
 merge-contacts-within-same-contacts-book = !(old-contact, new-contact, is-direct-merge) ->
   if is-direct-merge
     Info-Combiner.combine-contacts-info old-contact, new-contact
@@ -51,8 +62,8 @@ check-and-merge-contacts = !(checking-contact, checked-contacts, owner) ->
 
     distination = select-distination contact, checking-contact
     source = if distination.cid is contact.cid then checking-contact else contact
-    direct-merge-contacts source, distination if is-merging is "DIRECT"
-    pending-merge-contacts source, distination if is-merging is "PENDING" 
+    contact-merger.direct-merge-contacts source, distination if is-merging is "DIRECT"
+    contact-merger.pending-merge-contacts source, distination if is-merging is "PENDING" 
 
 # ----------------------------------↓ 性能热点 ↓---------------------------------------------- #
 # 占用了30% 左右的执行时间
@@ -99,14 +110,4 @@ get-double-checks = ->
     second-checkers = util.union second-checkers check.second-checker
   [first-checkers, second-checkers]
 
-direct-merge-contacts = !(source, distination) ->
-  Info-Combiner.combine-contacts-info distination, source
-  Info-Combiner.combine-contacts-mergences distination, source
-  Contact.add-contact-mergence-info distination, source
-  common.update-pending-merges source, distination
-
-pending-merge-contacts = !(source, distination) ->
-  Info-Combiner.add-contacts-pending-merges distination, source
-  Contact.add-volatile-pending-merge source, distination
-  
 module.exports = contact-merger

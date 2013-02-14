@@ -98,11 +98,4 @@ async-get-sn-api-key = !(sn, callback) ->
 add-user-mergence-info = (old-user, new-user) ->
   common.add-mergence-info old-user, new-user, 'uid'
 
-# user-info-updated-handler = !(user, time) ->
-  #TODO:
-  # db = database.get-db!
-  # debugger
-  # user.is-updated = true
-  # console.log "用户#{user.name}的信息在#{time}发生了更新。"
-
 (exports ? this) <<< {create-user-with-contacts, add-user-mergence-info, update-user, build-user-basic-info}

@@ -21,12 +21,20 @@ fqh =
     users = filter (.uid isnt user.uid), users if user.uid # TODO：性能：应该重构到查询条件中。
     callback users
 
+  get-users-by-ids: !(uids, callback) ->
+    query-statement =
+      "uid": $in: uids
+    fqh.query-database-for-users query-statement, callback
+
   query-users-on-phone-and-email: !(phones, emails, callback) ->
     query-statement = 
       $or:
         * "phones.phoneNumber": $in: phones
         * "emails": $in: emails
         # not merged-to 补充这个条件
+    fqh.query-database-for-users query-statement, callback
+
+  query-database-for-users: !(query-statement, callback) ->
     db = database.get-db!
     (err, users) <-! db.users.find(query-statement).toArray
     throw new Error err if err

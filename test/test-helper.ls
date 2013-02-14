@@ -25,7 +25,7 @@ helper =
 
   show-contacts: (contacts) ->
     return if !contacts
-    extening-string!
+    extending-string!
     console.log "\n\nid \t name \t\t phone \t\t im \t\t m-to \t\t m-from\n"
     for contact in contacts
       phone = if contact?.phones?.length and contact.phones[0] then contact.phones[0].last-substring(6) else ' '  * 6
@@ -97,7 +97,7 @@ random-select = (elements)->
 is-defined = (key, obj) -->
   _.is-array obj[key] and obj[key].length > 0
 
-extening-string = !->
+extending-string = !->
   String.prototype.last-substring = (position)->
     @substring(@length - position, @length)
 

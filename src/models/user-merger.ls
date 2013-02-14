@@ -1,4 +1,4 @@
-require! fqh: '../models/helpers/fast-query-helper'
+require! fqh: './helpers/fast-query-helper'
 require! ['./User', './helpers/Info-Combiner', '../util']
 require! common: './user-contact-common'
 
@@ -22,21 +22,35 @@ user-merger =
     (users) <-! fqh.get-repeat-users user
     callback users
 
-  direct-merge-users: !(old-user, new-user) ->
-    # throw new Error "不能够自动合并两个已经存在的用户！" if new-user.uid
-    Info-Combiner.combine-users-info old-user, new-user
-    if new-user.uid # new-user为已有用户，为手动合并。
-      Info-Combiner.combine-users-mergences  old-user, new-user
-      common.update-pending-merges old-user, new-user
-      old-user.is-updated = false # 手动合并之后，标识为false。
+  direct-merge-users: !(distination, source) ->
+    # throw new Error "不能够自动合并两个已经存在的用户！" if source.uid
+    Info-Combiner.combine-users-info distination, source
+    if source.uid # new-user为已有用户，为手动合并。
+      Info-Combiner.combine-users-mergences  distination, source
+      common.update-pending-merges distination, source
+      distination.is-updated = false # 手动合并之后，标识为false。
+      update-related-contacts distination.uid, source.uid, source.as-contact-of
       # 希望新建的用户。对于希望新建的用户如果要merge到其它用户，不用新建，直接copy信息就好了。
     else # 希望新建的用户。对于希望新建的用户如果要merge到其它用户，不用新建，直接copy信息就好了。
-      # User.add-user-mergence-info old-user, new-user
-      old-user.is-updated = true # 自动合并后，需要进一步手动评估mergences。
-    # util.event.emit 'user-info-updated', old-user, new Date!
-    # User.user-info-updated-handler old-user if old-user?.pending-merges?.length # 是否应该回调?
+      # User.add-user-mergence-info distination, source
+      distination.is-updated = true # 新建contact-user时，将contact-user自动合并到已有用户后，需要进一步手动评估已有用户的mergences。
+    # util.event.emit 'user-info-updated', distination, new Date!
+    # User.user-info-updated-handler distination if distination?.pending-merges?.length # 是否应该回调?
 
-  pendings-merge-users: !(old-user, new-user) ->
-    Info-Combiner.add-users-pending-merges old-user, new-user
+  pendings-merge-users: !(distination, source) ->
+    Info-Combiner.add-users-pending-merges distination, source
+
+update-related-contacts = !(distination-uid, source-uid, owners-uids) ->
+  if owners-uids?.length
+    (owners) <-! fqh.get-users-by-ids owners-uids
+    for owner in owners
+      distination-contacts = filter (-> it.act-by-user is distination-uid and not it.merged-to), owner.contacts
+      source-contacts = filter (-> it.act-by-user is source-uid and not it.merged-to), owner.contacts
+      if distination-contacts.length
+        require! './Contact-Merger'
+        Contact-Merger.direct-merge-contacts source-contacts[0], distination-contacts[0]
+      else 
+        source-contacts[0].act-by-user = distination-uid
+    util.update-multiple-docs 'users', owners, (->) # 这里为异步操作
 
 module.exports = user-merger 

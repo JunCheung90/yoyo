@@ -187,6 +187,11 @@ describe '联系人（Contact）与用户（User）合并逻辑全面测试：',
       (li-si) <-! should-find-a-user-named '李四'
       li-si.should.have.nicknames
       li-si.nicknames.should.include '李大四', '李小四'
+      li-si.pending-merges.should.eql []
+      li-si.merged-from.should.have.length 1
+      should.ok (li-si.merged-to is null)
+      # li-si.merged-from
+      # li-si.should.have.merged-to.with null
       done!  
   do
     (done) <-! after
