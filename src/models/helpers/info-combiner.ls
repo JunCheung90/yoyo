@@ -1,4 +1,4 @@
-require! '../util'
+require! '../../util'
 _ = require 'underscore'
 $C = util.to-camel-case 
 
@@ -105,24 +105,25 @@ combine-strangers = !(old-user, new-user) ->
   old-user.contacted-by-strangers = util.union old-user.contacted-by-strangers, new-user.contacted-by-strangers
 
 combine-users-mergences = !(old-user, new-user) ->
-  combine-mergences old-user, new-user
+  combine-mergences old-user, new-user, 'uid'
 
-combine-mergences = !(old, _new) ->
-  _new.merged-to = old.uid
+combine-mergences = !(old, _new, id-attr) ->
+  _new.merged-to = old[id-attr]
   old.merged-from ||= []
   old.merged-from = util.union old.merged-from, _new.merged-from
-  old.merged-from = util.union old.merged-from, _new.uid  
+  old.merged-from = util.union old.merged-from, _new.[id-attr]  
   if _new?.pending-merges?.length
     old-pending-merge-tos = [pm.pending-merge-to for pm in old.pending-merges when !pm.is-accepted and pm.pending-merge-to]
     old-pending-merge-froms = [pm.pending-merge-from for pm in old.pending-merges when !pm.is-accepted and pm.pending-merge-from]
+    # console.log "\n\n*************** new.pending-merges: %j ***************\n\n", _new.pending-merges
     for pending-merge in _new?.pending-merges
       continue if pending-merge.is-accepted 
-      if pending-merge.pending-merge-to and pending-merge.pending-merge-to not in old-pending-merge-tos
+      if pending-merge.pending-merge-to and pending-merge.pending-merge-to not in old-pending-merge-tos and pending-merge.pending-merge-to is not old[id-attr]
         old.pending-merges.push {($C 'pending-merge-to'): pending-merge.pending-merge-to, ($C 'is-accepted'): false}
-      if pending-merge.pending-merge-from  and pending-merge.pending-merge-from not in old-pending-merge-froms
+      if pending-merge.pending-merge-from  and pending-merge.pending-merge-from not in old-pending-merge-froms and pending-merge.pending-merge-from is not old[id-attr]
         old.pending-merges.push {($C 'pending-merge-from'): pending-merge.pending-merge-from, ($C 'is-accepted'): false}
 
-add-users-pending-merges = !(old-user, new-user) ->
+add-users-pending-merges = !(old-user, new-user) -> 
   add-pending-merges old-user, new-user, 'uid'
 
 add-pending-merges = !(old, _new, id-name) ->
@@ -147,7 +148,7 @@ combine-contacts-phones = !(old-contact, new-contact) ->
   old-contact.phones = util.union old-contact.phones, new-contact.phones
 
 combine-contacts-mergences = !(old-contact, new-contact) ->
-  combine-mergences old-contact, new-contact
+  combine-mergences old-contact, new-contact, 'cid'
 
 add-contacts-pending-merges = !(old-contact, new-contact) ->
   add-pending-merges old-contact, new-contact, 'cid'

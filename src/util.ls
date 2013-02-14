@@ -64,6 +64,6 @@ util =
   union: (set-a, set-b) ->
     set-a = set-a or []
     set-b = set-b or []
-    _.union set-a, set-b
+    _.compact _.union set-a, set-b
 
 module.exports = util

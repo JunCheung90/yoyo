@@ -1,5 +1,6 @@
-require! fqh: '../fast-query-helper'
-require! ['./User', './Info-Combiner', '../util']
+require! fqh: '../models/helpers/fast-query-helper'
+require! ['./User', './helpers/Info-Combiner', '../util']
+require! common: './user-contact-common'
 
 user-merger =
   create-user-then-merge-with-existed-user: !(user, callback) -> 
@@ -26,6 +27,8 @@ user-merger =
     Info-Combiner.combine-users-info old-user, new-user
     if new-user.uid # new-user为已有用户，为手动合并。
       Info-Combiner.combine-users-mergences  old-user, new-user
+      common.update-pending-merges old-user, new-user
+      old-user.is-updated = false # 手动合并之后，标识为false。
       # 希望新建的用户。对于希望新建的用户如果要merge到其它用户，不用新建，直接copy信息就好了。
     else # 希望新建的用户。对于希望新建的用户如果要merge到其它用户，不用新建，直接copy信息就好了。
       # User.add-user-mergence-info old-user, new-user

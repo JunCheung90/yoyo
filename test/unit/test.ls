@@ -8,7 +8,7 @@ require! ['should', 'async',
           '../../bin/servers-init'.shutdown-mongo-client,
           '../../bin/util', '../../bin/database', '../test-helper']
 
-fqh = require '../../bin/fast-query-helper'
+fqh = require '../../bin/models/helpers/fast-query-helper'
 
 multiple-times = 100 
 
@@ -39,7 +39,7 @@ describe 'mongoDb版注册用户：识别用户，绑定用户（User）和联�
 
   can '最新张三联系人情况，有2个Contacts，作为2人的Contacts。\n' !(done) ->
     test-helper.check-user-contacts '张三', 2, 2, done 
-
+ 
   do
     (done) <-! after 
     <-! shutdown-mongo-client

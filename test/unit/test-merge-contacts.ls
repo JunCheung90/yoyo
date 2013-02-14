@@ -178,15 +178,15 @@ describe '联系人（Contact）与用户（User）合并逻辑全面测试：',
       li-si.should.have.is-updated
       li-si.is-updated.should.be.true
 
-      # (users) <-! User-Merger.get-repeat-users li-si
-      # users.should.have.length 1
-      # User-Merger.direct-merge-users li-si, users[0]
-      # <-! util.update-multiple-docs 'users', [li-si, users[0]]
-      # (users) <-! should-find-not-merged-users 2
-      # (zhang-san) <-! should-find-a-user-named '张三'
-      # (li-si) <-! should-find-a-user-named '李四'
-      # li-si.should.have.nicknames
-      # li-si.nicknames.should.include '李大四', '李小四'
+      (users) <-! User-Merger.get-repeat-users li-si
+      users.should.have.length 1
+      User-Merger.direct-merge-users li-si, users[0]
+      <-! util.update-multiple-docs 'users', [li-si, users[0]]
+      (users) <-! should-find-not-merged-users 2
+      (zhang-san) <-! should-find-a-user-named '张三'
+      (li-si) <-! should-find-a-user-named '李四'
+      li-si.should.have.nicknames
+      li-si.nicknames.should.include '李大四', '李小四'
       done!  
   do
     (done) <-! after

@@ -4,7 +4,8 @@
 
 Merge-Strategy = require '../contacts-merging-strategy'
 _ = require 'underscore' 
-require! ['../util', './Checkers', './Info-Combiner', './User-Merger', './Contact']
+require! ['../util', './helpers/Checkers', './helpers/Info-Combiner', './User-Merger', './Contact']
+require! common: './user-contact-common'
 
 contact-merger =
  # 算法参见 http://my.ss.sysu.edu.cn/wiki/pages/viewpage.action?pageId=113049608
@@ -27,12 +28,6 @@ contact-merger =
         contact.cid = Contact.create-cid owner.uid, ++owner.contacts-seq
         check-and-merge-contacts contact, checked-contacts, owner 
         checked-contacts.push contact 
-
-
-# merge-contacts-act-by-same-saved-user-in-same-contacts-book = !(owner, old-user, new-user, contact) ->
-#   is-direct-merge = !new-user
-#   if merge-to-contact = Contact.get-merge-to-contact owner.contacts, contact, is-direct-merge
-#     merge-contacts-within-same-contacts-book merge-to-contact, contact, is-direct-merge
 
 merge-contacts-within-same-contacts-book = !(old-contact, new-contact, is-direct-merge) ->
   if is-direct-merge
@@ -104,22 +99,14 @@ get-double-checks = ->
     second-checkers = util.union second-checkers check.second-checker
   [first-checkers, second-checkers]
 
-direct-merge-contacts = (source, distination) ->
+direct-merge-contacts = !(source, distination) ->
   Info-Combiner.combine-contacts-info distination, source
   Info-Combiner.combine-contacts-mergences distination, source
   Contact.add-contact-mergence-info distination, source
-  update-pending-mergences source, distination
+  common.update-pending-merges source, distination
 
-pending-merge-contacts = (source, distination) ->
+pending-merge-contacts = !(source, distination) ->
   Info-Combiner.add-contacts-pending-merges distination, source
   Contact.add-volatile-pending-merge source, distination
   
-update-pending-mergences = !(source, distination) ->
-  # if !source.pending-mergences then return
-  # distination.pending-mergences ||= []
-  # distination.pending-mergences ++ source.pending-mergences 
-  # TODO: source和distination合并之后，每个pending的mergence，其merge-to和对应的merge-from可能会变化。
-  # 因为合并前可能是merged-to，合并到另外的联系人；但是merge后，信息丰富了，可能应该变成merged-from，将其他联系人合并过来。
-
-
 module.exports = contact-merger

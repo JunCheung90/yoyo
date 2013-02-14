@@ -4,7 +4,7 @@
 
 require! [restify, './config/config'.mongo, 
           'mongodb'.MongoClient, 'mongodb'.Server, './util', './database', './models/User']
-fqh = require './fast-query-helper'
+fqh = require './models/helpers/fast-query-helper'
 
 init-mongo-client = !(callback) -> #mongo-client, db are used to return
   database.client = new MongoClient new Server mongo.host, mongo.port
