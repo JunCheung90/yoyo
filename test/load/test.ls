@@ -3,7 +3,6 @@
  */
 
 require! ['should', 'async', 
-          '../../bin/models/User',
           '../../bin/servers-init'.init-mongo-client, 
           '../../bin/servers-init'.shutdown-mongo-client,
           '../../bin/util', '../../bin/database', '../test-helper']

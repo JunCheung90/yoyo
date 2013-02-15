@@ -66,4 +66,4 @@ util =
     set-b = set-b or []
     _.compact _.union set-a, set-b
 
-module.exports = util
+module.exports <<< util

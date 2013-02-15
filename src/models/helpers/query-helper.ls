@@ -3,7 +3,7 @@
 _ = require 'underscore'
 require! '../../database'
 
-fqh =
+qh =
   get-existed-repeat-user: !(user, callback) ->
     # TODO：重构，此处逻辑需要好好厘清，效率也需要提升。
     (users) <-! @get-repeat-users user
@@ -17,37 +17,39 @@ fqh =
     phones = []
     phones = [phone.phone-number for phone in user.phones] if user?.phones?.length
     emails = user.emails or []
-    (users) <-! fqh.query-users-on-phone-and-email phones, emails
+    (users) <-! query-users-on-phone-and-email phones, emails
     users = filter (.uid isnt user.uid), users if user.uid # TODO：性能：应该重构到查询条件中。
     callback users
 
-  get-users-by-ids: !(uids, callback) ->
+  get-users-by-uids: !(uids, callback) ->
     query-statement =
       "uid": $in: uids
-    fqh.query-database-for-users query-statement, callback
+    query-database-for-users query-statement, callback
 
-  query-users-on-phone-and-email: !(phones, emails, callback) ->
-    query-statement = 
-      $or:
-        * "phones.phoneNumber": $in: phones
-        * "emails": $in: emails
-        # not merged-to 补充这个条件
-    fqh.query-database-for-users query-statement, callback
-
-  query-database-for-users: !(query-statement, callback) ->
-    db = database.get-db!
-    (err, users) <-! db.users.find(query-statement).toArray
-    throw new Error err if err
-    callback users
-    
-  get-existed-contact-users: (contact, callback) ->
+  get-existed-contact-users: !(contact, callback) ->
     phones = contact.phones or []
-    emails = contact.emails or []
-    (users) <-! fqh.query-users-on-phone-and-email phones, emails
+    emails = contact.emails or [] 
+    (users) <-! query-users-on-phone-and-email phones, emails
     callback users
+
+query-users-on-phone-and-email = !(phones, emails, callback) ->
+  query-statement = 
+    $or:
+      * "phones.phoneNumber": $in: phones
+      * "emails": $in: emails
+      # not merged-to 补充这个条件
+  query-database-for-users query-statement, callback
+
+query-database-for-users = !(query-statement, callback) ->
+  db = database.get-db!
+  (err, users) <-! db.users.find(query-statement).toArray
+  throw new Error err if err
+  callback users
+    
+
 
 are-not-pending-merge-together = (users) ->
   # TODO: 判断出这里的users没有pending合并到一起
   false
 
-module.exports = fqh 
+module.exports <<< qh 

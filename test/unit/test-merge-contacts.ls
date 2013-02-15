@@ -3,7 +3,7 @@
  */
  
 require! ['should', 
-          '../../bin/models/User', '../../bin/models/User-Merger', '../../bin/util', '../../bin/database',
+          '../../bin/models/Users', '../../bin/models/User-Merger', '../../bin/util', '../../bin/database',
           '../../bin/servers-init'.shutdown-mongo-client]
 _ = require 'underscore'
 _(global).extend require './test-merging-helper'
@@ -26,7 +26,7 @@ describe '联系人（Contact）与用户（User）合并逻辑全面测试：',
         contact-lisi2 = {"names": ["李四"], "phones":["345", "234"]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
-        (user) <-! User.create-user-with-contacts user-data
+        (user) <-! Users.create-user-with-contacts user-data
         (found-user) <-! should-find-one-user-named '张三'
         found-user.contacts.length.should.eql 2
         should-one-contact-is-to found-user.contacts
@@ -41,7 +41,7 @@ describe '联系人（Contact）与用户（User）合并逻辑全面测试：',
         contact-lisi2 = {"names": ["李四"], "phones":[]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
-        (user) <-! User.create-user-with-contacts user-data
+        (user) <-! Users.create-user-with-contacts user-data
         (found-user) <-! should-find-one-user-named '张三'
         found-user.contacts.length.should.eql 2
         should-amount-of-to-eql found-user.contacts, 0
@@ -53,7 +53,7 @@ describe '联系人（Contact）与用户（User）合并逻辑全面测试：',
         contact-lisi2 = {"names": ["李四"], "phones":["1", "4"]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
-        (user) <-! User.create-user-with-contacts user-data
+        (user) <-! Users.create-user-with-contacts user-data
         (found-user) <-! should-find-one-user-named '张三'
         found-user.contacts.length.should.eql 2
         should-amount-of-to-eql found-user.contacts, 0
@@ -70,7 +70,7 @@ describe '联系人（Contact）与用户（User）合并逻辑全面测试：',
         contact-lisi2 = {"names": ["李四"], "ims":[{"type": "QQ", "account": "lisi111"}, {"type": "飞信", "account": "lisi222"}]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
-        (user) <-! User.create-user-with-contacts user-data
+        (user) <-! Users.create-user-with-contacts user-data
         (found-user) <-! should-find-one-user-named '张三'
         found-user.contacts.length.should.eql 2
         should-one-contact-is-to found-user.contacts
@@ -85,7 +85,7 @@ describe '联系人（Contact）与用户（User）合并逻辑全面测试：',
         contact-lisi2 = {"names": ["李四"], "ims":[]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
-        (user) <-! User.create-user-with-contacts user-data
+        (user) <-! Users.create-user-with-contacts user-data
         (found-user) <-! should-find-one-user-named '张三'
         found-user.contacts.length.should.eql 2
         should-amount-of-to-eql found-user.contacts, 0
@@ -97,7 +97,7 @@ describe '联系人（Contact）与用户（User）合并逻辑全面测试：',
         contact-lisi2 = {"names": ["李四"], "ims":[{"type": "QQ", "account": "lisi222"}, {"type": "飞信", "account": "lisi222"}]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
-        (user) <-! User.create-user-with-contacts user-data
+        (user) <-! Users.create-user-with-contacts user-data
         (found-user) <-! should-find-one-user-named '张三'
         found-user.contacts.length.should.eql 2
         should-amount-of-to-eql found-user.contacts, 0
@@ -109,7 +109,7 @@ describe '联系人（Contact）与用户（User）合并逻辑全面测试：',
         contact-lisi2 = {"names": ["李四"], "ims":[{"type": "AOL", "account": "lisi111"}]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
-        (user) <-! User.create-user-with-contacts user-data
+        (user) <-! Users.create-user-with-contacts user-data
         (found-user) <-! should-find-one-user-named '张三'
         found-user.contacts.length.should.eql 2
         should-amount-of-to-eql found-user.contacts, 0
@@ -121,7 +121,7 @@ describe '联系人（Contact）与用户（User）合并逻辑全面测试：',
         contact-lisi2 = {"names": ["李四"], "ims":[{"type": "QQ", "account": "lisi222"}]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
-        (user) <-! User.create-user-with-contacts user-data
+        (user) <-! Users.create-user-with-contacts user-data
         (found-user) <-! should-find-one-user-named '张三'
         found-user.contacts.length.should.eql 2
         should-amount-of-to-eql found-user.contacts, 0
@@ -139,7 +139,7 @@ describe '联系人（Contact）与用户（User）合并逻辑全面测试：',
         contact-lisi2 = {"names": ["李大四"], "phones":["345"]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
-        (user) <-! User.create-user-with-contacts user-data
+        (user) <-! Users.create-user-with-contacts user-data
         (users) <-! should-find-all-users-amount-be 3
         (zhangsan) <-! should-find-one-user-named '张三'
         zhangsan.contacts.should.have.length 2
@@ -208,11 +208,11 @@ create-zhangsan-with-pending-merging-contacts-lisi-and-lixiaosi = !(callback) ->
   contact-lisi1 = {"names": ["李小四"], "phones":["123", "234"]}
   contact-lisi2 = {"names": ["李大四"], "phones":["345"]}
   user-data.contacts ++= [contact-lisi1, contact-lisi2]
-  (user) <-! User.create-user-with-contacts user-data
+  (user) <-! Users.create-user-with-contacts user-data
   callback user
 
 create-li-si-with-phones-of-both-li-da-si-and-li-xiao-si = !(callback) ->
-  (user) <-! User.create-user-with-contacts {name: '李四', phones: [{phone-number:'123'}, {phone-number:'345'}]}
+  (user) <-! Users.create-user-with-contacts {name: '李四', phones: [{phone-number:'123'}, {phone-number:'345'}]}
   callback user
 
 should-one-user-merged-with-li-si = (li-da-si, li-xiao-si, li-si) ->

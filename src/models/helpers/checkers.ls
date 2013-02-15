@@ -19,6 +19,20 @@ Checkers =
     # TODO: 检查这里两个联系人c1, c2，看看其与contacts-owner的通讯记录有无交叠
     true
 
+  double-check: (checks, c1, c2, owner, result-of-pass-second-check)->
+    # 返回 'DIRECT' | 'PENDING' | 'NONE' | 'NOT_DECIDED' 其中second-check.false-result 包括了除'DIRECT'之外的3种，@see contacts-merging-strategy
+    for check in checks
+      for field in check.first-check.fields
+        if Checkers[check.first-check.checker] c1[field], c2[field]
+          if Checkers[check.second-check.checker] c1, c2, field, owner
+            return result-of-pass-second-check 
+          else
+            result = check.second-check.false-result
+            continue if result is 'NOT_DECIDED'
+            return result
+
+    return 'NOT_DECIDED'
+
 compare-each-pair-of-elements = (a, b, comparer) ->
   return false if !a or !b 
   for e-a in a
@@ -43,4 +57,4 @@ is-similar-others-names = (a, b) ->
   # TODO: 
   false
 
-module.exports = Checkers 
+module.exports <<< Checkers 

@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="11.5.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>100</x>
+      <y>100</y>
+      <w>100</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>Server</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>120</x>
+      <y>100</y>
+      <w>50</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.</panel_attributes>
+    <additional_attributes>30;100;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>110</x>
+      <y>290</y>
+      <w>50</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;.</panel_attributes>
+    <additional_attributes>30;100;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.custom.Text</type>
+    <coordinates>
+      <x>370</x>
+      <y>50</y>
+      <w>370</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>*Use Case 1 注册用户，合并联系人对象设计*</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <group>
+    <element>
+      <type>com.umlet.element.Class</type>
+      <coordinates>
+        <x>110</x>
+        <y>450</y>
+        <w>220</w>
+        <h>100</h>
+      </coordinates>
+      <panel_attributes>Users
+--
++create-user-with-contacts
++build-user-basic-info
+--
+-create-or-update-user-contacts
+-persit-all-users</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.Class</type>
+      <coordinates>
+        <x>110</x>
+        <y>790</y>
+        <w>300</w>
+        <h>130</h>
+      </coordinates>
+      <panel_attributes>Contact-Merger
+--
++merge-contacts
++merge-contact-act-by-user-with-exited-users
++direct-merge-contacts
++pending-merge-contacts
+--
+-check-and-merge-contacts
+-should-contacts-be-merged</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.Class</type>
+      <coordinates>
+        <x>110</x>
+        <y>680</y>
+        <w>330</w>
+        <h>100</h>
+      </coordinates>
+      <panel_attributes>Contacts
+--
++clean-garbage-contacts
++create-contacts
+-async-create-unsaved-contacts-users
+-create-and-merge-contacts-before-create-users
+</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.Class</type>
+      <coordinates>
+        <x>110</x>
+        <y>560</y>
+        <w>280</w>
+        <h>110</h>
+      </coordinates>
+      <panel_attributes>User-Merger
+--
++create-user-then-merge-with-existed-user
++get-repeat-users
++direct-merge-users
++pending-merge-users
+--
+-update-related-contacts</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.Class</type>
+      <coordinates>
+        <x>590</x>
+        <y>530</y>
+        <w>290</w>
+        <h>130</h>
+      </coordinates>
+      <panel_attributes>Checkers
+--
++is-same
++is-one-same
++is-one-similar
++is-same-owner-dif-provider
++is-communication-log-unoverlapped
++double-check</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.Class</type>
+      <coordinates>
+        <x>590</x>
+        <y>670</y>
+        <w>200</w>
+        <h>100</h>
+      </coordinates>
+      <panel_attributes>Query-Helper
+--
++get-existed-repeat-user
++get-repeat-users
++get-user-by-uids
++get-existed-contact-users</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.Class</type>
+      <coordinates>
+        <x>590</x>
+        <y>780</y>
+        <w>200</w>
+        <h>120</h>
+      </coordinates>
+      <panel_attributes>Info-Combiner
+--
++combine-users-info
++combine-users-merges
++add-users-pending-merges
++combine-contacts-info
++combine-contacts-merges
+</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.Package</type>
+      <coordinates>
+        <x>100</x>
+        <y>390</y>
+        <w>850</w>
+        <h>560</h>
+      </coordinates>
+      <panel_attributes>models</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.Package</type>
+      <coordinates>
+        <x>560</x>
+        <y>490</y>
+        <w>360</w>
+        <h>430</h>
+      </coordinates>
+      <panel_attributes>helpers</panel_attributes>
+      <additional_attributes/>
+    </element>
+  </group>
+  <group>
+    <element>
+      <type>com.umlet.element.Class</type>
+      <coordinates>
+        <x>110</x>
+        <y>240</y>
+        <w>190</w>
+        <h>60</h>
+      </coordinates>
+      <panel_attributes>User-Registration-Handler
+--
++register-user
+-validate-input-data</panel_attributes>
+      <additional_attributes/>
+    </element>
+    <element>
+      <type>com.umlet.element.Package</type>
+      <coordinates>
+        <x>100</x>
+        <y>200</y>
+        <w>850</w>
+        <h>120</h>
+      </coordinates>
+      <panel_attributes>Controllers</panel_attributes>
+      <additional_attributes/>
+    </element>
+  </group>
+</diagram>

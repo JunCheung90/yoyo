@@ -1,4 +1,4 @@
-require! ['../bin/util', '../bin/database', '../bin/models/User']
+require! ['../bin/util', '../bin/database', '../bin/models/Users']
 _ = require 'underscore'
 
 helper =
@@ -13,7 +13,7 @@ helper =
     # show-contacts user-data.contacts
 
     db = database.get-db!
-    (user) <-! User.create-user-with-contacts user-data
+    (user) <-! Users.create-user-with-contacts user-data
     (err, found-users) <-! db.users.find({name: user-name}).to-array
     found-users.length.should.eql 1
     found-users[0].name.should.eql user-name
@@ -105,4 +105,4 @@ is-merged-result-contact = (contact) ->
   return !contact.merged-to
 
 
-module.exports = helper
+module.exports <<< helper

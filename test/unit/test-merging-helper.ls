@@ -94,4 +94,4 @@ helper =
     distination.pending-merges[0].pending-merge-from.should.eql source[id-attr]
     source.pending-merges[0].pending-merge-to.should.eql distination[id-attr]
 
-module.exports = helper
+module.exports <<< helper

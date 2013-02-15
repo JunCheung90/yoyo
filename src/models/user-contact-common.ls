@@ -9,7 +9,6 @@ user-contact-common =
     _new.merged-to = old[linker]
     old.merged-from ||= []
     old.merged-from.push _new[linker]
-    # pending mergence不转移，用户确认时，再做相应调整。
 
   update-pending-merges: !(source, distination) ->
     if source?.pending-merges?.length and distination?.pending-merges?.length
@@ -24,4 +23,4 @@ remove-pending-merges-with = !(pending-merges, related-cid) ->
 
 
 
-module.exports = user-contact-common
+module.exports <<< user-contact-common

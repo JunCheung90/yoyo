@@ -6,4 +6,4 @@ database =
     throw new Error "db isn't initialized" if !@db
     @db
 
-module.exports = database
+module.exports <<< database

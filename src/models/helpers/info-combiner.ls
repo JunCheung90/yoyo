@@ -2,13 +2,34 @@ require! '../../util'
 _ = require 'underscore'
 $C = util.to-camel-case 
 
-combine-users-info = !(old-user, new-user) -> 
-  # 这里的逻辑要更新，考虑各种复杂的信息合并情况。
-  # TODO：应对数据中的错误，例如：电话号码错了一位等情况。
-  # old-user <<< new-user
-  combine-user-basic-info old-user, new-user
-  combine-commnication-channels old-user, new-user
-  combine-relations old-user, new-user #性能：可以提高。
+info-combiner =
+  combine-users-info: !(old-user, new-user) -> 
+    # 这里的逻辑要更新，考虑各种复杂的信息合并情况。
+    # TODO：应对数据中的错误，例如：电话号码错了一位等情况。
+    # old-user <<< new-user
+    combine-user-basic-info old-user, new-user
+    combine-commnication-channels old-user, new-user
+    combine-relations old-user, new-user #性能：可以提高。
+
+  combine-users-merge: !(old-user, new-user) ->
+    combine-mergences old-user, new-user, 'uid'
+
+  add-users-pending-merges: !(old-user, new-user) -> 
+    add-pending-merges old-user, new-user, 'uid'
+
+  combine-contacts-info: !(old-contact, new-contact) ->
+    # throw new Error "Merging contacts act by different user: #{old-contact.names[0]} act-by #{old-contact.act-by-user}, #{new-contact.names[0]} act-by #{new-contact.act-by-user}" if old-contact.act-by-user is not new-contact.act-by-user
+    combine-contacts-names old-contact, new-contact
+    combine-contacts-phones old-contact, new-contact
+    combine-emails old-contact, new-contact
+    combine-sns old-contact, new-contact
+    combine-ims old-contact, new-contact
+
+  combine-contacts-merge: !(old-contact, new-contact) ->
+    combine-mergences old-contact, new-contact, 'cid'
+
+  add-contacts-pending-merges: !(old-contact, new-contact) ->
+    add-pending-merges old-contact, new-contact, 'cid'
 
 combine-user-basic-info = !(old-user, new-user) ->
   old-user.last-modified-date = current = new Date!.get-time!
@@ -58,11 +79,6 @@ combine-on-collection = !(old-user, new-user, collection, distingusih-attr, conf
     else
       conflict-handler old-elements-map, new-element
 
-# combine-phones-conflict-handler = !(old-user, new-user, old-user-phones-map, new-phone) ->
-#   old-phone = old-user-phones-map[phone.phone-number][0]
-#   throw new Error "Merging users: #{old-user.name} and #{new-user.name} are different on 'is-active' on the phone #{new-phone.phone-number}" if new-phone.is-active is not old-phone.is-active
-#   combine-phone-in-using-time old-phone, new-phone
-
 combine-phone-in-using-time = !(old-phone, new-phone) ->
   old-phone.start-using-time ||= new-phone.start-using-time
   old-phone.end-using-time ||= new-phone.end-using-time
@@ -104,9 +120,6 @@ combine-strangers = !(old-user, new-user) ->
   old-user.contacted-strangers = util.union old-user.contacted-strangers, new-user.contacted-strangers
   old-user.contacted-by-strangers = util.union old-user.contacted-by-strangers, new-user.contacted-by-strangers
 
-combine-users-mergences = !(old-user, new-user) ->
-  combine-mergences old-user, new-user, 'uid'
-
 combine-mergences = !(old, _new, id-attr) ->
   _new.merged-to = old[id-attr]
   old.merged-from ||= []
@@ -123,9 +136,6 @@ combine-mergences = !(old, _new, id-attr) ->
       if pending-merge.pending-merge-from  and pending-merge.pending-merge-from not in old-pending-merge-froms and pending-merge.pending-merge-from is not old[id-attr]
         old.pending-merges.push {($C 'pending-merge-from'): pending-merge.pending-merge-from, ($C 'is-accepted'): false}
 
-add-users-pending-merges = !(old-user, new-user) -> 
-  add-pending-merges old-user, new-user, 'uid'
-
 add-pending-merges = !(old, _new, id-name) ->
   old.pending-merges ||= []
   old.pending-merges.push {($C 'pending-merge-to'): _new[id-name], ($C 'is-accepted'): false}
@@ -133,30 +143,10 @@ add-pending-merges = !(old, _new, id-name) ->
   _new.pending-merges.push {($C 'pending-merge-from'): old[id-name], ($C 'is-accepted'): false}
 
 
-combine-contacts-info = !(old-contact, new-contact) ->
-  # throw new Error "Merging contacts act by different user: #{old-contact.names[0]} act-by #{old-contact.act-by-user}, #{new-contact.names[0]} act-by #{new-contact.act-by-user}" if old-contact.act-by-user is not new-contact.act-by-user
-  combine-contacts-names old-contact, new-contact
-  combine-contacts-phones old-contact, new-contact
-  combine-emails old-contact, new-contact
-  combine-sns old-contact, new-contact
-  combine-ims old-contact, new-contact
-
 combine-contacts-names = !(old-contact, new-contact) ->
   old-contact.names = util.union old-contact.names, new-contact.names
 
 combine-contacts-phones = !(old-contact, new-contact) ->
   old-contact.phones = util.union old-contact.phones, new-contact.phones
 
-combine-contacts-mergences = !(old-contact, new-contact) ->
-  combine-mergences old-contact, new-contact, 'cid'
-
-add-contacts-pending-merges = !(old-contact, new-contact) ->
-  add-pending-merges old-contact, new-contact, 'cid'
-
-module.exports = 
-  combine-users-info: combine-users-info
-  combine-users-mergences: combine-users-mergences
-  add-users-pending-merges: add-users-pending-merges
-  combine-contacts-info: combine-contacts-info
-  combine-contacts-mergences: combine-contacts-mergences
-  add-contacts-pending-merges: add-contacts-pending-merges
+module.exports <<< info-combiner

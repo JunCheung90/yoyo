@@ -2,18 +2,39 @@
  * Created by Wang, Qing. All rights reserved.
  */
  
-require! [async, '../util', './Contact-Merger', './User']
+require! [async, '../util', './Contact-Merger', './Users']
 require! common: './user-contact-common'
 
-# ！！！注意，在async-create-unsaved-contacts-users和save-contacts-users之间，有可能新的User来create contacts，
-# 其contacts中有和当前用户相同的user，因此会造成user的重复。所以今后必须有独立进程定期清理合并user。
-create-contacts = !(contacts-owner, callback) ->
-  (to-create-users, to-update-users) <-! async-create-unsaved-contacts-users contacts-owner
-  remove-contacts-volatile-pending-merges contacts-owner.contacts 
-  # 异步create时，判断merge-to和merge-from会有问题，需要整理。
-  clean-merge-to-and-from contacts-owner.contacts 
-  clean-merge-to-and-from to-create-users
-  callback to-create-users, to-update-users
+Contacts =
+  a: 1
+  # ！！！注意，在async-create-unsaved-contacts-users和save-contacts-users之间，有可能新的User来create contacts，
+  # 其contacts中有和当前用户相同的user，因此会造成user的重复。所以今后必须有独立进程定期清理合并user。
+  create-contacts: !(contacts-owner, callback) ->
+    (to-create-users, to-update-users) <-! async-create-unsaved-contacts-users contacts-owner
+    remove-contacts-volatile-pending-merges contacts-owner.contacts #volatile-pending-merges是需要pending merge的contact对象的引用，持久化前要去除。
+    # 异步create时，判断merge-to和merge-from会有问题，需要整理。
+    clean-merge-to-and-from contacts-owner.contacts 
+    clean-merge-to-and-from to-create-users
+    callback to-create-users, to-update-users
+
+  bind-contact-with-user: !(contact, user, owner) ->
+    contact.act-by-user = user.uid
+    user.as-contact-of ||= [] 
+    user.as-contact-of = util.union user.as-contact-of, owner.uid
+
+  add-contact-mergence-info: !(old-contact, new-contact) ->
+    common.add-mergence-info old-contact, new-contact, 'cid'
+
+  # volatile pending merge用来帮助生成对应的user，并加上pending merge。在持久化时必须去掉。
+  add-volatile-pending-merge: !(source, distination) ->
+    source.__pending-merges ||= [] 
+    distination.__pending-merges ||= []
+    source.__pending-merges.push {($C 'pending-merge-to'): distination}
+    distination.__pending-merges.push {($C 'pending-merge-from'): source}
+
+  create-cid: (uid, seq-no) ->
+    uid + '-c-' + new Date!.get-time! + '-' + seq-no
+
 
 async-create-unsaved-contacts-users = !(owner, callback) ->
   to-create-contact-users = []
@@ -45,15 +66,8 @@ merge-contact-act-by-user-with-existed-users = \
 create-and-merge-contacts-before-create-users = (owner, contacts) ->
   Contact-Merger.merge-contacts owner, contacts
 
-
-create-cid = (uid, seq-no) ->
-  uid + '-c-' + new Date!.get-time! + '-' + seq-no
-
 clean-merge-to-and-from = !(users) ->
 # TODO：由于contacts是异步创建的，merge-to和from的关系会比较混乱，需要厘清
-
-add-contact-mergence-info = (old-contact, new-contact) ->
-  common.add-mergence-info old-contact, new-contact, 'cid'
 
 $C = util.to-camel-case 
 create-contact-user = (contact, contact-user-creator) ->
@@ -66,11 +80,6 @@ create-contact-user = (contact, contact-user-creator) ->
         user-p-to.pending-merges ||= []
         user.pending-merges.push {($C 'pending-merge-to'): user-p-to.uid, ($C 'is-accepted'): false}
         user-p-to.pending-merges.push {($C 'pending-merge-from'): user.uid, ($C 'is-accepted'): false}
-      # else if p.pending-merge-from
-      #   user-p-from = contact-user-creator p.pending-merge-from
-      #   user-p-from.pending-merges ||= []
-      #   user.pending-merges.push {($C 'pending-merge-from'): user-p-from.uid, ($C 'is-accepted'): false}
-      #   user-p-from.pending-merges.push {($C 'pending-merge-to'): user.uid, ($C 'is-accepted'): false}
   user
 
 contact-user-creator-factory = -> 
@@ -79,7 +88,7 @@ contact-user-creator-factory = ->
     user = contact-user-map[contact.cid]
     if !user
       user = {} <<< contact{emails, ims, sns}
-      User.build-user-basic-info user
+      Users.build-user-basic-info user
       user.uid = util.get-UUid! 
       user.is-registered = false
       user.nicknames = contact.names
@@ -89,11 +98,6 @@ contact-user-creator-factory = ->
           user.phones.push {phone-number: phone}
       contact-user-map[contact.cid] = user
     user
-
-bind-contact-with-user = !(contact, user, owner) ->
-  contact.act-by-user = user.uid
-  user.as-contact-of ||= [] 
-  user.as-contact-of = util.union user.as-contact-of, owner.uid
 
 get-merge-to-contact = (contacts, contact, is-direct-merge) ->
   act-by-user = contact.act-by-user
@@ -113,13 +117,6 @@ get-contact = (contacts, cid) ->
   for contact in contacts
     return contact if contact.cid is cid
 
-# volatile pending merge用来帮助生成对应的user，并加上pending merge。在持久化时必须去掉。
-add-volatile-pending-merge = !(source, distination) ->
-  source.__pending-merges ||= []
-  distination.__pending-merges ||= []
-  source.__pending-merges.push {($C 'pending-merge-to'): distination}
-  distination.__pending-merges.push {($C 'pending-merge-from'): source}
-
 remove-contacts-volatile-pending-merges = !(contacts) ->
   for contact in contacts
     remove-volatile-pending-merge contact
@@ -130,7 +127,4 @@ remove-volatile-pending-merge = !(contact) ->
 has-volatile-pendign-merge = (contact) ->
   contact?.__pending-merges?.length
 
-(exports ? this) <<< \
-{create-contacts, add-contact-mergence-info, get-merge-to-contact,
-create-contact-user, bind-contact-with-user, create-cid, \
-add-volatile-pending-merge, remove-volatile-pending-merge}
+module.exports <<< Contacts

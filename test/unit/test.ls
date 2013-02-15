@@ -3,12 +3,11 @@
  */
  
 require! ['should', 'async', 
-          '../../bin/models/User',
           '../../bin/servers-init'.init-mongo-client, 
           '../../bin/servers-init'.shutdown-mongo-client,
           '../../bin/util', '../../bin/database', '../test-helper']
 
-fqh = require '../../bin/models/helpers/fast-query-helper'
+qh = require '../../bin/models/helpers/query-helper'
 
 multiple-times = 100 
 

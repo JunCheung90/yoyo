@@ -3,8 +3,8 @@
  */
 
 require! [restify, './config/config'.mongo, 
-          'mongodb'.MongoClient, 'mongodb'.Server, './util', './database', './models/User']
-fqh = require './models/helpers/fast-query-helper'
+          'mongodb'.MongoClient, 'mongodb'.Server, './util', './database', './models/Users']
+qh = require './models/helpers/query-helper'
 
 init-mongo-client = !(callback) -> #mongo-client, db are used to return
   database.client = new MongoClient new Server mongo.host, mongo.port
@@ -12,7 +12,6 @@ init-mongo-client = !(callback) -> #mongo-client, db are used to return
   database.db = database.client.db(mongo.db)
   database.db.users = database.db.collection 'users'
   database.db.call-logs = database.db.collection 'call-log-statistic'
-  # util.event.on 'user-info-updated', User.user-info-updated-handler
   callback!
 
 shutdown-mongo-client = !(callback) ->

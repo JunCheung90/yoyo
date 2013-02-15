@@ -44,7 +44,5 @@ conver-double-checkers = (real-strategy, key) ->
     check.first-check.checker = util.to-camel-case check.first-check.checker
     check.second-check.checker = util.to-camel-case check.second-check.checker
     real-strategy[key].push check
-  
 
-
-module.exports = convert-checkers-to-camel-case contacts-merging-strategy 
+module.exports <<< convert-checkers-to-camel-case contacts-merging-strategy 
