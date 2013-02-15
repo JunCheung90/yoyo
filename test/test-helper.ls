@@ -76,6 +76,7 @@ add-multiple-repeat-contacts = (user-data, multiple-times, repeat-rate) ->
 
 generate-random-contact = -> 
   "names": [util.get-UUid!] 
+  "phones": [util.get-UUid!]
 
 generate-repeat-contact = (seed-contacts)->
   dif-keys = ['phones', 'emails']

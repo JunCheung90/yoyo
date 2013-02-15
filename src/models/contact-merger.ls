@@ -4,8 +4,8 @@
 
 Merge-Strategy = require '../contacts-merging-strategy'
 _ = require 'underscore' 
-require! ['./helpers/Checkers', './helpers/Info-Combiner', './User-Merger', './Contacts']
-require! common: './user-contact-common'
+require! ['./helpers/Info-Combiner', './User-Merger', './Contacts']
+require! common: './user-contact-common', Checkers: './helpers/merge-checkers'
 
 contact-merger =
  # 算法参见 http://my.ss.sysu.edu.cn/wiki/pages/viewpage.action?pageId=113049608
@@ -23,7 +23,7 @@ contact-merger =
   merge-contacts: !(owner, contacts) ->
     if contacts
       owner.contacts-seq ||= 0
-      checked-contacts = []
+      checked-contacts = [] 
       for contact in contacts
         contact.cid = Contacts.create-cid owner.uid, ++owner.contacts-seq
         check-and-merge-contacts contact, checked-contacts, owner 

@@ -9,8 +9,8 @@ Users =
   create-user-with-contacts: !(user-data, callback)->
     # 如果系统中此用户尚未注册过，则新建user。
     user = {} <<< user-data
-    debugger
     @build-user-basic-info user
+    Contacts.remove-invalid-contacts user # TODO：性能：可以合并到Contacts.create-contacts的循环中。
     (old-user, new-user) <-! User-Merger.create-user-then-merge-with-existed-user user
     # 仅有new-user时，说明没有发现old-user需要合并；仅有old-user，说明user已经被合并到了old-user；new-user、old-user两者都有，说明发生了pending合并。
     contacts-owner = new-user or old-user # contacts将添加到的user是将新user识别为了old-user；仅有new-user是新建了一个独立的user

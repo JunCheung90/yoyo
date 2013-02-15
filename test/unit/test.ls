@@ -10,7 +10,6 @@ require! ['should', 'async',
 qh = require '../../bin/models/helpers/query-helper'
 
 multiple-times = 100 
-
 repeat-rate = 0.2 
 
 can = it # it在LiveScript中被作为缺省的参数，因此我们先置换为can
@@ -72,10 +71,7 @@ describe 'mongoDb版注册用户：简单合并联系人', !->
     found-users.length.should.eql 1
     found-users[0].contacts.length.should.eql all-original-contacts + multiple-times
     <-! test-helper.are-contacts-merged-correct found-users[0].contacts, non-repeat-original-contacts + non-repeat-contacts-amount
-    # (err, all-users) <-! db.users.find().to-array
-    # all-users.length.should.eql 3
     done! 
-
 
   do
     (done) <-! after 

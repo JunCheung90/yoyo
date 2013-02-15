@@ -3,10 +3,9 @@
  */
  
 require! [async, '../util', './Contact-Merger', './Users']
-require! common: './user-contact-common'
+require! common: './user-contact-common', Validator: './helpers/communication-channel-validator'
 
 Contacts =
-  a: 1
   # ！！！注意，在async-create-unsaved-contacts-users和save-contacts-users之间，有可能新的User来create contacts，
   # 其contacts中有和当前用户相同的user，因此会造成user的重复。所以今后必须有独立进程定期清理合并user。
   create-contacts: !(contacts-owner, callback) ->
@@ -31,6 +30,10 @@ Contacts =
     distination.__pending-merges ||= []
     source.__pending-merges.push {($C 'pending-merge-to'): distination}
     distination.__pending-merges.push {($C 'pending-merge-from'): source}
+
+  remove-invalid-contacts: !(contacts-owner) ->
+    if contacts-owner?.contacts?.length
+      contacts-owner.contacts = filter is-valid-contact, contacts-owner.contacts
 
   create-cid: (uid, seq-no) ->
     uid + '-c-' + new Date!.get-time! + '-' + seq-no
@@ -126,5 +129,11 @@ remove-volatile-pending-merge = !(contact) ->
 
 has-volatile-pendign-merge = (contact) ->
   contact?.__pending-merges?.length
+
+is-valid-contact = ->
+  Validator.has-valid-phones it.phones or
+  Validator.has-valid-emails it.emails or
+  Validator.has-valid-sns it.sns or
+  Validator.has-valid-ims it.ims
 
 module.exports <<< Contacts

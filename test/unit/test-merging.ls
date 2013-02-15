@@ -27,7 +27,7 @@ describe '联系人（Contact）与用户（User）合并逻辑全面测试：',
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
         (user) <-! Users.create-user-with-contacts user-data
-        (found-user) <-! should-find-one-user-named '张三'
+        (found-user) <-! should-find-one-user-named '张三' 
         found-user.contacts.length.should.eql 2
         should-one-contact-is-to found-user.contacts
         should-one-contact-is-from found-user.contacts
@@ -38,7 +38,7 @@ describe '联系人（Contact）与用户（User）合并逻辑全面测试：',
 
       can 'phones有一个为空时，不会合并。\n', !(done) ->
         contact-lisi1 = {"names": ["李小四"], "phones":["123", "234"]}
-        contact-lisi2 = {"names": ["李四"], "phones":[]}
+        contact-lisi2 = {"names": ["李四"], "phones":[], "emails":["a@mail.com"]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
         (user) <-! Users.create-user-with-contacts user-data
@@ -82,7 +82,7 @@ describe '联系人（Contact）与用户（User）合并逻辑全面测试：',
 
       can 'ims有一个为空时，不会合并。\n', !(done) ->
         contact-lisi1 = {"names": ["李小四"], "ims":[{"type": "QQ", "account": "lisi111"}, {"type": "AOL", "account": "lisi111"}]}
-        contact-lisi2 = {"names": ["李四"], "ims":[]}
+        contact-lisi2 = {"names": ["李四"], "ims":[], "phones":["123"]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
         (user) <-! Users.create-user-with-contacts user-data
@@ -166,7 +166,7 @@ describe '联系人（Contact）与用户（User）合并逻辑全面测试：',
       done! 
       
     can '两个user李四、李小四，李小四更新了电话号码（李四有的）之后。\n', !(done) ->
-      (user) <- create-zhangsan-with-pending-merging-contacts-lisi-and-lixiaosi
+      (user) <- create-zhangsan-with-pending-merging-contacts-lidasi-and-lixiaosi
       (li-da-si) <-! should-find-a-user-with-nickname '李大四'
       (li-xiao-si) <-! should-find-a-user-with-nickname '李小四'
       
@@ -204,7 +204,7 @@ initial-test-environment = !(callback) ->
   user-data := data
   callback!
 
-create-zhangsan-with-pending-merging-contacts-lisi-and-lixiaosi = !(callback) ->
+create-zhangsan-with-pending-merging-contacts-lidasi-and-lixiaosi = !(callback) ->
   contact-lisi1 = {"names": ["李小四"], "phones":["123", "234"]}
   contact-lisi2 = {"names": ["李大四"], "phones":["345"]}
   user-data.contacts ++= [contact-lisi1, contact-lisi2]
