@@ -17,6 +17,8 @@ Users =
     perhaps-old-user = if old-user and new-user then old-user else null # 当new-user和old-user需要pending-merge时，会同时有两个users要存储。
     contacts-owner.uid ||= util.get-UUid!
     (to-create-users, to-update-users) <-! create-or-update-user-contacts contacts-owner
+    # TODO：今后将抽取到Controller里面予以协调。
+    ranking-contacts-mining-interesting-info-and-set-avatar contacts-owner
     <-! persist-all-users to-create-users, to-update-users, contacts-owner, perhaps-old-user 
     <-! get-api-keys contacts-owner
     callback contacts-owner
@@ -89,5 +91,9 @@ async-get-im-api-key = !(im, callback) ->
 async-get-sn-api-key = !(sn, callback) ->
   # TODO: 
   callback!
+
+ranking-contacts-mining-interesting-info-and-set-avatar = !(contacts-owner) ->
+  # TODO：执行后，contacts-owner的每个contact将会有rank-score，用于排名。挖掘有趣信息和确定头像的工作同时进行。contacts-owner（user）将有interesting-infos
+
 
 module.exports <<< Users

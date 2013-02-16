@@ -53,6 +53,8 @@ user = # yoyo server端数据
     * cid: 'owner-uid-c-timestamp_of_add-seqno'
       act-by-user: 'uid_lisi'
       names: ['李小四']
+      rank-score: 399 # yoyo服务器计算得出的联系人推荐排名分数，越大排名越靠前
+      avatars: ['s-aid', 'u-aid-1', 'u-aid-2'] # s-aid是系统根据通信时间计算出的avatar，u-aid是用户给这个联系人设定的。在用户手机上显示时，this.u-aid > act-by-user.current-avatar > this.s-aid
       phones: ['123456']
       emails: ['lisi@fake.com']
       ims: 
@@ -78,6 +80,26 @@ user = # yoyo server端数据
 # 在当前用户的通信历史中出现过，但又不是用户的联系人的phone、email等等，系统为这些人生成（is-register = false）的用户，并记录它们与用户的关系。
   contacted-strangers: ['uid-of-stranger-1', 'uid-of-stranger-2'] # 用户联系过的strangers。
   contacted-by-strangers: ['uid-of-stranger-3', 'uid-of-stranger-2'] # 联系过用户的strangers，stranger-2即联系过当前用户，也被当前用户联系过。
+#-------- interesting-info --------#
+  interesting-infos:
+    * iiid: 'uid-ii-timestamp_of_add-seqno' 
+      type: 'most-calling-out-time' # ii的类别，可以挖掘多种不同有趣信息给回客户端
+      # info这部分的内容，可以不存在user里面，单独存储type和其对应的info，这里仅仅存type和data就可以了。但是，
+      info: '#{data.related-contact.name}坑电话费啊, #{data.time-frame}我竟然打了#{calling-out-times}电话给他，\
+            说了#{data.calling-out-amount-time}，至少花了我#{data.fee}。这笔帐不能不算！<a href=#{data.related-contact.cid}>#{data.related-contact.name}</a>\
+            还我小钱钱来！'
+      data: # 有关ii的数据，不同type可能不同。
+        related-contact
+          name: '张三'
+          cid: 'cid-of-zhangsan'
+        time-frame:
+          start-time: '2012-12-01 08-10-11'
+          end-time: '2013-01-01 23-10-11'
+        calling-out-times: 210 # 210次
+        calling-out-amount-time: '310 m' # 310分钟
+        fee
+      created-time: '2013-01-01 23-10-11'
+
 require! fs
 
 # 下面部分用来生成json数据
