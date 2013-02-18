@@ -94,4 +94,10 @@ helper =
     distination.pending-merges[0].pending-merge-from.should.eql source[id-attr]
     source.pending-merges[0].pending-merge-to.should.eql distination[id-attr]
 
+  should-have-contact-named: !(user, contact-name) ->
+    contact-name in user.contacts
+
+  should-not-have-contact-named: !(user, contact-name) ->
+    !should-have-contact-named user, contact-name
+
 module.exports <<< helper

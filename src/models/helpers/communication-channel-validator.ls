@@ -1,3 +1,7 @@
+require! '../../config/config'
+
+
+
 Validator =
   has-valid-phones: (phones)->
     has-valid-items phones, @is-valid-phone
@@ -18,7 +22,10 @@ Validator =
     /.+@.+\..+/.test email #TODO：进一步完善
 
   is-valid-im: (im)->
-    !!im #TODO：进一步完善
+    if im?.type and im?.account
+      im.type in config.communication-channels-validation.im.type-white-list
+    else
+      false
 
   is-valid-sn: (sn)->
     !!sn #TODO：进一步完善
