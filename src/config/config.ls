@@ -17,3 +17,5 @@ module.exports <<<
 	communication-channels-validation:
 		im:
 			type-white-list: ['QQ', 'MSN', 'GTALK'] # 这里需要进一步加入所有可能的IM提供商，或者改用黑名单？
+		sn:
+			type-white-list: ['FACEBOOK', 'TWITTER', 'SINA', 'TQQ', 'RENREN']

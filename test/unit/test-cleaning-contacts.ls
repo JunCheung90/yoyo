@@ -25,37 +25,48 @@ describe '清理无用的Contact：', !->
     done! 
     
   can '清除只有不合法电子邮件的联系人。\n', !(done) ->
-    (zhangsan) <- create-zhangsan-with-contacts-lidasi-and {"names": "illegal-email", "emails":["12d3"]}
-    zhangsan.contacts ++= {"names": "illegal-email-but-leagl-phone", "emails":["12d3"], "phones": ['1232']}
+    (zhangsan) <- create-zhangsan-with-contacts-lidasi-and {"names": ["illegal-email"], "emails":["12d3"]}
+    zhangsan.contacts ++= {"names": ["illegal-email-but-leagl-phone"], "emails":["12d3"], "phones": ['1232']}
     zhangsan.contacts.should.have.length 2
     done! 
     
   can '清除只有不合法IM的联系人。\n', !(done) ->
-    (zhangsan) <- create-zhangsan-with-contacts-lidasi-and {"names": "illegal-IM", "ims":[{"type": "", "account": ""}]}
-    zhangsan.contacts ++= {"names": "illegal-email-but-leagl-phone", "ims":[{"type": "", "account": ""}], "phones": ['1232']}
+    (zhangsan) <- create-zhangsan-with-contacts-lidasi-and {"names": ["illegal-IM"], "ims":[{"type": "", "account": ""}]}
+    zhangsan.contacts ++= {"names": ["illegal-email-but-leagl-phone"], "ims":[{"type": "", "account": ""}], "phones": ['1232']}
     zhangsan.contacts.should.have.length 2
     done!  
     
   can '清除只有不合法IM（提供商，type）的联系人。\n', !(done) ->
-    (zhangsan) <- create-zhangsan-with-contacts-lidasi-and {"names": "illegal-IM", "ims":[{"type": "illegal-provider", "account": "李四"}]}
-    zhangsan.contacts ++= {"names": "illegal-email-but-leagl-phone", "ims":[{"type": "illegal-provider", "account": "李四"}], "phones": ['1232']}
+    (zhangsan) <- create-zhangsan-with-contacts-lidasi-and {"names": ["illegal-IM"], "ims":[{"type": "illegal-provider", "account": "李四"}]}
+    zhangsan.contacts ++= {"names": ["illegal-email-but-leagl-phone"], "ims":[{"type": "illegal-provider", "account": "李四"}], "phones": ['1232']}
     zhangsan.contacts.should.have.length 2
     should-have-contact-named zhangsan, 'illegal-email-but-leagl-phone'
     should-not-have-contact-named zhangsan, 'illegal-IM'
     done!  
     
-  can '不会清除合法IM提供商（例如QQ）的联系人。\n', !(done) ->
-    (zhangsan) <- create-zhangsan-with-contacts-lidasi-and {"names": "legal-IM", "ims":[{"type": "QQ", "account": "李四"}]}
+  can '不会清除IM提供商（例如QQ）合法的联系人。\n', !(done) ->
+    (zhangsan) <- create-zhangsan-with-contacts-lidasi-and {"names": ["legal-IM"], "ims":[{"type": "QQ", "account": "李四"}]}
     zhangsan.contacts.should.have.length 2
     should-have-contact-named zhangsan, 'legal-IM'
     done!  
     
-  # can '清除只有不合法SN的联系人。\n', !(done) ->
-  #   # (zhangsan) <- create-zhangsan-with-contacts-lidasi-and {"names": "illegal-email", "emails":["12d3"]}
-  #   # zhangsan.contacts ++= {"names": "illegal-email-but-leagl-phone", "emails":["12d3"], "phones": ['1232']}
-  #   # zhangsan.contacts.should.have.length 2
-  #   done! 
-    
+  can '清除只有不合法SN的联系人。\n', !(done) ->
+    (zhangsan) <- create-zhangsan-with-contacts-lidasi-and {"names": ["illegal-sn"], "sns":[{"type": "", "account": ""}]}
+    zhangsan.contacts ++= {"names": ["illegal-sn-but-leagl-phone"], "sns":[{"type": "", "account": ""}], "phones": ['1232']}
+    zhangsan.contacts.should.have.length 2
+    done! 
+
+  can '清除只有不合法SN（提供商，type）的联系人。\n', !(done) ->
+    (zhangsan) <- create-zhangsan-with-contacts-lidasi-and {"names": ["illegal-sn"], "sns":[{"type": "illegal-sn", "account": "李四"}]}
+    zhangsan.contacts ++= {"names": ["illegal-sn-but-leagl-phone"], "sns":[{"type": "illegal-sn", "account": "李四"}], "phones": ['1232']}
+    zhangsan.contacts.should.have.length 2
+    done!
+
+  can '不清除SN提供商合法的联系人。\n', !(done) ->
+    (zhangsan) <- create-zhangsan-with-contacts-lidasi-and {"names": ["legal-sn", '李四'], "sns":[{"type": "SINA", "account": "李四"}]}
+    zhangsan.contacts.should.have.length 2
+    done!
+
   do
     (done) <-! after
     <-! shutdown-mongo-client

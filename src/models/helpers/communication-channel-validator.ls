@@ -22,14 +22,16 @@ Validator =
     /.+@.+\..+/.test email #TODO：进一步完善
 
   is-valid-im: (im)->
-    if im?.type and im?.account
-      im.type in config.communication-channels-validation.im.type-white-list
-    else
-      false
+    is-valid-provider im, config.communication-channels-validation.im.type-white-list
 
   is-valid-sn: (sn)->
-    !!sn #TODO：进一步完善
+    is-valid-provider sn, config.communication-channels-validation.sn.type-white-list
 
+is-valid-provider = (channel, type-white-list) ->
+  if channel?.type and channel?.account
+    channel.type in type-white-list
+  else
+    false
 
 has-valid-items = (items, validator)->
   if items?.length
