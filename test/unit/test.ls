@@ -9,7 +9,7 @@ require! ['should', 'async',
 
 qh = require '../../bin/models/helpers/query-helper'
 
-multiple-times = 100 
+multiple-times = 10 
 repeat-rate = 0.2 
 
 can = it # it在LiveScript中被作为缺省的参数，因此我们先置换为can
@@ -76,4 +76,4 @@ describe 'mongoDb版注册用户：简单合并联系人', !->
   do
     (done) <-! after 
     <-! shutdown-mongo-client
-    done!
+    done! 
