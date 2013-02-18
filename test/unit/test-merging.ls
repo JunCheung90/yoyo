@@ -22,8 +22,8 @@ describe '联系人（Contact）与用户（User）合并逻辑全面测试：',
         done!
       
       can 'phones有一个相同（均非空）时，进行合并。\n', !(done) ->
-        contact-lisi1 = {"names": ["李小四"], "phones":["123", "234"]}
-        contact-lisi2 = {"names": ["李四"], "phones":["345", "234"]}
+        contact-lisi1 = {"names": ["李小四"], "phones":["12345678911", "22123456789"]}
+        contact-lisi2 = {"names": ["李四"], "phones":["33123456789", "22123456789"]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
         (user) <-! Users.create-user-with-contacts user-data
@@ -33,11 +33,11 @@ describe '联系人（Contact）与用户（User）合并逻辑全面测试：',
         should-one-contact-is-from found-user.contacts
         merged-contact = get-the-merged-contact found-user.contacts
         merged-contact.names.should.eql ["李小四", "李四"]
-        merged-contact.phones.should.eql ['123', '234', '345']
+        merged-contact.phones.should.eql ['12345678911', '22123456789', '33123456789']
         done!
 
       can 'phones有一个为空时，不会合并。\n', !(done) ->
-        contact-lisi1 = {"names": ["李小四"], "phones":["123", "234"]}
+        contact-lisi1 = {"names": ["李小四"], "phones":["12345678911", "22123456789"]}
         contact-lisi2 = {"names": ["李四"], "phones":[], "emails":["a@mail.com"]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
@@ -49,8 +49,8 @@ describe '联系人（Contact）与用户（User）合并逻辑全面测试：',
         done!
 
       can 'phones均不相同时，不会合并。\n', !(done) ->
-        contact-lisi1 = {"names": ["李小四"], "phones":["123", "234"]}
-        contact-lisi2 = {"names": ["李四"], "phones":["1", "4"]}
+        contact-lisi1 = {"names": ["李小四"], "phones":["12345678911", "22123456789"]}
+        contact-lisi2 = {"names": ["李四"], "phones":["33123456789", "44123456789"]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
         (user) <-! Users.create-user-with-contacts user-data
@@ -82,7 +82,7 @@ describe '联系人（Contact）与用户（User）合并逻辑全面测试：',
 
       can 'ims有一个为空时，不会合并。\n', !(done) ->
         contact-lisi1 = {"names": ["李小四"], "ims":[{"type": "QQ", "account": "lisi111"}, {"type": "AOL", "account": "lisi111"}]}
-        contact-lisi2 = {"names": ["李四"], "ims":[], "phones":["123"]}
+        contact-lisi2 = {"names": ["李四"], "ims":[], "phones":["12345678911"]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
         (user) <-! Users.create-user-with-contacts user-data
@@ -135,8 +135,8 @@ describe '联系人（Contact）与用户（User）合并逻辑全面测试：',
         <-! initial-test-environment
         done! 
       can 'names有一个类似时（李小四 vs. 李大四），推荐合并联系人，并推荐合并对应联系人用户。\n', !(done) ->
-        contact-lisi1 = {"names": ["李小四"], "phones":["123", "234"]}
-        contact-lisi2 = {"names": ["李大四"], "phones":["345"]}
+        contact-lisi1 = {"names": ["李小四"], "phones":["12345678911", "22123456789"]}
+        contact-lisi2 = {"names": ["李大四"], "phones":["33123456789"]}
         user-data.contacts ++= [contact-lisi1, contact-lisi2]
 
         (user) <-! Users.create-user-with-contacts user-data
@@ -205,14 +205,14 @@ initial-test-environment = !(callback) ->
   callback!
 
 create-zhangsan-with-pending-merging-contacts-lidasi-and-lixiaosi = !(callback) ->
-  contact-lisi1 = {"names": ["李小四"], "phones":["123", "234"]}
-  contact-lisi2 = {"names": ["李大四"], "phones":["345"]}
+  contact-lisi1 = {"names": ["李小四"], "phones":["12345678911", "22123456789"]}
+  contact-lisi2 = {"names": ["李大四"], "phones":["33123456789"]}
   user-data.contacts ++= [contact-lisi1, contact-lisi2]
   (user) <-! Users.create-user-with-contacts user-data
   callback user
 
 create-li-si-with-phones-of-both-li-da-si-and-li-xiao-si = !(callback) ->
-  (user) <-! Users.create-user-with-contacts {name: '李四', phones: [{phone-number:'123'}, {phone-number:'345'}]}
+  (user) <-! Users.create-user-with-contacts {name: '李四', phones: [{phone-number:'12345678911'}, {phone-number:'33123456789'}]}
   callback user
 
 should-one-user-merged-with-li-si = (li-da-si, li-xiao-si, li-si) ->

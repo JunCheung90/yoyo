@@ -10,7 +10,7 @@ helper =
     user-data = helper.load-user-data json-file-name
     non-repeat-contacts-amount = add-multiple-repeat-contacts user-data, multiple-times, repeat-rate
     # console.log "\\\\\\\\\\\\\\\\\\\\\\\ user-data.contacts \\\\\\\\\\\\\\\\\\\\\\\\\\n"
-    # show-contacts user-data.contacts
+    # @show-contacts user-data.contacts
 
     db = database.get-db!
     (user) <-! Users.create-user-with-contacts user-data
@@ -76,20 +76,25 @@ add-multiple-repeat-contacts = (user-data, multiple-times, repeat-rate) ->
 
 generate-random-contact = -> 
   "names": [util.get-UUid!] 
-  "phones": [util.get-UUid!]
+  "phones": [generate-random-phone-number!]
 
 generate-repeat-contact = (seed-contacts)->
-  dif-keys = ['phones', 'emails']
+  dif-keys = ['phones']
   keys = ['ims'] # 这里如果用多个key的话，会出现搭桥的现象，导致原本不重复的contact变成重复的。
   contact = {}
   different-value-key = random-select dif-keys
-  contact[different-value-key] = [Math.random! * 100000 + '']
+  contact[different-value-key] = [generate-random-phone-number!]
 
   repeat-value-key = random-select keys
   seed = random-select filter is-defined(repeat-value-key), seed-contacts
   contact[repeat-value-key] = seed[repeat-value-key]
   contact.names ||= ["repeat-contact-on-#{repeat-value-key}"] 
-  contact 
+  contact
+
+generate-random-phone-number = ->
+  phone-number = (Math.floor (1 + Math.random!) * Math.pow 10, 10) + ''
+  # console.log "Phone Number: %j", phone-number
+  phone-number
 
 random-select = (elements)->
   throw new Error "Can't' random select form #{elements}" if !elements
