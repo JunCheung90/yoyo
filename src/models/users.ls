@@ -34,6 +34,42 @@ Users =
     user.current-avatar = user.avatars[0]
     [phone.start-using-time = current for phone in user.phones] if user?.phones?.length
 
+  get-or-create-user-with-phone-number: !(phone-number, callback) ->
+    (user) <-! get-user-with-phone-number phone-number
+    if user
+      callback user
+    else
+      (user) <-! create-user-with-phone-number phone-number
+      callback user
+
+  update-user-contacted-strangers: !(user-uid, stranger-uid, callback) ->
+    /**
+    
+      TODO:
+      - add stranger to user.contacted-strangers
+    
+    **/
+    callback!
+
+  update-user-contacted-by-strangers: !(user-uid, stranger-uid, callback) ->
+    /**
+    
+      TODO:
+      - add stranger if it's stranger
+    
+    **/
+    callback!
+
+get-user-with-phone-number = !(phone-number, callback) ->
+  #TODO: 
+  user = {}
+  callback user
+
+create-user-with-phone-number = !(phone-number, callback) ->
+  #TODO:
+  user = {}
+  callback user
+
 create-default-system-avatar = (user) ->
   #TODO:
  
