@@ -1,0 +1,18 @@
+{
+	"ownerId": "uid-of-zhangsan",
+	"rejectTo": [
+		"uid-of-lisi",
+		"uid2"
+	],
+	"type": "豆瓣",
+	"lastModified": "UTC",
+	"updates": [
+		{
+			"updateTime": "UTC",
+			"updateContents": [
+				"json_result1",
+				"json_result2"
+			]
+		}
+	]
+}

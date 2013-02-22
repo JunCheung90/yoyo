@@ -12,6 +12,7 @@ init-mongo-client = !(callback) -> #mongo-client, db are used to return
   database.db = database.client.db(mongo.db)
   database.db.users = database.db.collection 'users'
   database.db.call-logs = database.db.collection 'call-log-statistic'
+  database.db.sn-update = database.db.collection 'sn-update'
   callback!
 
 shutdown-mongo-client = !(callback) ->
