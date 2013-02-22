@@ -3,6 +3,8 @@ user = # yoyo server端数据
   uid: 'xxxx' # 注册用户之后将存在, 对于尚未注册，而仅仅是通过他人通讯录识别的user，为null。
   is-person: true # true | false 对于单位用户（电话）来说为false
   name: '张三'
+  gender: null # null 未知、不确定 | F | M
+  birthday：null
   nicknames: ['小张', '小三'] # 从他人通信录里面给当前用户的名称中获取。
   avatars: ['s-aid-1', 's-aid-2', 'u-aid-1', 'u-aid-2'] # avatar的id全局唯一，有系统计算给出的（s）和用户上传的（u）
   current-avatar: 's-aid-2'
