@@ -6,8 +6,7 @@ user = # yoyo server端数据
   gender: null # null 未知、不确定 | F | M
   birthday：null
   nicknames: ['小张', '小三'] # 从他人通信录里面给当前用户的名称中获取。
-  avatars: ['s-aid-1', 's-aid-2', 'u-aid-1', 'u-aid-2'] # avatar的id全局唯一，有系统计算给出的（s）和用户上传的（u）
-  current-avatar: 's-aid-2'
+  avatars: ['u-aid-2', 'u-aid-1', 's-aid'] # avatar的id全局唯一，有系统计算给出的（s）和用户上传的（u），avatars[0]是当前使用的avatar。
   phones: # 记录用户使用（过）的电话号码。
     * phone-number: '3456789'
       is-active: true
