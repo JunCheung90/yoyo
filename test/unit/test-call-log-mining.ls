@@ -74,7 +74,7 @@ check-zhangsan-call-log = !(user, call-log-count, callback) ->
 create-user-zhangsan = !(callback) ->
   user-data = require '../test-data/zhangsan.json'
   (zhangsan) <-! Users.create-user-with-contacts user-data
-  <-! call-logs.update-user-call-log zhangsan, user-data.calllogs
+  <-! call-logs.update-user-call-log zhangsan, user-data.calllogs, '2012-11-10 21:32:12'
   callback zhangsan
 
 check-total-call-log-count = !(user-name, in-count, out-count, miss-count, callback) ->
