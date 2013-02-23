@@ -1,8 +1,10 @@
 user-call-logs-statistic = 
   from-user: 'uid-of-zhangsan'
   to-user: 'uid-of-lisi'
+  last-call-log-time: '2013-01-01 13:00:00'
   statistic:
     count: 15
+    miss-count: 1
     duration: 1245
   
   child-node:
@@ -12,9 +14,11 @@ user-call-logs-statistic =
         * interval: 0 # 0-23
           statistic:
             count: 12
+            miss-count: 1
             duration:1000
       statistic:
         count: 15
+        miss-count: 1
         duration: 1245
       child-node:
         * type: 'MONTH'
@@ -23,9 +27,11 @@ user-call-logs-statistic =
             * interval: 0
               statistic:
                 count: 12
+                miss-count: 1
                 duration:1000
           statistic:
             count: 12
+            miss-count: 1
             duration: 1000
 
           child-node:
@@ -35,9 +41,11 @@ user-call-logs-statistic =
                 * interval: 0
                   statistic:
                     count: 12
+                    miss-count: 1
                     duration:1000              
               statistic:
                 count: 12
+                miss-count: 1
                 duration: 1000 
               child-node:
                 * type: 'DAY'
@@ -46,9 +54,11 @@ user-call-logs-statistic =
                     * interval: 0
                       statistic:
                         count: 12
+                        miss-count: 1
                         duration:1000     
                   statistic:
                     count: 12
+                    miss-count: 1
                     duration: 1000                  
                   child-node:
                     * type: 'HOUR'
@@ -56,6 +66,7 @@ user-call-logs-statistic =
                       distribution-in-hour: []
                       statistic:
                         count: 12
+                        miss-count: 1
                         duration: 1000
                       child-node: null
                     ...
