@@ -1,3 +1,6 @@
 *.js
+dev-start.bat
 node_modules/
+!/node-modules/node-mock/
+!/node-modules/node-sns-oauth/
 test-bin/load/*.log
