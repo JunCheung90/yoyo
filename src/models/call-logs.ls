@@ -65,7 +65,7 @@ save-user-call-log = !(user-call-logs, callback) ->
 update-statistic = !(user, call-logs-with-uid, callback) ->
   connected-users = get-connected-users user, call-logs-with-uid
   (call-log-statistics) <-! get-or-init-call-log-statistics connected-users
-  call-log-statistics = update-statistic-by-each-call-log call-log-statistics, connected-users
+  call-log-statistics = update-statistics-by-each-call-log call-log-statistics, connected-users
   <-! save-call-log-statistics call-log-statistics
   callback!
 
@@ -99,19 +99,40 @@ get-or-init-call-log-statistics = !(connected-users, callback) ->
   call-log-statistics = []
   (err) <-! async.for-each connected-users, !(connected-user, next) ->
     (err, call-log-statistic) <-! database.db.call-log-statistic.find-one({from-uid: connected-user.from-uid, to-uid: connected-user.to-uid})
-    call-log-statistic ?= {from-uid: connected-user.from-uid, to-uid: connected-user.to-uid, statistic: {count: 0, miss-count: 0, duration: 0}, child-node: []}
+    call-log-statistic ?= inti-root-statistic connected-user
     call-log-statistics ++= call-log-statistic
     next!
   throw new Error err if err
   callback call-log-statistics
 
-update-statistic-by-each-call-log = (call-log-statistics, connected-users) ->
+inti-root-statistic = (connected-user)->
+  node = init-statistic-node 'ROOT'
+  node.from-uid = connected-user.from-uid
+  node.to-uid = connected-user.to-uid
+  node
+
+init-statistic-node = (type)->
+  {
+    type: type
+    start-time: null
+    end-time: null
+    statistic: {
+      count: 0, 
+      miss-count: 0, 
+      duration: 0,
+      distribution-in-hour: []
+    }, 
+    child-node: []
+  }
+
+update-statistics-by-each-call-log = (call-log-statistics, connected-users) ->
   for connected-user, i in connected-users
     #TODO: 目前只统计两个user之间总数据，下一步需要增加统计各时间节点的数据，完善‘统计树’
     call-log-statistics[i].statistic.count += connected-user.times.length
-    for duration, i in connected-user.durations
-      call-log-statistics[i].statistic.duration += duration
-      if connected-user.types[i] === 'MISS'
+    current-node = call-log-statistics[i]
+    for time, j in connected-user.times
+      call-log-statistics[i].statistic.duration += connected-user.durations[j]
+      if connected-user.types[j] === 'MISS'
         call-log-statistics[i].statistic.miss-count += 1
 
   call-log-statistics

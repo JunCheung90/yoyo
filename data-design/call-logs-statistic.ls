@@ -1,76 +1,52 @@
 user-call-logs-statistic = 
   from-user: 'uid-of-zhangsan'
   to-user: 'uid-of-lisi'
-  last-call-log-time: '2013-01-01 13:00:00'
+
+  type: 'ROOT'  
+  start-time: '2013-01-01 13:00:00'
+  end-time: '2013-01-01 13:00:00'
   statistic:
     count: 15
     miss-count: 1
     duration: 1245
+    distribution-in-hour:
+      * start: 1 # 0 to 23
+        end: 2 # 1 to 24, larger than start
+        statistic-in-hour:
+          count: 12
+          miss-count: 1
+          duration: 1000
   
   child-node:
-    * type: 'YEAR'
-      interval: 2012
-      distribution-in-hour:
-        * interval: 0 # 0-23
-          statistic:
-            count: 12
-            miss-count: 1
-            duration:1000
+    * type: 'YEAR'  
+      start-time: '2013-01-01 13:00:00'
+      end-time: '2013-01-01 13:00:00'
       statistic:
         count: 15
         miss-count: 1
         duration: 1245
+        distribution-in-hour:
+          * start: 1 # 0 to 23
+            end: 2 # 1 to 24, larger than start
+            statistic-in-hour:
+              count: 12
+              miss-count: 1
+              duration: 1000
       child-node:
-        * type: 'MONTH'
-          interval: 1 # 1 to 12
-          distribution-in-hour:
-            * interval: 0
-              statistic:
-                count: 12
-                miss-count: 1
-                duration:1000
+        * type: 'MONTH'  
+          start-time: '2013-01-01 13:00:00'
+          end-time: '2013-01-01 13:00:00'
           statistic:
-            count: 12
+            count: 15
             miss-count: 1
-            duration: 1000
-
-          child-node:
-            * type: 'WEEK'
-              interval: 1
-              distribution-in-hour:
-                * interval: 0
-                  statistic:
-                    count: 12
-                    miss-count: 1
-                    duration:1000              
-              statistic:
-                count: 12
-                miss-count: 1
-                duration: 1000 
-              child-node:
-                * type: 'DAY'
-                  interval: 1 # 1 to 31
-                  distribution-in-hour:
-                    * interval: 0
-                      statistic:
-                        count: 12
-                        miss-count: 1
-                        duration:1000     
-                  statistic:
-                    count: 12
-                    miss-count: 1
-                    duration: 1000                  
-                  child-node:
-                    * type: 'HOUR'
-                      interval: 0 # 0 to 23
-                      distribution-in-hour: []
-                      statistic:
-                        count: 12
-                        miss-count: 1
-                        duration: 1000
-                      child-node: null
-                    ...
-                ...
-            ...
+            duration: 1245
+            distribution-in-hour:
+              * start: 1 # 0 to 23
+                end: 2 # 1 to 24, larger than start
+                statistic-in-hour:
+                  count: 12
+                  miss-count: 1
+                  duration: 1000
+          child-node: []
         ...
-    ... 
+    ...
