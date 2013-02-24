@@ -8,7 +8,7 @@ require! [async, '../database', './Users', './Contacts']
 _ = require 'underscore'
 
 Call-logs =
-  update-user-call-log: !(user, call-logs, last-call-log-time, callback) ->
+  update-user-call-log-and-related-statistic: !(user, call-logs, last-call-log-time, callback) ->
     (call-logs-with-uid) <-! add-uid-to-each-call-log user, call-logs    
     <-! update-user-call-logs-with-uid user, call-logs-with-uid, last-call-log-time    
     <-! update-statistic user, call-logs-with-uid
@@ -65,7 +65,7 @@ save-user-call-log = !(user-call-logs, callback) ->
 update-statistic = !(user, call-logs-with-uid, callback) ->
   connected-users = get-connected-users user, call-logs-with-uid
   (call-log-statistics) <-! get-or-init-call-log-statistics connected-users
-  call-log-statistics = update-statistics-by-each-call-log call-log-statistics, connected-users
+  call-log-statistics = update-statistics-with-connected-users call-log-statistics, connected-users
   <-! save-call-log-statistics call-log-statistics
   callback!
 
@@ -125,7 +125,7 @@ init-statistic-node = (type)->
     child-node: []
   }
 
-update-statistics-by-each-call-log = (call-log-statistics, connected-users) ->
+update-statistics-with-connected-users = (call-log-statistics, connected-users) ->
   for connected-user, i in connected-users
     #TODO: 目前只统计两个user之间总数据，下一步需要增加统计各时间节点的数据，完善‘统计树’
     call-log-statistics[i].statistic.count += connected-user.times.length
