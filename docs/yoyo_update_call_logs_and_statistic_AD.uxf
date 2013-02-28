@@ -4,7 +4,7 @@
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>470</x>
+      <x>420</x>
       <y>20</y>
       <w>50</w>
       <h>80</h>
@@ -15,7 +15,7 @@
   <element>
     <type>com.umlet.element.custom.InitialState</type>
     <coordinates>
-      <x>490</x>
+      <x>440</x>
       <y>30</y>
       <w>20</w>
       <h>20</h>
@@ -26,7 +26,7 @@
   <element>
     <type>com.umlet.element.custom.State</type>
     <coordinates>
-      <x>420</x>
+      <x>370</x>
       <y>80</y>
       <w>160</w>
       <h>60</h>
@@ -39,7 +39,7 @@
   <element>
     <type>com.umlet.element.custom.Text</type>
     <coordinates>
-      <x>320</x>
+      <x>270</x>
       <y>0</y>
       <w>390</w>
       <h>20</h>
@@ -50,7 +50,7 @@
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>470</x>
+      <x>420</x>
       <y>110</y>
       <w>50</w>
       <h>90</h>
@@ -61,7 +61,7 @@
   <element>
     <type>com.umlet.element.custom.State</type>
     <coordinates>
-      <x>420</x>
+      <x>370</x>
       <y>180</y>
       <w>160</w>
       <h>60</h>
@@ -73,7 +73,7 @@
   <element>
     <type>com.umlet.element.custom.Decision</type>
     <coordinates>
-      <x>480</x>
+      <x>430</x>
       <y>280</y>
       <w>40</w>
       <h>40</h>
@@ -84,7 +84,7 @@
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>470</x>
+      <x>420</x>
       <y>210</y>
       <w>50</w>
       <h>90</h>
@@ -95,7 +95,7 @@
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>240</x>
+      <x>190</x>
       <y>270</y>
       <w>260</w>
       <h>90</h>
@@ -107,7 +107,7 @@ m2=True</panel_attributes>
   <element>
     <type>com.umlet.element.custom.State</type>
     <coordinates>
-      <x>190</x>
+      <x>140</x>
       <y>340</y>
       <w>160</w>
       <h>80</h>
@@ -121,7 +121,7 @@ act-by-user，
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>490</x>
+      <x>440</x>
       <y>270</y>
       <w>240</w>
       <h>80</h>
@@ -133,7 +133,7 @@ m2=False</panel_attributes>
   <element>
     <type>com.umlet.element.custom.State</type>
     <coordinates>
-      <x>630</x>
+      <x>580</x>
       <y>330</y>
       <w>160</w>
       <h>80</h>
@@ -146,7 +146,7 @@ m2=False</panel_attributes>
   <element>
     <type>com.umlet.element.custom.State</type>
     <coordinates>
-      <x>490</x>
+      <x>440</x>
       <y>510</y>
       <w>160</w>
       <h>80</h>
@@ -157,7 +157,7 @@ m2=False</panel_attributes>
   <element>
     <type>com.umlet.element.custom.Decision</type>
     <coordinates>
-      <x>690</x>
+      <x>640</x>
       <y>450</y>
       <w>40</w>
       <h>40</h>
@@ -168,7 +168,7 @@ m2=False</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>680</x>
+      <x>630</x>
       <y>380</y>
       <w>50</w>
       <h>90</h>
@@ -179,7 +179,7 @@ m2=False</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>540</x>
+      <x>490</x>
       <y>440</y>
       <w>170</w>
       <h>90</h>
@@ -191,7 +191,7 @@ m2=True</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>700</x>
+      <x>650</x>
       <y>440</y>
       <w>160</w>
       <h>90</h>
@@ -203,7 +203,7 @@ m2=False</panel_attributes>
   <element>
     <type>com.umlet.element.custom.State</type>
     <coordinates>
-      <x>760</x>
+      <x>710</x>
       <y>510</y>
       <w>160</w>
       <h>80</h>
@@ -216,7 +216,7 @@ m2=False</panel_attributes>
   <element>
     <type>com.umlet.element.custom.Text</type>
     <coordinates>
-      <x>240</x>
+      <x>190</x>
       <y>30</y>
       <w>210</w>
       <h>40</h>
@@ -227,7 +227,7 @@ m2=False</panel_attributes>
   <element>
     <type>com.umlet.element.custom.State</type>
     <coordinates>
-      <x>420</x>
+      <x>370</x>
       <y>740</y>
       <w>160</w>
       <h>80</h>
@@ -239,7 +239,7 @@ m2=False</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>540</x>
+      <x>490</x>
       <y>560</y>
       <w>100</w>
       <h>120</h>
@@ -250,7 +250,7 @@ m2=False</panel_attributes>
   <element>
     <type>com.umlet.element.custom.Decision</type>
     <coordinates>
-      <x>480</x>
+      <x>430</x>
       <y>870</y>
       <w>40</w>
       <h>40</h>
@@ -261,7 +261,7 @@ m2=False</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>470</x>
+      <x>420</x>
       <y>790</y>
       <w>50</w>
       <h>100</h>
@@ -272,7 +272,7 @@ m2=False</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>450</x>
+      <x>400</x>
       <y>880</y>
       <w>86</w>
       <h>180</h>
@@ -284,7 +284,7 @@ m2=False</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>330</x>
+      <x>280</x>
       <y>860</y>
       <w>170</w>
       <h>80</h>
@@ -296,7 +296,7 @@ m2=False</panel_attributes>
   <element>
     <type>com.umlet.element.custom.State</type>
     <coordinates>
-      <x>270</x>
+      <x>220</x>
       <y>920</y>
       <w>180</w>
       <h>90</h>
@@ -311,7 +311,7 @@ or B.contacted-strangers
   <element>
     <type>com.umlet.element.custom.State</type>
     <coordinates>
-      <x>420</x>
+      <x>370</x>
       <y>1040</y>
       <w>160</w>
       <h>80</h>
@@ -324,7 +324,7 @@ or B.contacted-strangers
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>330</x>
+      <x>280</x>
       <y>980</y>
       <w>110</w>
       <h>120</h>
@@ -335,7 +335,7 @@ or B.contacted-strangers
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>240</x>
+      <x>190</x>
       <y>390</y>
       <w>200</w>
       <h>410</h>
@@ -346,7 +346,7 @@ or B.contacted-strangers
   <element>
     <type>com.umlet.element.custom.State</type>
     <coordinates>
-      <x>620</x>
+      <x>570</x>
       <y>620</y>
       <w>180</w>
       <h>90</h>
@@ -361,7 +361,7 @@ or A.contacted-by-strangers
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>550</x>
+      <x>500</x>
       <y>680</y>
       <w>180</w>
       <h>120</h>
@@ -372,7 +372,7 @@ or A.contacted-by-strangers
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>770</x>
+      <x>720</x>
       <y>560</y>
       <w>90</w>
       <h>120</h>
@@ -383,7 +383,7 @@ or A.contacted-by-strangers
   <element>
     <type>com.umlet.element.custom.State</type>
     <coordinates>
-      <x>420</x>
+      <x>370</x>
       <y>1150</y>
       <w>160</w>
       <h>80</h>
@@ -395,7 +395,7 @@ or A.contacted-by-strangers
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>470</x>
+      <x>420</x>
       <y>1090</y>
       <w>50</w>
       <h>80</h>
@@ -406,33 +406,33 @@ or A.contacted-by-strangers
   <element>
     <type>com.umlet.element.custom.State</type>
     <coordinates>
-      <x>420</x>
+      <x>370</x>
       <y>1270</y>
       <w>160</w>
       <h>80</h>
     </coordinates>
     <panel_attributes>根据call-logs-with-uid
-获取对应的
-connected-user pair</panel_attributes>
+获取statistic-keys</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.custom.State</type>
     <coordinates>
-      <x>420</x>
+      <x>370</x>
       <y>1390</y>
       <w>160</w>
       <h>80</h>
     </coordinates>
-    <panel_attributes>根据connected-user pair
-更新call-log-statistic树
+    <panel_attributes>根据statistic-keys
+从数据库中读取/初始化
+statistic数据
 </panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>470</x>
+      <x>420</x>
       <y>1200</y>
       <w>50</w>
       <h>90</h>
@@ -443,7 +443,7 @@ connected-user pair</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>470</x>
+      <x>420</x>
       <y>1320</y>
       <w>50</w>
       <h>90</h>
@@ -454,20 +454,20 @@ connected-user pair</panel_attributes>
   <element>
     <type>com.umlet.element.custom.State</type>
     <coordinates>
-      <x>420</x>
+      <x>370</x>
       <y>1510</y>
       <w>160</w>
       <h>80</h>
     </coordinates>
-    <panel_attributes>保存更新后的
-call-log-statistic树
+    <panel_attributes>更新statistic具体data
+保存回到数据库
 </panel_attributes>
     <additional_attributes/>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>470</x>
+      <x>420</x>
       <y>1440</y>
       <w>50</w>
       <h>90</h>
@@ -478,8 +478,8 @@ call-log-statistic树
   <element>
     <type>com.umlet.element.custom.FinalState</type>
     <coordinates>
-      <x>490</x>
-      <y>1630</y>
+      <x>440</x>
+      <y>1640</y>
       <w>20</w>
       <h>20</h>
     </coordinates>
@@ -489,12 +489,12 @@ call-log-statistic树
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>470</x>
+      <x>420</x>
       <y>1560</y>
       <w>50</w>
-      <h>90</h>
+      <h>100</h>
     </coordinates>
     <panel_attributes>lt=&lt;-</panel_attributes>
-    <additional_attributes>30;70;30;30</additional_attributes>
+    <additional_attributes>30;80;30;30</additional_attributes>
   </element>
 </diagram>

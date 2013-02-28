@@ -12,8 +12,11 @@ Call-log-statistic =
     (statistics-for-modified) <- create-or-update-statistic-nodes call-log-datas-with-statistic-key-array
     callback!
 
+  get-user-relative-statistic-year-sorted: !(user, callback) ->
+    callback!
+
 get-data-with-statistic-key = (user, call-logs-array-with-uid) ->
-  node-types = ['YEAR', 'MONTH', 'DAY', 'HOUR']
+  node-types = ['TOTAL', 'YEAR', 'MONTH', 'DAY', 'HOUR']
   result-array = []
   md5-array = []
   for call-log-with-uid in call-logs-array-with-uid
@@ -72,12 +75,15 @@ get-start-time-and-end-time = (node-type, call-log-time) ->
   start-time = null
   end-time = null
   switch node-type
+    case 'TOTAL' then
+      start-time = ''
+      end-time = ''
     case 'YEAR' then
       start-time = time-strings[0] + '-01-01 00:00:00'
       end-time = time-strings[0] + '-12-31 23:59:59'
     case 'MONTH' then
       start-time = time-strings[0] + '-' + time-strings[1] + '-01 00:00:00'
-      end-time = time-strings[0] + '-' + time-strings[1] + '-' + get-end-date! + ' 23:59:59'
+      end-time = time-strings[0] + '-' + time-strings[1] + '-' + get-end-date(time-strings[0], time-strings[1]) + ' 23:59:59'
     case 'DAY' then
       start-time = time-strings[0] + '-' + time-strings[1] + '-' + time-strings[2] + ' 00:00:00'
       end-time = time-strings[0] + '-' + time-strings[1] + '-' + time-strings[2] + ' 23:59:59'
