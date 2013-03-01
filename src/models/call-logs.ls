@@ -3,15 +3,15 @@
  * All rights reserved.
  */
  
-require! [async, '../database', './Users', './Contacts']
+require! [async, '../database', './Users', './Contacts', './call-log-statistic']
 
 _ = require 'underscore'
 
 Call-logs =
   update-user-call-log-and-related-statistic: !(user, call-logs, last-call-log-time, callback) ->
     (call-logs-with-uid) <-! add-uid-to-each-call-log user, call-logs    
-    <-! update-user-call-logs-with-uid user, call-logs-with-uid, last-call-log-time    
-    <-! update-statistic user, call-logs-with-uid
+    <-! update-user-call-logs-with-uid user, call-logs-with-uid, last-call-log-time  
+    <-! call-log-statistic.update-user-call-log-statistic user, call-logs-with-uid
     callback!
 
 add-uid-to-each-call-log = !(user, call-logs, callback)->
@@ -59,89 +59,6 @@ get-user-call-logs = !(user, callback) ->
 save-user-call-log = !(user-call-logs, callback) ->
   db = database.get-db!
   (err, user-call-logs) <-! db.call-logs.save user-call-logs
-  throw new Error err if err
-  callback!
-
-update-statistic = !(user, call-logs-with-uid, callback) ->
-  connected-users = get-connected-users user, call-logs-with-uid
-  (call-log-statistics) <-! get-or-init-call-log-statistics connected-users
-  call-log-statistics = update-statistics-with-connected-users call-log-statistics, connected-users
-  <-! save-call-log-statistics call-log-statistics
-  callback!
-
-get-connected-users = (user, call-logs-with-uid) ->
-  connected-users = []
-  for call-log-with-uid in call-logs-with-uid
-    new-connected-user = init-connected-user-in-fomat user, call-log-with-uid
-    connected-users := add-element-without-duplicate connected-users, new-connected-user
-  connected-users
-
-init-connected-user-in-fomat = (user, call-log) ->
-  if call-log.type === 'OUT'
-    from-uid = user.uid
-    to-uid = call-log.uid
-  else
-    from-uid = call-log.uid
-    to-uid = user.uid
-  {from-uid: from-uid, to-uid: to-uid, times: [call-log.time], durations: [call-log.duration], types: [call-log.type]}
-
-add-element-without-duplicate = (connected-users, new-connected-user) ->
-  for connected-user, i in connected-users
-    if connected-user.from-uid === new-connected-user.from-uid && connected-user.to-uid === new-connected-user.to-uid
-      connected-users[i].times ++= new-connected-user.times
-      connected-users[i].durations ++= new-connected-user.durations
-      connected-users[i].types ++= new-connected-user.types
-      return connected-users
-  connected-users ++= new-connected-user
-  connected-users
-
-get-or-init-call-log-statistics = !(connected-users, callback) ->
-  call-log-statistics = []
-  (err) <-! async.for-each connected-users, !(connected-user, next) ->
-    (err, call-log-statistic) <-! database.db.call-log-statistic.find-one({from-uid: connected-user.from-uid, to-uid: connected-user.to-uid})
-    call-log-statistic ?= inti-root-statistic connected-user
-    call-log-statistics ++= call-log-statistic
-    next!
-  throw new Error err if err
-  callback call-log-statistics
-
-inti-root-statistic = (connected-user)->
-  node = init-statistic-node 'ROOT'
-  node.from-uid = connected-user.from-uid
-  node.to-uid = connected-user.to-uid
-  node
-
-init-statistic-node = (type)->
-  {
-    type: type
-    start-time: null
-    end-time: null
-    statistic: {
-      count: 0, 
-      miss-count: 0, 
-      duration: 0,
-      distribution-in-hour: []
-    }, 
-    child-node: []
-  }
-
-update-statistics-with-connected-users = (call-log-statistics, connected-users) ->
-  for connected-user, i in connected-users
-    #TODO: 目前只统计两个user之间总数据，下一步需要增加统计各时间节点的数据，完善‘统计树’
-    call-log-statistics[i].statistic.count += connected-user.times.length
-    current-node = call-log-statistics[i]
-    for time, j in connected-user.times
-      call-log-statistics[i].statistic.duration += connected-user.durations[j]
-      if connected-user.types[j] === 'MISS'
-        call-log-statistics[i].statistic.miss-count += 1
-
-  call-log-statistics
-
-save-call-log-statistics = !(call-log-statistics, callback) ->
-  (err) <-! async.for-each call-log-statistics, !(call-log-statistic, next) ->
-    (err) <-! database.db.call-log-statistic.save call-log-statistic
-    throw new Error err if err
-    next! 
   throw new Error err if err
   callback!
 
