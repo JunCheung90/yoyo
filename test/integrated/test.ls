@@ -2,9 +2,7 @@
  * Created by Wang, Qing. All rights reserved.
  */
 
-require! [restify, should,
-          '../../bin/servers-init'.orm,
-          '../../bin/orm-sync'.drop-create-orm]
+require! [restify, should]
 
 yoyo-config =
   url: 'http://localhost:8888'
@@ -17,7 +15,6 @@ can = it
 describe '测试YoYo REST API' !->
   do
     (done) <-! before
-    <-! drop-create-orm
     done!
 
   # can '查询联系人：GET /contact/10879 应当返回200' !(done) ->
@@ -29,6 +26,7 @@ describe '测试YoYo REST API' !->
 
   can '注册用户：POST /user 应当返回200' !(done) ->
     post-data = require '../test-data/zhangsan.json'
+    console.log post-data
     do
       (err, req, res, data) <-! client.post '/user', post-data
       should.not.exist err 

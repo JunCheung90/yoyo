@@ -56,9 +56,9 @@ register-user = !(register-data, callback) ->
 		callback response
 		
 	
-create-user-and-mining-interesting-info = !(db, register-data, callback) ->
-	(user) <-! User.create-user-with-contacts db, register-data
-	(info) <-! User.mining-interesting-info db, user
+create-user-and-mining-interesting-info = !(db, user-data, callback) ->
+	(user) <-! Users.create-user-with-contacts user-data
+	(info) <-! Users.mining-interesting-info user
 	callback user, info
 
 

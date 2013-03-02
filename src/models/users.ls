@@ -23,6 +23,9 @@ Users =
     <-! get-api-keys contacts-owner
     callback contacts-owner
 
+  mining-interesting-info: !(user, callback) ->
+    callback!
+
   build-user-basic-info: !(user)->
     current = new Date!.get-time! 
     user.is-registered = true

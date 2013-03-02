@@ -27,7 +27,7 @@ describe.only '保存通话记录: ' !->
 
   can "保存张三的通话记录，一共9个记录，并增加通话对象uid\n" !(done) ->    
     (zhangsan) <-! create-user-zhangsan
-    <-! check-zhangsan-call-log zhangsan, 7501
+    <-! check-zhangsan-call-log zhangsan, 9
     done!
 
 describe '通话历史记录统计：', !->
@@ -72,19 +72,9 @@ check-zhangsan-call-log = !(user, call-log-count, callback) ->
   callback!
 
 create-user-zhangsan = !(callback) ->
-  calllogs = []
-  calllog = {
-    "phoneNumber": "12345678",
-    "type": "IN",
-    "duration": 24,
-    "time": "2012-11-04 21:32:12"
-  }
-  for i from 0 to 7500
-    calllogs ++= calllog 
-  console.log calllogs.length
   user-data = require '../test-data/zhangsan.json'
   (zhangsan) <-! Users.create-user-with-contacts user-data
-  <-! call-logs.update-user-call-log-and-related-statistic zhangsan, calllogs, '2012-11-10 21:32:12'
+  <-! call-logs.update-user-call-log-and-related-statistic zhangsan, user-data.calllogs, '2012-11-10 21:32:12'
   callback zhangsan
 
 check-total-call-log-count = !(user-name, in-count, out-count, miss-count, callback) ->
