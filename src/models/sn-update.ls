@@ -7,9 +7,9 @@ Sn =
     (users) <-! get-user-has-sn
     (err) <-! async.each-limit users, sn-config.batch-limit, !(user-data, next) ->
       for sn, i in user-data.sns
-        user-sn-info = create-sn-base-info user-data, sn 
+        sn-update-doc = create-sn-base-info user-data, sn 
         # 第一次更新
-        create-sn-update-for-one-user user-sn-info
+        create-sn-update-for-one-user sn-update-doc
       next!  
     throw new Error err if err
 
@@ -27,26 +27,36 @@ Sn =
       next!
     throw new Error err if err  
 
-create-sn-update-for-one-user = !(user-sn-info) ->
-  sn-link = @initialize-link user-sn-info
+  # TODO 返回客户端接口，请求参数（？userID & last-modified），数据模型见sn-content-sample.ls
+  
+
+
+create-sn-update-for-one-user = !(sn-update-doc) ->
+  sn-link = @initialize-link sn-update-doc
   config = {} <<< {count: sn-config.update-amount}
   (update) <-! get-sn-update-by-config config    
   db = database.get-db!;
-  # TODO
-  sn-update-doc = {} <<< update + user-sn-info
+  sn-update-doc.updates = update
+  sn-update-doc.last-modified = new Date!.get-time!
+  sn-update-doc.since-id = update[0].id
   (err) <-! db.sn-update.save sn-update-doc
   throw new Error err if err
   console.log "update created.\n"
 
 get-sn-update-for-one-user = !(sn-update-doc) ->
   sn-link = @initialize-link sn-update-doc 
+  #TODO yoyo-sn模块应封装其他sn平台的参数请求/返回数据接口与现用的一致
   config = {} <<< {count: sn-config.update-amount, since-id: sn-update-doc.since-id}
   (update) <-! get-sn-update-by-config config
   db = database.get-db!;
   (err) <-! db.sn-update.update (
-      {_id: sn-update-doc._id},
+      {_id: sn-update-doc._id}
       {
-        $push: {updates: update}  # TODO update是子数组插入会有问题！
+        $set: { 
+          'lastModified': new Date!.get-time!
+          'sinceId': update[0].id
+        }
+        $pushAll: {updates: update}  
       }
     )
   throw new Error err if err
@@ -55,14 +65,14 @@ get-sn-update-for-one-user = !(sn-update-doc) ->
 get-sn-update-by-config = !(config, callback) ->
   (err, update) <-! sn-link.user_timeline config
   throw new Error err if err
-  # 转换数据格式 TODO
-  transform-update = [] <<< 
-  callback update    
+  # TODO 转换数据格式，目前未清除冗余信息(deep-replace 本地json, 目标json)
+  transform-update = update.statuses
+  callback transform-update    
 
 get-user-has-sn = !(callback) ->
   db = database.get-db!;
   (err, found-users) <-! db.users.find (
-      {sns: {$ne: []}},
+      {sns: {$ne: []}}
       {
         uid: 1
         sns: 1
@@ -79,18 +89,19 @@ create-sn-base-info = (user-data, sn) ->
   base-info.updates = []
   base-info  
     
-initialize-link = (user-sn-info) ->
+initialize-link = (sn-update-doc) ->
   user-key = {}
-  user-key.access_token = user-sn-info.api-key 
-  sn-type = user-sn-info.type
+  user-key.access_token = sn-update-doc.api-key 
+  sn-type = sn-update-doc.type
   Sn = yoyo-sn[sn-type]
   sn-link = new Sn(user-key)
+
 
 user-key = 
   access_token: '2.00swKOcCCybyeCa4691e40davR53uC'
   uid: '2397145114'
   screen_name: '北上的风'  
 
-Sn.get-sn-update user-key, 'Weibo'
+Sn.initialize!
 
 module.exports <<< Sn
