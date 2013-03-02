@@ -1,5 +1,6 @@
 {
 	"type": "weibo",
+	"sinceId": 3548531606082168,
 	"updates": [
 		{
 			"created_at": "UTC",
@@ -43,6 +44,5 @@
 			"reposts_count": 0,
 			"comments_count": 0
 		}
-	],
-	"reject-to": ["uid-of-lisi", "uid2"]
+	]
 }
