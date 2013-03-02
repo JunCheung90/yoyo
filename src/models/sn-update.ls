@@ -16,20 +16,48 @@ Sn =
   get-sn-update-regular: !() -> #定时更新已经存在的sn-update文档
     db = database.get-db!
     (err, sn-update-docs) <-! db.sn-update.find(
-        {},
+        {}
         {
           updates: 0 # 不用updates的主体部分
         }
       ).to-array
     throw new Error err if err
     (err) <-! async.each sn-update-docs, sn-config.batch-limit, !(sn-update-doc, next) ->
-
+      get-sn-update-for-one-user sn-update-doc
       next!
     throw new Error err if err  
 
-  # TODO 返回客户端接口，请求参数（？userID & last-modified），数据模型见sn-content-sample.ls
-  
+  # 返回客户端接口，请求参数（？uid & since-id-configs & count），数据模型见client-sn-update-sample.ls
+  client-get-sn-update: !(req-parms, callback) ->
+    db = database.get-db!
+    max-update-amount = req-parms.count || config.max-update-amount
+    content = []
+    count = 0
+    for since-id-config, i in since-id-configs
+      (sn-update-result) <-! client-get-one-type-sn-update since-id-config
+      sn-update-result.updates = sn-update-result.updates.slice 0, max-update-amount
+      content.push! sn-update-result
+      count ++ sn-update-result.updates.length
+    client-sn-update = {}
+    client-sn-update.content = content
+    client-sn-update.count = count
+    callback client-sn-update    
 
+client-get-one-type-sn-update: !(config, callback) ->
+  (err, sn-update-result) <-! db.sn-update.find-one(
+      {
+        ower-id: req-parms.uid
+        since-id: {$gt: since-id-config.since-id}
+        type: since-id-config.type
+      }
+      {
+        type: 1
+        since-id: 1
+        updates: {$elemMatch: {id: {$gt: since-id-config.since-id}}}
+      }
+    )
+  throw new Error err if err
+  callback sn-update-result
 
 create-sn-update-for-one-user = !(sn-update-doc) ->
   sn-link = @initialize-link sn-update-doc
@@ -37,7 +65,6 @@ create-sn-update-for-one-user = !(sn-update-doc) ->
   (update) <-! get-sn-update-by-config config    
   db = database.get-db!;
   sn-update-doc.updates = update
-  sn-update-doc.last-modified = new Date!.get-time!
   sn-update-doc.since-id = update[0].id
   (err) <-! db.sn-update.save sn-update-doc
   throw new Error err if err
@@ -53,7 +80,6 @@ get-sn-update-for-one-user = !(sn-update-doc) ->
       {_id: sn-update-doc._id}
       {
         $set: { 
-          'lastModified': new Date!.get-time!
           'sinceId': update[0].id
         }
         $pushAll: {updates: update}  
@@ -84,7 +110,6 @@ get-user-has-sn = !(callback) ->
 create-sn-base-info = (user-data, sn) ->
   base-info = {} <<< sn
   base-info.ower-id = user-data.uid  
-  base-info.last-modified = null  
   base-info.since-id = null  
   base-info.updates = []
   base-info  
