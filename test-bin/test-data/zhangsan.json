@@ -23,8 +23,9 @@
 	],
 	"sns": [
 		{
-			"snName": "豆瓣",
-			"accountName": "张三豆"
+			"type": "weibo",
+			"accountId": "2397145114",
+			"apiKey": "2.00swKOcCCybyeCa4691e40davR53uC"
 		}
 	],
 	"addresses": [

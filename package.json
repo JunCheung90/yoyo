@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "mongodb": "~1.2.9",
-    "async": "~0.1.22",
+    "async": "~0.2.5",
     "prelude-ls": "~0.6.0",
     "node-uuid": "~1.4.0",
     "restify": "~1.4.4",

@@ -113,11 +113,12 @@ async-get-api-keys = !(user)-> # 异步方法，完成之后会存储user。
     next!
   throw new Error err if err
 
-  (err) <-! async.for-each user.sns, !(sn, next) ->
-    (api-key) <-! async-get-sn-api-key sn
-    sn.api-key = api-key
-    next!
-  throw new Error err if err
+  # donothing, api-key改由客户端维护，当有变改的时候通知服务端修改
+  # (err) <-! async.for-each user.sns, !(sn, next) ->
+  #   (api-key) <-! async-get-sn-api-key sn
+  #   sn.api-key = api-key
+  #   next!
+  # throw new Error err if err
 
   db = database.get-db!
   (err, user) <-! db.users.save user
