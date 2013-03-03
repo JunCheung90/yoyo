@@ -3,9 +3,7 @@
  * All rights reserved.
  */
  
-require! [async, '../database', './Users', './Contacts', './call-log-statistic']
-
-_ = require 'underscore'
+require! [async, '../database', './Users', './Contacts', './call-log-statistic', '../util']
 
 Call-logs =
   update-user-call-log-and-related-statistic: !(user, call-logs, last-call-log-time, callback) ->
@@ -45,7 +43,7 @@ update-user-call-logs-with-uid = !(user, call-logs-with-uid, last-call-log-time,
   (user-call-logs) <-! get-user-call-logs user
   user-call-logs ?= {uid: user.uid, call-logs: []}
   user-call-logs.last-call-log-time = last-call-log-time
-  user-call-logs.call-logs = _.union user-call-logs.call-logs, call-logs-with-uid
+  user-call-logs.call-logs = util.union user-call-logs.call-logs, call-logs-with-uid
   <-! save-user-call-log user-call-logs
   callback!
 
