@@ -27,8 +27,8 @@ user = # yoyo server端数据
       account: '222222'
       is-active: true
       api-key: 'AOL可能给出的api key'
-  sns:
-    * type: '豆瓣'
+  sns:  # 平台的授权次序 新浪微博weibo > 人人网renren > 腾讯微博tqq > 豆瓣douban，暂定一个用户在一个平台至多一个账号
+    * type: 'douban'
       account-name: '张三豆'
       account-id: '1213213' # acount-name和account-id两者必须有一个
       api-key: 'xxxx' # 社交平台端授权后得到的key，用以从SN获取信息，由手机客户端上传

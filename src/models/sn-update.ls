@@ -25,29 +25,30 @@ Sn =
 
   # 返回客户端接口，请求参数（？uid & since-id-configs & count），数据模型见client-sn-update-sample.ls
   client-get-sn-update: !(req-parms, callback) ->
-    db = database.get-db!
-    max-update-amount = req-parms.count || config.max-update-amount
+    uid = req-parms.uid
+    max-update-amount = req-parms.count || sn-config.max-update-amount
+    since-id-configs = req-parms.since-id-configs || sn-config.since-id-default-configs;  # 第一次请求返回全部
     content = []
     count = 0
     for since-id-config, i in since-id-configs
-      (sn-update-result) <-! client-get-one-type-sn-update since-id-config
-      sn-update-result.updates = sn-update-result.updates.slice 0, max-update-amount
-      content.push! sn-update-result
-      count ++ sn-update-result.updates.length
-    client-sn-update = {}
-    client-sn-update.content = content
-    client-sn-update.count = count
+      (sn-update-result) <-! client-get-one-type-sn-update uid, since-id-config
+      if sn-update-result != null
+        sn-update-result.updates = sn-update-result.updates.reverse!.slice 0, max-update-amount
+        content.push! sn-update-result
+        count += sn-update-result.updates.length
+    client-sn-update = {} <<< {content, count}
     callback client-sn-update    
 
-client-get-one-type-sn-update = !(config, callback) ->
+client-get-one-type-sn-update = !(uid, config, callback) ->
+  db = database.get-db!
   query = 
-    ower-id: req-parms.uid
-    since-id: {$gt: since-id-config.since-id}
-    type: since-id-config.type
+    ower-id: uid
+    since-id: {$gt: config.since-id}
+    type: config.type
   projection = 
     type: 1
     since-id: 1
-    updates: {$elemMatch: {id: {$gt: since-id-config.since-id}}}  
+    updates: {$elemMatch: {id: {$gt: config.since-id}}}  
   (err, sn-update-result) <-! db.sn-update.find-one query, projection
   throw new Error err if err
   callback sn-update-result
@@ -57,8 +58,9 @@ create-sn-update-for-one-user = !(sn-update-doc) ->
   config = {} <<< {count: sn-config.update-amount}
   (update) <-! get-sn-update-by-config sn-link, config    
   db = database.get-db!;
-  sn-update-doc.updates = update
   sn-update-doc.since-id = update[0].id
+  # 最新的更新在数组末尾
+  sn-update-doc.updates = update.reverse!
   (err) <-! db.sn-update.save sn-update-doc
   throw new Error err if err
   console.log "update created.\n"
@@ -66,24 +68,27 @@ create-sn-update-for-one-user = !(sn-update-doc) ->
 get-sn-update-for-one-user = !(sn-update-doc) ->
   sn-link = initialize-link sn-update-doc 
   #TODO yoyo-sn模块应封装其他sn平台的参数请求/返回数据接口与现用的一致
-  config = {} <<< {count: sn-config.update-amount, since-id: sn-update-doc.since-id}
+  config = {} <<< {count: sn-config.update-amount, since_id: sn-update-doc.since-id}
   (update) <-! get-sn-update-by-config sn-link, config
-  db = database.get-db!;
-  query = {_id: sn-update-doc._id}
-  projection =
-    $set: { 
-      'sinceId': update[0].id
-    }
-    $pushAll: {updates: update} 
-  (err) <-! db.sn-update.update query, projection
-  throw new Error err if err
-  console.log "update saved.\n"
+  if update.length
+    db = database.get-db!;
+    query = {_id: sn-update-doc._id}
+    projection =
+      $set: { 
+        'sinceId': update[0].id
+      }
+      # 最新的更新在数组末尾，由于mongodb暂不支持从数组最前插入
+      $pushAll: {updates: update.reverse!} 
+    (err) <-! db.sn-update.update query, projection
+    throw new Error err if err
+    console.log "update saved.\n"
 
 get-sn-update-by-config = !(sn-link, config, callback) ->
   (err, update) <-! sn-link.user_timeline config
-  throw new Error err if err
-  # TODO 转换数据格式，目前未清除冗余信息(deep-replace 本地json, 目标json)
+  console.log err if err
+  # TODO 转换数据格式，目前未清除冗余信息(deep-replace 本地数据模式json, 目标json)
   transform-update = update.statuses
+  # 拿回的最新更新在数组最前
   callback transform-update    
 
 get-user-has-sn = !(callback) ->
@@ -109,10 +114,5 @@ initialize-link = (sn-update-doc) ->
   sn-type = sn-update-doc.type
   Sn = yoyo-sn[sn-type]
   sn-link = new Sn(user-key)
-
-user-key = 
-  access_token: '2.00swKOcCCybyeCa4691e40davR53uC'
-  uid: '2397145114'
-  screen_name: '北上的风'  
 
 module.exports <<< Sn

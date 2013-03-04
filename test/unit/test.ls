@@ -14,7 +14,7 @@ repeat-rate = 0.2
 
 can = it # it在LiveScript中被作为缺省的参数，因此我们先置换为can
 
-describe 'mongoDb版注册用户：识别用户，绑定用户（User）和联系人（Contact）', !->
+describe.only 'mongoDb版注册用户：识别用户，绑定用户（User）和联系人（Contact）', !->
   do
     (done) <-! before
     <-! init-mongo-client

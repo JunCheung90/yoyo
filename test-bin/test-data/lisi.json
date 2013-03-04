@@ -23,8 +23,10 @@
     ],
     "sns": [
         {
-            "snName": "豆瓣",
-            "accountName": "李四豆"
+            "type": "weibo",
+            "accountName": "周吴文",
+            "accountId": "3120116101",
+            "apiKey": "2.00PjgJ6DCybyeCa778dcf76308i8r6"
         }
     ],
     "addresses": [

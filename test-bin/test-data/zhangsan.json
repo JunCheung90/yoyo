@@ -24,8 +24,9 @@
 	"sns": [
 		{
 			"type": "weibo",
-			"accountId": "2397145114",
-			"apiKey": "2.00swKOcCCybyeCa4691e40davR53uC"
+			"accountName": "ucent_YoYo",
+			"accountId": "3076154802",
+			"apiKey": "2.00C5OL3DCybyeCd6e534f3794a_5BB"
 		}
 	],
 	"addresses": [
