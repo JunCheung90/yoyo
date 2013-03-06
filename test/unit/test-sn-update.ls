@@ -18,20 +18,14 @@ create-user = !(json-file, uid, callback) ->
 db = null
 
 <-! init-mongo-client
-# <-! database.db.drop-collection 'users' 
+<-! database.db.drop-collection 'users' 
 <-! database.db.drop-collection 'sn-update' 
 db := database.get-db!
-# <-! create-user "zhangsan.json", 1
-# <-! create-user "lisi.json", 2
-# <-! create-user "zhaowu.json", 3
+<-! create-user "zhangsan.json", 'uid-1'
+<-! create-user "lisi.json", 'uid-2'
+<-! create-user "zhaowu.json", 'uid-3'
 
 # 1测试初始化
 <-! Sn.initialize
 # 2测试定时更新
-# setInterval(Sn.get-sn-update-regular, sn-config.update-interval);
-# 3测试返回客户端接口
-req-parms = 
-  uid: 1
-  count: 2
-(updates) <-! Sn.client-get-sn-update req-parms
-console.log updates
+setInterval(Sn.get-sn-update-regular, sn-config.update-interval)

@@ -30,26 +30,30 @@ Sn =
     since-id-configs = req-parms.since-id-configs || sn-config.since-id-default-configs;  # 第一次请求返回全部
     content = []
     count = 0
-    for since-id-config, i in since-id-configs
-      (sn-update-result) <-! client-get-one-type-sn-update uid, since-id-config
+    (err) <-! async.each since-id-configs, !(since-id-config, next) ->
+      (sn-update-result) <-! client-get-one-type-sn-update uid, since-id-config, max-update-amount
       if sn-update-result != null
-        sn-update-result.updates = sn-update-result.updates.reverse!.slice 0, max-update-amount
-        content.push! sn-update-result
-        count += sn-update-result.updates.length
+        updates = sn-update-result.updates.reverse!
+        sn-update-result.updates = updates
+        content.push sn-update-result
+        count += updates.length
+      next!
+    throw new Error err if err
     client-sn-update = {} <<< {content, count}
     callback client-sn-update    
 
-client-get-one-type-sn-update = !(uid, config, callback) ->
+client-get-one-type-sn-update = !(uid, config, max-update-amount, callback) ->
   db = database.get-db!
   query = 
-    ower-id: uid
+    owner-id: uid
     since-id: {$gt: config.since-id}
     type: config.type
   projection = 
+    _id: 0
     type: 1
     since-id: 1
-    updates: {$elemMatch: {id: {$gt: config.since-id}}}  
-  (err, sn-update-result) <-! db.sn-update.find-one query, projection
+    updates: {$slice: -max-update-amount}  # 只返回最新的条目
+  (err, sn-update-result) <-! db.sn-update.find-one(query, projection)
   throw new Error err if err
   callback sn-update-result
 
@@ -85,7 +89,7 @@ get-sn-update-for-one-user = !(sn-update-doc) ->
 
 get-sn-update-by-config = !(sn-link, config, callback) ->
   (err, update) <-! sn-link.user_timeline config
-  console.log err if err
+  throw new Error err if err
   # TODO 转换数据格式，目前未清除冗余信息(deep-replace 本地数据模式json, 目标json)
   transform-update = update.statuses
   # 拿回的最新更新在数组最前
@@ -103,7 +107,7 @@ get-user-has-sn = !(callback) ->
 
 create-sn-base-info = (user-data, sn) ->
   base-info = {} <<< sn
-  base-info.ower-id = user-data.uid  
+  base-info.owner-id = user-data.uid  
   base-info.since-id = null  
   base-info.updates = []
   base-info  
