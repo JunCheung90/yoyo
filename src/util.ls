@@ -66,4 +66,30 @@ util =
     set-b = set-b or []
     _.compact _.union set-a, set-b
 
+  clean-json: (full-json, clean-format) ->
+    clean-json full-json, clean-format
+
+# 清除full-json多余的数据，只保留clean-format中定义的
+function clean-json full-json, clean-format
+  if clean-format == null || typeof clean-format != "object"
+    return full-json 
+  if (clean-format instanceof Array)
+    copy = []
+    for elem, i in clean-format
+      copy[i] = clean-json full-json[i], clean-format[i]
+    return copy  
+  if (clean-format instanceof Object)
+    copy = {}
+    for key, val of clean-format
+      if clean-format.hasOwnProperty(key) && full-json.hasOwnProperty(key)
+        copy[key] = clean-json full-json[key], clean-format[key]
+    return copy;  
+  throw new Error "type isn't supported."    
+
+# 转换json的key, 由{type1: 1}转换为{type2: 1}
+# 应用场景：不同sn平台给回的接口格式不一致
+# TODO：思路：从target.json提取key数组，将source.json字符串化，按前面的数组依次正则替换key值，再还原
+function format-json source-format, target-format
+  source-string = JSON.stringify source-format    
+
 module.exports <<< util

@@ -1,4 +1,4 @@
-require! ['../database','yoyo-sn', '../config/sn-config', async]
+require! ['../database','yoyo-sn', '../config/sn-config', '../util', async]
 require! ['../servers-init'.init-mongo-client, '../servers-init'.shutdown-mongo-client]
 
 Sn =
@@ -88,12 +88,15 @@ get-sn-update-for-one-user = !(sn-update-doc) ->
     console.log "update saved.\n"
 
 get-sn-update-by-config = !(sn-link, config, callback) ->
-  (err, update) <-! sn-link.user_timeline config
+  (err, update-result) <-! sn-link.user_timeline config
+  console.log err if err
+  # 转换数据格式，清除冗余信息(deep-replace 本地数据模式json, 目标json)
+  update-sample = util.load-json __dirname + "../../../data-design/sn-update-sample.json"
+  (err, transform-updates) <-! async.map update-result.statuses, !(update, next) ->
+    next null, util.clean-json update, update-sample
   throw new Error err if err
-  # TODO 转换数据格式，目前未清除冗余信息(deep-replace 本地数据模式json, 目标json)
-  transform-update = update.statuses
   # 拿回的最新更新在数组最前
-  callback transform-update    
+  callback transform-updates   
 
 get-user-has-sn = !(callback) ->
   db = database.get-db!;

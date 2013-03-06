@@ -9,7 +9,7 @@ _ = require 'underscore'
 # console.log async.eachLimit
 
 create-user = !(json-file, uid, callback) ->
-  userdata = util.load-json "../test-data/#{json-file}"
+  userdata = util.load-json __dirname + "../test-data/#{json-file}"
   userdata.uid = uid
   (err) <-! db.users.save userdata
   throw new Error err if err
@@ -22,7 +22,7 @@ db = null
 <-! database.db.drop-collection 'sn-update' 
 db := database.get-db!
 <-! create-user "zhangsan.json", 'uid-1'
-<-! create-user "lisi.json", 'uid-2'
+# <-! create-user "lisi.json", 'uid-2'
 <-! create-user "zhaowu.json", 'uid-3'
 
 # 1测试初始化
