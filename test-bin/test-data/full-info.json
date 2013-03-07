@@ -1,0 +1,21 @@
+{
+	"my-type": "weibo",
+	"norsekey": "norse-value",
+	"status": [
+		{
+			"created_at": "UTC",
+			"my-id": 3548531606082168,
+			"text": "多米的歌单，Jing的心情，大爱~[笑哈哈]",
+			"source": "<a href=\"http://weibo.com/\" rel=\"nofollow\">新浪微博</a>",
+			"geo": null,
+			"user": {
+				"my-id": 2397145114,
+				"my-screen_name": "北上的风",
+				"my-norsekey3": "norse-value4"
+			},
+			"reposts_count": 0,
+			"comments_count": 0,
+			"norsekey2": ["norse-value2", "norse-value2"]
+		}
+	]
+}

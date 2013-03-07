@@ -1,0 +1,18 @@
+{
+	"my-type": null,
+	"status": [
+		{
+			"created_at": null,
+			"my-id": null,
+			"text": null,
+			"source": null,
+			"geo": null,
+			"user": {
+				"my-id": null,
+				"my-screen_name": null
+			},
+			"reposts_count": null,
+			"comments_count": null
+		}
+	]
+}

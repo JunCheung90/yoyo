@@ -88,8 +88,10 @@ function clean-json full-json, clean-format
 
 # 转换json的key, 由{type1: 1}转换为{type2: 1}
 # 应用场景：不同sn平台给回的接口格式不一致
-# TODO：思路：从target.json提取key数组，将source.json字符串化，按前面的数组依次正则替换key值，再还原
+# TODO：思路：从target.json提取key数组，将source.json字符串化，按前面的key数组依次正则替换key值，再还原
 function format-json source-format, target-format
   source-string = JSON.stringify source-format    
+
+# clean-json和format-json的测试数据见test-data  
 
 module.exports <<< util

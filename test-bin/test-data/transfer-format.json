@@ -1,0 +1,18 @@
+{
+	"type": "weibo",
+	"updates": [
+		{
+			"created_at": null,
+			"id": null,
+			"text": null,
+			"source": null,
+			"geo": null,
+			"user": {
+				"id": null,
+				"screen_name": null
+			},
+			"reposts_count": null,
+			"comments_count": null
+		}
+	]
+}

@@ -1,3 +1,4 @@
+# TODO: 完善yoyo-mock模块，模拟sn平台的接口，进行sn更新功能的大规模测试（性能）
 require! ['should', 'async', 
           '../../bin/servers-init'.init-mongo-client, 
           '../../bin/servers-init'.shutdown-mongo-client,
@@ -9,7 +10,7 @@ _ = require 'underscore'
 # console.log async.eachLimit
 
 create-user = !(json-file, uid, callback) ->
-  userdata = util.load-json __dirname + "../test-data/#{json-file}"
+  userdata = util.load-json __dirname + "/../test-data/#{json-file}"
   userdata.uid = uid
   (err) <-! db.users.save userdata
   throw new Error err if err

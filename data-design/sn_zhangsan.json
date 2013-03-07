@@ -1,18 +1,16 @@
 {
 	"ownerId": "uid-of-zhangsan",
+	"type": "豆瓣",
+	"accountName": "张三豆",
+	"accountId": "1213213",
+	"apiKey": "xxxx",
 	"rejectTo": [
 		"uid-of-lisi",
 		"uid2"
 	],
-	"type": "豆瓣",
-	"lastModified": "UTC",
+	"sinceId": 32323,
 	"updates": [
-		{
-			"updateTime": "UTC",
-			"updateContents": [
-				"json_result1",
-				"json_result2"
-			]
-		}
+		"json_result1",
+		"json_result2"
 	]
 }

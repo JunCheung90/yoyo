@@ -2,7 +2,8 @@ require! ['../database','yoyo-sn', '../config/sn-config', '../util', async]
 require! ['../servers-init'.init-mongo-client, '../servers-init'.shutdown-mongo-client]
 
 Sn =
-  initialize: !(callback) ->  #第一次启动时或有新的有sn用户注册时创建sn-update文档
+  # 第一次启动时或有新的有sn用户注册时创建sn-update文档
+  initialize: !(callback) ->  
     <-! init-mongo-client
     (users) <-! get-user-has-sn
     (err) <-! async.each-limit users, sn-config.batch-limit, !(user-data, next) ->
@@ -14,7 +15,8 @@ Sn =
     throw new Error err if err
     callback!
 
-  get-sn-update-regular: !-> #定时更新已经存在的sn-update文档
+  # 定时更新已经存在的sn-update文档
+  get-sn-update-regular: !->
     db = database.get-db!
     (err, sn-update-docs) <-! db.sn-update.find({}, {updates: 0}).to-array # 不用updates的主体部分
     throw new Error err if err
@@ -71,7 +73,7 @@ create-sn-update-for-one-user = !(sn-update-doc) ->
 
 get-sn-update-for-one-user = !(sn-update-doc) ->
   sn-link = initialize-link sn-update-doc 
-  #TODO yoyo-sn模块应封装其他sn平台的参数请求/返回数据接口与现用的一致
+  #TODO yoyo-sn模块应封装其他sn平台的参数请求/返回数据接口与现用的（新浪微博）一致
   config = {} <<< {count: sn-config.update-amount, since_id: sn-update-doc.since-id}
   (update) <-! get-sn-update-by-config sn-link, config
   if update.length
@@ -91,7 +93,7 @@ get-sn-update-by-config = !(sn-link, config, callback) ->
   (err, update-result) <-! sn-link.user_timeline config
   console.log err if err
   # 转换数据格式，清除冗余信息(deep-replace 本地数据模式json, 目标json)
-  update-sample = util.load-json __dirname + "../../../data-design/sn-update-sample.json"
+  update-sample = util.load-json __dirname + "../../../data-design/sn-update-content-sample.json"
   (err, transform-updates) <-! async.map update-result.statuses, !(update, next) ->
     next null, util.clean-json update, update-sample
   throw new Error err if err
