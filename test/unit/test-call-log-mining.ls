@@ -16,7 +16,7 @@ user = null
 
 can = it # it在LiveScript中被作为缺省的参数，因此我们先置换为can
 
-describe.only '保存通话记录: ' !->
+describe '保存通话记录: ' !->
   do
     (done) <-! before
     <-! init-mongo-client
@@ -30,34 +30,34 @@ describe.only '保存通话记录: ' !->
     <-! check-zhangsan-call-log zhangsan, 9
     done!
 
-describe '通话历史记录统计：', !->
-  do
-    (done) <-! before
-    <-! init-mongo-client
-    <-! database.db.drop-collection 'users'
-    <-! database.db.drop-collection 'call-logs'
-    <-! database.db.drop-collection 'call-log-statistic'
-    (zhangsan) <-! create-user-zhangsan
-    user = zhangsan
-    done!
+# describe '通话历史记录统计：', !->
+#   do
+#     (done) <-! before
+#     <-! init-mongo-client
+#     <-! database.db.drop-collection 'users'
+#     <-! database.db.drop-collection 'call-logs'
+#     <-! database.db.drop-collection 'call-log-statistic'
+#     (zhangsan) <-! create-user-zhangsan
+#     user = zhangsan
+#     done!
 
-  can "张三通话次数统计，有4个打进，3个打出，2个未接\n" !(done) ->
-    check-total-call-log-count '', 4, 3, 2, done
+#   can "张三通话次数统计，有4个打进，3个打出，2个未接\n" !(done) ->
+#     check-total-call-log-count '', 4, 3, 2, done
 
-  can "张三通话时间统计，打进（206s），打出（649s）\n" !(done) ->
-    check-total-call-log-duration '', 206, 649, done
+#   can "张三通话时间统计，打进（206s），打出（649s）\n" !(done) ->
+#     check-total-call-log-duration '', 206, 649, done
 
-  can "张三对李四通话次数统计，有3个打进，2个打出，1个未接\n" !(done) ->
-    check-total-call-log-count '李四', 3, 2, 1, done
+#   can "张三对李四通话次数统计，有3个打进，2个打出，1个未接\n" !(done) ->
+#     check-total-call-log-count '李四', 3, 2, 1, done
 
-  can "张三对李四通话时间统计，打进106s，打出49s\n" !(done) ->
-    check-total-call-log-duration '李四', 106, 46, done
+#   can "张三对李四通话时间统计，打进106s，打出49s\n" !(done) ->
+#     check-total-call-log-duration '李四', 106, 46, done
 
-  can "张三对赵五通话次数统计，有1个打进，1个打出，1个未接\n" !(done) ->
-    check-total-call-log-count '赵五', 1, 2, 1, done
+#   can "张三对赵五通话次数统计，有1个打进，1个打出，1个未接\n" !(done) ->
+#     check-total-call-log-count '赵五', 1, 2, 1, done
 
-  can "张三对赵五通话时间统计，打进100s，打出600s\n" !(done) ->
-    check-total-call-log-duration '赵五', 100, 600, done
+#   can "张三对赵五通话时间统计，打进100s，打出600s\n" !(done) ->
+#     check-total-call-log-duration '赵五', 100, 600, done
 
 initial-test-environment = !(callback) ->
   (data) <- initial-environment

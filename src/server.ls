@@ -4,16 +4,61 @@
 
 require! [fs, express, 
   './controllers/contact-manager', 
-  './controllers/user-manager']
+  './controllers/user-manager',
+  json]
 
 yoyo = express!
 yoyo.use express.body-parser!
 
 # 注册用户
 do
-  (req, res) <-! yoyo.post '/user'
-  (result) <-! user-manager.register-user req.body
-  res.send result
+  (req, res) <-! yoyo.post '/userRegister'  
+  (result) <-! detected-is-json req
+  if !result
+    (result) <-! user-manager.register-user req.body
+    res.send result
+  else
+    res.send result
+
+# 更新用户profile
+do
+  (req, res) <-! yoyo.post '/userUpdate'
+  (result) <-! detected-is-json req
+  if !result
+    (result) <-! user-manager.update-user req.body
+    res.send result
+  else
+    res.send result
+
+# 同步联系人
+do
+  (req, res) <-! yoyo.post '/contactSynchronize'
+  (result) <-! detected-is-json req
+  if !result
+    (result) <-! contact-manager.synchronizeContact req.body
+    res.send result
+  else
+    res.send result
+
+# 同步通话记录
+do
+  (req, res) <-! yoyo.post '/callLogSynchronize'
+  (result) <-! detected-is-json req
+  if !result
+    (result) <-! call-log-manager.synchronizeCallLog req.body
+    res.send result
+  else
+    res.send result
+
+# 获取社交更新
+do
+  (req, res) <-! yoyo.post '/snUpdate'
+  (result) <-! detected-is-json req
+  if !result
+    (result) <-! sn-manager.get-sn-update req.body
+    res.send result
+  else
+    res.send result
 
 # 查询某个联系人情况。（实际中使用较少，可能在未来移除）
 do
@@ -28,6 +73,15 @@ do
   throw err if err
   res.write-head 200, {'Content-Type': 'image/png'}
   res.end data, 'binary'
+
+detected-is-json = !(req, callback) ->
+  if req.headers.'content-type' != "application/json"
+    result = {}
+    [result.result-code, result.error-message] = [1, 'request data is not json']
+    callback result
+  else
+    callback null
+
 
 yoyo.listen 8888 
 console.log 'yoyo is listening on port 8888'

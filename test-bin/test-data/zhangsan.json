@@ -80,55 +80,55 @@
 			"phoneNumber": "12345678",
 			"type": "IN",
 			"duration": 24,
-			"time": "2012-11-04 21:32:12"
+			"time": "1360820331679"
 		},
 		{
 			"phoneNumber": "23456789",
 			"type": "MISS",
 			"duration": 0,
-			"time": "2012-11-05 21:32:12"
+			"time": "1362320331679"
 		},
 		{
 			"phoneNumber": "12345678",
 			"type": "IN",
 			"duration": 15,
-			"time": "2012-11-06 21:32:12"
+			"time": "1362520331679"
 		},
 		{
 			"phoneNumber": "12345678",
 			"type": "OUT",
 			"duration": 48,
-			"time": "2012-11-07 21:32:12"
+			"time": "1362720331679"
 		},
 		{
 			"phoneNumber": "12345678",
 			"type": "OUT",
 			"duration": 1,
-			"time": "2012-11-08 21:32:12"
+			"time": "1362820331679"
 		},
 		{
 			"phoneNumber": "23456789",
 			"type": "IN",
 			"duration": 100,
-			"time": "2012-11-08 11:32:12"
+			"time": "1362810331679"
 		},
 		{
 			"phoneNumber": "23456789",
 			"type": "OUT",
 			"duration": 600,
-			"time": "2012-11-08 16:32:12"
+			"time": "1362820331679"
 		},
 		{
 			"phoneNumber": "12345678",
 			"type": "IN",
 			"duration": 67,
-			"time": "2012-11-09 21:32:12"
+			"time": "1362820031679"
 		},
 		{
 			"phoneNumber": "12345678",
 			"type": "MISS",
 			"duration": 0,
-			"time": "2012-11-10 21:32:12"
+			"time": "1362820331679"
 		}
 	]
 }

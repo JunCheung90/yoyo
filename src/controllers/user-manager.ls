@@ -35,33 +35,54 @@ require! ['../config/config'.mongo,
 					'../util'
 					'../models/Users'
 					'../servers-init'.init-mongo-client, 
-					'../servers-init'.shutdown-mongo-client]
+					'../servers-init'.shutdown-mongo-client
+					'../database'
+					'./call-log-manager']
 
-[db, client] = [null null]
-(mongo-client, mongo-db) <-! init-mongo-client
-[db, client] := [mongo-db, mongo-client]
+user-manager = 
+	register-user: !(register-data, callback) ->
+		response = {}
+		if !register-data.user?
+			[response.result-code, response.error-message] = [2, "miss necessary argument: user"]
+			return callback response
 
-register-user = !(register-data, callback) ->
-	throw new Error("Can't register a user with exist id") if register-data.uid
-	response = {}
-	if !db
-		(mongo-client, mongo-db) <-! init-mongo-client
-		[db, client] := [mongo-db, mongo-client]
-		(user, info) <-! create-user-and-mining-interesting-info db, register-data
-		[response.user, response.interesting-info] = [user, info]
-		callback response
-	else
-		(user, info) <-! create-user-and-mining-interesting-info db, register-data
-		[response.user, response.interesting-info] = [user, info]
+		if !register-data.user?.phones?
+			[response.result-code, response.error-message] = [2, "miss necessary argument: user's phones"]
+			return callback response
+
+		if !register-data.user?.contacts?
+			[response.result-code, response.error-message] = [2, "miss necessary argument: user's contacts"]
+			return callback response
+
+		if !register-data.call-logs?
+			[response.result-code, response.error-message] = [2, "miss necessary argument: user's callLogs"]
+			return callback response
+
+		if register-data.user.uid
+			[response.result-code, response.error-message] = [3, "Can't register a user with exist id"]
+			return callback response
+		# throw new Error("Can't register a user with exist id") if register-data.uid		
+		(db) <-! database.get-or-init-db
+		(user, info) <-! create-user-and-mining-interesting-info db, register-data.user
+		<-! call-log-manager.update-user-call-logs user, register-data.call-logs
+		[response.result-code, response.user, response.interesting-info] = [0, user, info]
 		callback response
 		
+
+	update-user: !(update-data, callback) ->
+		response = {}
+		if !update-data.uid?
+			[response.result-code, response.error-message] = [2, "miss necessary argument: uid"]
+			return callback response
+			
+		(user) <- Users.update-user update-data
+		[response.result-code, response.user] = [0, user]
+		callback response
 	
 create-user-and-mining-interesting-info = !(db, user-data, callback) ->
 	(user) <-! Users.create-user-with-contacts user-data
 	(info) <-! Users.mining-interesting-info user
 	callback user, info
-
-
 
 !function update-exist-user exist-user, user, user-phone
 	if is-same-user exist-user, user
@@ -123,4 +144,4 @@ function get-sn-api-key sn
 		callback result
 '''
 
-(exports ? this) <<< {register-user}
+module.exports <<< user-manager

@@ -7,10 +7,14 @@ require! [async, '../database', './Users', './Contacts', './call-log-statistic',
 
 Call-logs =
   update-user-call-log-and-related-statistic: !(user, call-logs, last-call-log-time, callback) ->
-    (call-logs-with-uid) <-! add-uid-to-each-call-log user, call-logs    
-    <-! update-user-call-logs-with-uid user, call-logs-with-uid, last-call-log-time  
-    <-! call-log-statistic.update-user-call-log-statistic user, call-logs-with-uid
-    callback!
+    (user-call-logs) <-! get-user-call-logs user
+    if user-call-logs.last-call-log-time >= last-call-log-time
+      callback!
+    else
+      (call-logs-with-uid) <-! add-uid-to-each-call-log user, call-logs    
+      <-! update-user-call-logs-with-uid user-call-logs, call-logs-with-uid, last-call-log-time  
+      <-! call-log-statistic.update-user-call-log-statistic user, call-logs-with-uid
+      callback! 
 
 add-uid-to-each-call-log = !(user, call-logs, callback)->
   (call-logs-with-uid) <-! async-add-uid-to-each-call-log user, call-logs
@@ -39,9 +43,7 @@ get-user-contact-with-phone-number = (user, phone-number) ->
     return contact if phone-number in contact.phones
   null
 
-update-user-call-logs-with-uid = !(user, call-logs-with-uid, last-call-log-time, callback) ->
-  (user-call-logs) <-! get-user-call-logs user
-  user-call-logs ?= {uid: user.uid, call-logs: []}
+update-user-call-logs-with-uid = !(user-call-logs, call-logs-with-uid, last-call-log-time, callback) ->
   user-call-logs.last-call-log-time = last-call-log-time
   user-call-logs.call-logs = util.union user-call-logs.call-logs, call-logs-with-uid
   <-! save-user-call-log user-call-logs
@@ -49,13 +51,14 @@ update-user-call-logs-with-uid = !(user, call-logs-with-uid, last-call-log-time,
 
 get-user-call-logs = !(user, callback) ->
   query-statement = {uid: user.uid}
-  db = database.get-db!
+  (db) <-! database.get-or-init-db
   (err, user-call-logs) <-! db.call-logs.find-one(query-statement)
   throw new Error err if err
+  user-call-logs ?= {uid: user.uid, call-logs: [], last-call-log-time: 0}
   callback user-call-logs
 
 save-user-call-log = !(user-call-logs, callback) ->
-  db = database.get-db!
+  (db) <-! database.get-or-init-db
   (err, user-call-logs) <-! db.call-logs.save user-call-logs
   throw new Error err if err
   callback!

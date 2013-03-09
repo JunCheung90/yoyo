@@ -23,6 +23,20 @@ Users =
     <-! get-api-keys contacts-owner
     callback contacts-owner
 
+  update-user: !(user-new-profile, callback) ->
+    (user) <-! @get-user-by-uid user-new-profile.uid
+    for key, value of user-new-profile
+      user[key] = value
+    user.last-modified-date = new Date!.get-time!
+    (user) <-! save-user user
+    callback user
+
+  get-user-by-uid: !(uid, callback) ->
+    (db) <-! database.get-or-init-db!
+    (err, user) <-! db.users.find-one {uid: uid}
+    throw new Error err if err
+    callback user
+
   mining-interesting-info: !(user, callback) ->
     callback!
 
@@ -62,6 +76,12 @@ Users =
     
     **/
     callback!
+
+save-user = !(user, callback) ->
+  (db) <-! database.get-or-init-db!
+  (err, user) <-! db.users.save user
+  throw new Error err if err
+  callback user
 
 get-user-with-phone-number = !(phone-number, callback) ->
   #TODO: 

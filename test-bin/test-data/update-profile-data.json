@@ -1,0 +1,47 @@
+{
+  "uid": "71239bde-cad3-4bb8-b4ac-4d0db6c819c4",
+  "name": "张三丰",
+  "birthday": 1352841288890,
+  "phones": [
+    {
+      "phoneNumber": "34567890",
+      "isActive": true,
+      "startUsingTime": 0 
+    },
+    {
+      "phoneNumber": "15018749416",
+      "isActive": true,
+      "startUsingTime": 1352841288890
+    }
+  ],
+  "emails": [
+    "zhangsan@fake.com"
+  ],
+  "ims": [
+    {
+      "type": "QQ",
+      "account": "zhangsan111",
+      "isActive": true
+    },
+    {
+      "type": "AOL",
+      "account": "zhangsan222",
+      "isActive": true
+    }
+  ],
+  "sns": [
+    {
+      "type": "weibo",
+      "accountName": "ucent_YoYo",
+      "accountId": "3076154802",
+      "apiKey": "2.00C5OL3DCybyeCb4d42dc271082YcZ"
+    }
+  ],
+  "addresses": [
+    "广州 大学城 中山大学 至善园 307"
+  ],
+  "tags": [
+    "设计师"
+  ]
+  
+}
