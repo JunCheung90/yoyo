@@ -69,28 +69,33 @@ get-connected-user = (user, call-log-with-uid) ->
   {from-uid: from-uid, to-uid: to-uid, time: call-log-with-uid.time, duration: call-log-with-uid.duration, type: call-log-with-uid.type}
 
 get-start-time-and-end-time = (node-type, call-log-time) ->
-  time-split = call-log-time / ' '
-  time-strings = time-split[0] / '-'
-  time-strings ++= time-split[1] / ':'
-  start-time = null
-  end-time = null
+  call-log-date = new Date!
+  call-log-date.set-time call-log-time
+  year = call-log-date.get-full-year!
+  month = call-log-date.get-month!
+  day = call-log-date.get-date!
+  hour = call-log-date.get-hours!
+  start-date = null
+  end-date = null
   switch node-type
-    case 'TOTAL' then
-      start-time = ''
-      end-time = ''
     case 'YEAR' then
-      start-time = time-strings[0] + '-01-01 00:00:00'
-      end-time = time-strings[0] + '-12-31 23:59:59'
+      start-date = get-date year, 0, 1, 0, 0, 0
+      end-date = get-date year, 11, 31, 23, 59, 59
     case 'MONTH' then
-      start-time = time-strings[0] + '-' + time-strings[1] + '-01 00:00:00'
-      end-time = time-strings[0] + '-' + time-strings[1] + '-' + get-end-date(time-strings[0], time-strings[1]) + ' 23:59:59'
+      start-date = get-date year, month, 1, 0, 0, 0     
+      end-date = get-date year, month, (get-end-date year, month), 23, 59, 59
     case 'DAY' then
-      start-time = time-strings[0] + '-' + time-strings[1] + '-' + time-strings[2] + ' 00:00:00'
-      end-time = time-strings[0] + '-' + time-strings[1] + '-' + time-strings[2] + ' 23:59:59'
+      start-date = get-date year, month, day, 0, 0, 0
+      end-date = get-date year, month, day, 23, 59, 59
     case 'HOUR' then
-      start-time = time-strings[0] + '-' + time-strings[1] + '-' + time-strings[2] + ' ' + time-strings[3] + ':00:00'
-      end-time = time-strings[0] + '-' + time-strings[1] + '-' + time-strings[2] + ' ' + time-strings[3] + ':59:59'
-  {start-time: start-time, end-time: end-time}
+      start-date = get-date year, month, day, hour, 0, 0
+      end-date = get-date year, month, day, hour, 59, 59
+    case 'TOTAL' then
+      start-date = new Date!
+      start-date.set-time 0
+      end-date = start-date
+      
+  {start-time: start-date.get-time!, end-time: end-date.get-time!}
 
 get-end-date = (year, month) ->
   if month == '02'
@@ -103,6 +108,17 @@ get-end-date = (year, month) ->
     return '31'
   else
     return '30'
+
+get-date = (year, month, day, hour, minute, second) ->
+  date = new Date!
+  date.set-full-year year
+  date.set-month month
+  date.set-date day
+  date.set-hours hour
+  date.set-minutes minute
+  date.set-seconds second
+  date.set-milliseconds 0
+  date
 
 get-or-init-statistic = !(statistic-key, callback) ->
   (err, statistic) <-! database.db.call-log-statistic.find-one statistic-key
@@ -150,9 +166,9 @@ update-statistic-data = (statistic-data, call-log-data) ->
   statistic-data
 
 get-hour-by-time = (time) ->
-  time-strings = time / ' '
-  time-strings = time-strings[1] / ':'
-  hour = parse-int time-strings[0]
+  date = new Date!
+  date.set-time time
+  date.get-hours!
 
 save-statistic = !(statistic, callback) ->
   (err) <-! database.db.call-log-statistic.save statistic
