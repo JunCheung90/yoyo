@@ -121,7 +121,8 @@ get-date = (year, month, day, hour, minute, second) ->
   date
 
 get-or-init-statistic = !(statistic-key, callback) ->
-  (err, statistic) <-! database.db.call-log-statistic.find-one statistic-key
+  (db) <-! database.get-db
+  (err, statistic) <-! db.call-log-statistic.find-one statistic-key
   throw new Error err if err
 
   if !statistic
@@ -171,7 +172,8 @@ get-hour-by-time = (time) ->
   date.get-hours!
 
 save-statistic = !(statistic, callback) ->
-  (err) <-! database.db.call-log-statistic.save statistic
+  (db) <-! database.get-db
+  (err) <-! db.call-log-statistic.save statistic
   throw new Error err if err
   callback!
 

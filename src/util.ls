@@ -41,7 +41,7 @@ util =
     !is-early t-str1, t-str2
 
   insert-multiple-docs: !(collection, docs, callback) ->
-    db = database.get-db!
+    (db) <-! database.get-db
     if docs?.length > 0 then
       (err, docs) <-! db[collection].insert docs
       throw new Error err if err
@@ -50,7 +50,7 @@ util =
       callback! 
 
   update-multiple-docs: !(collection, docs, callback) ->
-    db = database.get-db!
+    (db) <-! database.get-db
     if docs?.length > 0 then
       (err) <-! async.for-each docs, !(doc, next) ->
         (err, docs) <-! db[collection].save doc

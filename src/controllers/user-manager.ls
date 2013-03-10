@@ -32,9 +32,6 @@
 '''
 
 require! ['../models/Users'
-					'../servers-init'.init-mongo-client, 
-					'../servers-init'.shutdown-mongo-client
-					'../database'
 					'./call-log-manager']
 
 User-manager = 
@@ -60,8 +57,7 @@ User-manager =
 			[response.result-code, response.error-message] = [3, "Can't register a user with exist id"]
 			return callback response
 		# throw new Error("Can't register a user with exist id") if register-data.uid		
-		(db) <-! database.get-or-init-db
-		(user, info) <-! create-user-and-mining-interesting-info db, register-data.user
+		(user, info) <-! create-user-and-mining-interesting-info register-data.user
 		<-! call-log-manager.update-user-call-logs user, register-data.call-logs
 		[response.result-code, response.user, response.interesting-info] = [0, user, info]
 		callback response
@@ -77,7 +73,7 @@ User-manager =
 		[response.result-code, response.user] = [0, user]
 		callback response
 	
-create-user-and-mining-interesting-info = !(db, user-data, callback) ->
+create-user-and-mining-interesting-info = !(user-data, callback) ->
 	(user) <-! Users.create-user-with-contacts user-data
 	(info) <-! Users.mining-interesting-info user
 	callback user, info

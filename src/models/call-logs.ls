@@ -51,14 +51,14 @@ update-user-call-logs-with-uid = !(user-call-logs, call-logs-with-uid, last-call
 
 get-user-call-logs = !(user, callback) ->
   query-statement = {uid: user.uid}
-  (db) <-! database.get-or-init-db
+  (db) <-! database.get-db
   (err, user-call-logs) <-! db.call-logs.find-one(query-statement)
   throw new Error err if err
   user-call-logs ?= {uid: user.uid, call-logs: [], last-call-log-time: 0}
   callback user-call-logs
 
 save-user-call-log = !(user-call-logs, callback) ->
-  (db) <-! database.get-or-init-db
+  (db) <-! database.get-db
   (err, user-call-logs) <-! db.call-logs.save user-call-logs
   throw new Error err if err
   callback!

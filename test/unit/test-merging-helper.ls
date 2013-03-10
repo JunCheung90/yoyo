@@ -1,12 +1,11 @@
 require! ['should', '../../bin/database'
-          '../../bin/servers-init'.init-mongo-client, 
-          '../../bin/servers-init'.shutdown-mongo-client, '../test-helper']
+          '../test-helper']
 
 db = null
 
 helper =
   initial-environment: (callback) ->
-    <-! init-mongo-client
+    <-! database.init-mongo-client
     db := database.db
     <-! db.drop-collection 'users'
     user-data = test-helper.load-user-data 'dump-user.json'

@@ -1,10 +1,8 @@
 require! ['../database','yoyo-sn', '../config/sn-config', '../util', async]
-require! ['../servers-init'.init-mongo-client, '../servers-init'.shutdown-mongo-client]
 
 Sn =
   # 第一次启动时或有新的有sn用户注册时创建sn-update文档
-  initialize: !(callback) ->  
-    <-! init-mongo-client
+  initialize: !(callback) -> 
     (users) <-! get-user-has-sn
     (err) <-! async.each-limit users, sn-config.batch-limit, !(user-data, next) ->
       for sn, i in user-data.sns
@@ -17,7 +15,7 @@ Sn =
 
   # 定时更新已经存在的sn-update文档
   get-sn-update-regular: !->
-    db = database.get-db!
+    (db) <-! database.get-db
     (err, sn-update-docs) <-! db.sn-update.find({}, {updates: 0}).to-array # 不用updates的主体部分
     throw new Error err if err
     (err) <-! async.each-limit sn-update-docs, sn-config.batch-limit, !(sn-update-doc, next) ->
@@ -45,7 +43,7 @@ Sn =
     callback client-sn-update    
 
 client-get-one-type-sn-update = !(uid, config, max-update-amount, callback) ->
-  db = database.get-db!
+  (db) <-! database.get-db
   query = 
     owner-id: uid
     since-id: {$gt: config.since-id}
@@ -63,7 +61,7 @@ create-sn-update-for-one-user = !(sn-update-doc) ->
   sn-link = initialize-link sn-update-doc
   config = {} <<< {count: sn-config.update-amount}
   (update) <-! get-sn-update-by-config sn-link, config    
-  db = database.get-db!;
+  (db) <-! database.get-db
   sn-update-doc.since-id = update[0].id
   # 最新的更新在数组末尾
   sn-update-doc.updates = update.reverse!
@@ -77,7 +75,7 @@ get-sn-update-for-one-user = !(sn-update-doc) ->
   config = {} <<< {count: sn-config.update-amount, since_id: sn-update-doc.since-id}
   (update) <-! get-sn-update-by-config sn-link, config
   if update.length
-    db = database.get-db!;
+    (db) <-! database.get-db;
     query = {_id: sn-update-doc._id}
     projection =
       $set: { 
@@ -101,7 +99,7 @@ get-sn-update-by-config = !(sn-link, config, callback) ->
   callback transform-updates   
 
 get-user-has-sn = !(callback) ->
-  db = database.get-db!;
+  (db) <-! database.get-db
   query = {sns: {$ne: []}}
   projection =
     uid: 1

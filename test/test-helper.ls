@@ -12,7 +12,7 @@ helper =
     # console.log "\\\\\\\\\\\\\\\\\\\\\\\ user-data.contacts \\\\\\\\\\\\\\\\\\\\\\\\\\n"
     # @show-contacts user-data.contacts
 
-    db = database.get-db!
+    (db) <-! database.get-db
     (user) <-! Users.create-user-with-contacts user-data
     (err, found-users) <-! db.users.find({name: user-name}).to-array
     found-users.length.should.eql 1
@@ -47,7 +47,7 @@ helper =
     callback!
 
   check-user-contacts: !(user-name, amount-of-has-contacts, amount-of-as-contacts, callback) ->
-    db = database.get-db!
+    (db) <-! database.get-db
     (err, found-users) <-! db.users.find({name: user-name}).to-array
     found-users.length.should.eql 1
     found-user = found-users[0]

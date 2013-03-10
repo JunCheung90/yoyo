@@ -5,9 +5,7 @@
 
 require! ['should', 
           '../../bin/models/call-logs'
-          '../../bin/models/Users', '../../bin/database',
-          '../../bin/servers-init'.init-mongo-client,
-          '../../bin/servers-init'.shutdown-mongo-client]
+          '../../bin/models/Users', '../../bin/database']
 _ = require 'underscore'
 _(global).extend require './test-merging-helper'
 
@@ -19,7 +17,7 @@ can = it # it在LiveScript中被作为缺省的参数，因此我们先置换为
 describe '保存通话记录: ' !->
   do
     (done) <-! before
-    <-! init-mongo-client
+    <-! database.init-mongo-client
     <-! database.db.drop-collection 'users'
     <-! database.db.drop-collection 'call-logs'
     <-! database.db.drop-collection 'call-log-statistic'
@@ -33,7 +31,7 @@ describe '保存通话记录: ' !->
 # describe '通话历史记录统计：', !->
 #   do
 #     (done) <-! before
-#     <-! init-mongo-client
+#     <-! database.init-mongo-client
 #     <-! database.db.drop-collection 'users'
 #     <-! database.db.drop-collection 'call-logs'
 #     <-! database.db.drop-collection 'call-log-statistic'

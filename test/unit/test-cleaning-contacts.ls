@@ -3,8 +3,7 @@
  */
  
 require! ['should', 
-          '../../bin/models/Users', '../../bin/models/User-Merger', '../../bin/util', '../../bin/database',
-          '../../bin/servers-init'.shutdown-mongo-client]
+          '../../bin/models/Users', '../../bin/models/User-Merger', '../../bin/util', '../../bin/database']
 _ = require 'underscore'
 _(global).extend require './test-merging-helper'
 
@@ -94,7 +93,7 @@ describe '清理无用的Contact：', !->
 
   do
     (done) <-! after
-    <-! shutdown-mongo-client
+    <-! database.shutdown-mongo-client
     done! 
   
 # describe '清除合法联系人的不合法通讯方式：', !->
@@ -111,7 +110,7 @@ describe '清理无用的Contact：', !->
      
 #   do
 #     (done) <-! after
-#     <-! shutdown-mongo-client
+#     <-! database.shutdown-mongo-client
 #     done!
 
 

@@ -3,8 +3,6 @@
  */
  
 require! ['should', 'async', 
-          '../../bin/servers-init'.init-mongo-client, 
-          '../../bin/servers-init'.shutdown-mongo-client,
           '../../bin/util', '../../bin/database', '../test-helper']
 
 qh = require '../../bin/models/helpers/query-helper'
@@ -17,7 +15,7 @@ can = it # it在LiveScript中被作为缺省的参数，因此我们先置换为
 describe 'mongoDb版注册用户：识别用户，绑定用户（User）和联系人（Contact）', !->
   do
     (done) <-! before
-    <-! init-mongo-client
+    <-! database.init-mongo-client
     <-! database.db.drop-collection 'users' 
     done! 
 
@@ -40,13 +38,13 @@ describe 'mongoDb版注册用户：识别用户，绑定用户（User）和联�
  
   do
     (done) <-! after 
-    <-! shutdown-mongo-client
+    <-! database.shutdown-mongo-client
     done!
 
 describe 'mongoDb版注册用户：简单合并联系人', !->
   do
     (done) <-! before
-    <-! init-mongo-client
+    <-! database.init-mongo-client
     <-! database.db.drop-collection 'users'
     done! 
 
@@ -75,5 +73,5 @@ describe 'mongoDb版注册用户：简单合并联系人', !->
 
   do
     (done) <-! after 
-    <-! shutdown-mongo-client
+    <-! database.shutdown-mongo-client
     done! 

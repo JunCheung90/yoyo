@@ -41,7 +41,7 @@ query-users-on-phone-and-email = !(phones, emails, callback) ->
   query-database-for-users query-statement, callback
 
 query-database-for-users = !(query-statement, callback) ->
-  db = database.get-db!
+  (db) <-! database.get-db
   (err, users) <-! db.users.find(query-statement).toArray
   throw new Error err if err
   callback users

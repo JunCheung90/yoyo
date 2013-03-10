@@ -32,7 +32,7 @@ Users =
     callback user
 
   get-user-by-uid: !(uid, callback) ->
-    (db) <-! database.get-or-init-db!
+    (db) <-! database.get-db
     (err, user) <-! db.users.find-one {uid: uid}
     throw new Error err if err
     callback user
@@ -78,7 +78,7 @@ Users =
     callback!
 
 save-user = !(user, callback) ->
-  (db) <-! database.get-or-init-db!
+  (db) <-! database.get-db!
   (err, user) <-! db.users.save user
   throw new Error err if err
   callback user
@@ -140,7 +140,7 @@ async-get-api-keys = !(user)-> # 异步方法，完成之后会存储user。
   #   next!
   # throw new Error err if err
 
-  db = database.get-db!
+  (db) <-! database.get-db
   (err, user) <-! db.users.save user
   throw new Error err if err
 

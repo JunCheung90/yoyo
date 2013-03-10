@@ -3,8 +3,7 @@
  */
  
 require! ['should', 
-          '../../bin/models/Users', '../../bin/models/User-Merger', '../../bin/util', '../../bin/database',
-          '../../bin/servers-init'.shutdown-mongo-client]
+          '../../bin/models/Users', '../../bin/models/User-Merger', '../../bin/util', '../../bin/database']
 _ = require 'underscore'
 _(global).extend require './test-merging-helper'
 
@@ -195,7 +194,7 @@ describe '联系人（Contact）与用户（User）合并逻辑全面测试：',
       done!  
   do
     (done) <-! after
-    <-! shutdown-mongo-client
+    <-! database.shutdown-mongo-client
     done!
   
 
