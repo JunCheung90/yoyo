@@ -40,7 +40,7 @@ user = # yoyo server端数据
   #----------- status ----------#
   is-updated: false # 用户的数据是否发生了更新，如果为true，需要重新评估mergences。
   is-registered: true
-  last-modified-date: '2013-01-09'
+  last-modified-date: '2013-01-09' # timestamp
   merged-to: null 
   merged-from: [] # 这里有可能是多个merge后的结果, 包括了所有信息的最初来源。如果A merge到了B，B又merge到了C，则在C的merged-from里面有A也有B。但是，A的merge-to仍然记录为B。
   pending-merges: # 等待系统在未来确定，或者由后台人工accept，或者reject的pending merges。yoyo对于User只会pending merge，已经存在的User其最终Merge一定是由人来决定的。
@@ -52,6 +52,7 @@ user = # yoyo server端数据
   #----------- relations ----------#
   contacts: # 当前用户的联系人
     * cid: 'owner-uid-c-timestamp_of_add-seqno'
+      cid-in-client: 124
       act-by-user: 'uid_lisi'
       names: ['李小四']
       rank-score: 399 # yoyo服务器计算得出的联系人推荐排名分数，越大排名越靠前

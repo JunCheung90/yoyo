@@ -4,8 +4,7 @@
 
 require! [fs, express, 
   './controllers/contact-manager', 
-  './controllers/user-manager',
-  json]
+  './controllers/user-manager']
 
 yoyo = express!
 yoyo.use express.body-parser!

@@ -31,15 +31,13 @@
 ============== Registration JSON Example End=================
 '''
 
-require! ['../config/config'.mongo,
-					'../util'
-					'../models/Users'
+require! ['../models/Users'
 					'../servers-init'.init-mongo-client, 
 					'../servers-init'.shutdown-mongo-client
 					'../database'
 					'./call-log-manager']
 
-user-manager = 
+User-manager = 
 	register-user: !(register-data, callback) ->
 		response = {}
 		if !register-data.user?
@@ -74,7 +72,7 @@ user-manager =
 		if !update-data.uid?
 			[response.result-code, response.error-message] = [2, "miss necessary argument: uid"]
 			return callback response
-			
+
 		(user) <- Users.update-user update-data
 		[response.result-code, response.user] = [0, user]
 		callback response
@@ -144,4 +142,4 @@ function get-sn-api-key sn
 		callback result
 '''
 
-module.exports <<< user-manager
+module.exports <<< User-manager

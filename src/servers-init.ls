@@ -3,7 +3,7 @@
  */
 
 require! [restify, './config/config'.mongo, 
-          'mongodb'.MongoClient, 'mongodb'.Server, './util', './database', './models/Users']
+          'mongodb'.MongoClient, 'mongodb'.Server, './util', './database']
 qh = require './models/helpers/query-helper'
 
 init-mongo-client = !(callback) -> #mongo-client, db are used to return

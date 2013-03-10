@@ -1,4 +1,4 @@
-servers-init = require './servers-init'
+require! './servers-init'
 
 database =
   db: null
