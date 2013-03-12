@@ -1,0 +1,52 @@
+[
+  {
+    "cidInClient": 3,
+    "names": [
+      "小黑"
+    ],
+    "phones": [
+      "2163123"
+    ],
+    "emails": [
+      "xiaohei@fake.com"
+    ],
+    "ims": [
+      {
+        "type": "QQ",
+        "account": "xiaoheiqq"
+      }
+    ],
+    "sns": [],
+    "tags": []
+  },
+  {
+    "cidInClient": 4,
+    "names": [
+      "李四"
+    ],
+    "phones": [
+      "12345678"
+    ],
+    "emails": [
+      "lisi@gmail.com"
+    ],
+    "ims": [],
+    "sns": [],
+    "tags": []
+  },
+  {
+    "cidInClient": 5,
+    "names": [
+      "赵五"
+    ],
+    "phones": [
+      "1563132"
+    ],
+    "emails": [
+      "zhaowu@fake.com"
+    ],
+    "ims": [],
+    "sns": [],
+    "tags": []
+  }
+]

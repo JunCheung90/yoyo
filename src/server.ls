@@ -34,7 +34,7 @@ do
   (req, res) <-! yoyo.post '/contactSynchronize'
   (result) <-! detected-is-json req
   if !result
-    (result) <-! contact-manager.synchronizeContact req.body
+    (result) <-! contact-manager.synchronize-user-contacts req.body
     res.send result
   else
     res.send result

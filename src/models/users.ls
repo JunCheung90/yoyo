@@ -4,6 +4,7 @@
  
 require! [async, '../util', '../database', './Contacts', './User-Merger']
 require! common: './user-contact-common'
+require! qh: './helpers/query-helper'
 
 Users =
   create-user-with-contacts: !(user-data, callback)->
@@ -23,19 +24,19 @@ Users =
     <-! get-api-keys contacts-owner
     callback contacts-owner
 
-  update-user: !(user-new-profile, callback) ->
+  update-user-profile: !(user-new-profile, callback) ->
     (user) <-! @get-user-by-uid user-new-profile.uid
     for key, value of user-new-profile
       user[key] = value
     user.last-modified-date = new Date!.get-time!
-    (user) <-! save-user user
+    (err, result) <-! util.update-multiple-docs 'users', [user]
+    throw new Error err if err
     callback user
 
   get-user-by-uid: !(uid, callback) ->
-    (db) <-! database.get-db
-    (err, user) <-! db.users.find-one {uid: uid}
-    throw new Error err if err
-    callback user
+    (users) <-! qh.get-users-by-uids [uid]
+    callbak null if users.length == 0
+    callback users[0]    
 
   mining-interesting-info: !(user, callback) ->
     callback!
@@ -77,11 +78,12 @@ Users =
     **/
     callback!
 
-save-user = !(user, callback) ->
-  (db) <-! database.get-db!
-  (err, user) <-! db.users.save user
-  throw new Error err if err
-  callback user
+  update-user-contacts: !(contacts-owner, callback) ->
+    (to-create-users, to-update-users) <-! create-or-update-user-contacts contacts-owner
+    # TODO：今后将抽取到Controller里面予以协调。
+    ranking-contacts-mining-interesting-info-and-set-avatar contacts-owner
+    <-! persist-all-users to-create-users, to-update-users, contacts-owner, null
+    callback contacts-owner
 
 get-user-with-phone-number = !(phone-number, callback) ->
   #TODO: 

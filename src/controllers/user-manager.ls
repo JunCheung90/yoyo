@@ -69,7 +69,7 @@ User-manager =
 			[response.result-code, response.error-message] = [2, "miss necessary argument: uid"]
 			return callback response
 
-		(user) <- Users.update-user update-data
+		(user) <- Users.update-user-profile update-data
 		[response.result-code, response.user] = [0, user]
 		callback response
 	

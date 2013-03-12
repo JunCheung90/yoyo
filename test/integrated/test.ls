@@ -16,6 +16,10 @@ user = null
 describe '测试YoYo REST API' !->
   do
     (done) <-! before
+    (db) <-! database.get-db
+    <-! db.drop-collection 'users'
+    <-! db.drop-collection 'call-logs'
+    <-! db.drop-collection 'call-log-statistic'
     done!
 
   # can '查询联系人：GET /contact/10879 应当返回200' !(done) ->
@@ -51,8 +55,33 @@ describe '测试YoYo REST API' !->
       response =  eval '(' + res.body + ')'
       response.should.have.property 'resultCode'
 
-      # 正常应答
-      # response.result-code.should.eql 0
-      # response.should.have.property 'user'
-      # response.user.should.have.property 'uid'
+      response.result-code.should.eql 0
+
+      response.should.have.property 'user'
+      response.user.should.have.property 'uid'
+      response.user.uid.should.eql user.uid
+
+      response.user.phones.length.should.eql 2
+      user := response.user   
+
+      done!
+
+  can '同步联系人：POST /contactSynchronize 应当返还200' !(done) ->
+    user.contacts[0].cid-in-client = -1
+    new-contacts = require '../test-data/new-contacts.json'
+    for new-contact in new-contacts
+      user.contacts.push new-contact
+    do
+      (err, req, res, data) <-! client.post '/contactSynchronize', user
+      should.not.exist err
+      res.statusCode.should.eql 200
+      response =  eval '(' + res.body + ')'
+      response.should.have.property 'resultCode'
+
+      response.result-code.should.eql 0
+
+      response.should.have.property 'contacts'
+
+      response.contacts.length.should.eql 4   
+
       done!

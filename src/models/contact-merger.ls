@@ -25,7 +25,7 @@ contact-merger =
       owner.contacts-seq ||= 0
       checked-contacts = [] 
       for contact in contacts
-        contact.cid = Contacts.create-cid owner.uid, ++owner.contacts-seq
+        contact.cid ?= Contacts.create-cid owner.uid, ++owner.contacts-seq
         check-and-merge-contacts contact, checked-contacts, owner 
         checked-contacts.push contact 
 
