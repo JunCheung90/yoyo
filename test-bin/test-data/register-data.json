@@ -38,6 +38,7 @@
     ],
     "contacts": [
       {
+        "cidInClient": 1,
         "names": [
           "李小四"
         ],
@@ -57,6 +58,7 @@
         "tags": []
       },
       {
+        "cidInClient": 2,
         "names": [
           "赵小五"
         ],
@@ -83,54 +85,6 @@
       "type": "IN",
       "duration": 24,
       "time": "1360820331679"
-    },
-    {
-      "phoneNumber": "23456789",
-      "type": "MISS",
-      "duration": 0,
-      "time": "1362320331679"
-    },
-    {
-      "phoneNumber": "12345678",
-      "type": "IN",
-      "duration": 15,
-      "time": "1362520331679"
-    },
-    {
-      "phoneNumber": "12345678",
-      "type": "OUT",
-      "duration": 48,
-      "time": "1362720331679"
-    },
-    {
-      "phoneNumber": "12345678",
-      "type": "OUT",
-      "duration": 1,
-      "time": "1362820331679"
-    },
-    {
-      "phoneNumber": "23456789",
-      "type": "IN",
-      "duration": 100,
-      "time": "1362810331679"
-    },
-    {
-      "phoneNumber": "23456789",
-      "type": "OUT",
-      "duration": 600,
-      "time": "1362820331679"
-    },
-    {
-      "phoneNumber": "12345678",
-      "type": "IN",
-      "duration": 67,
-      "time": "1362820031679"
-    },
-    {
-      "phoneNumber": "12345678",
-      "type": "MISS",
-      "duration": 0,
-      "time": "1362820331679"
-    }
+    }    
   ]
 }

@@ -4,7 +4,8 @@
 
 require! [fs, express, 
   './controllers/contact-manager', 
-  './controllers/user-manager']
+  './controllers/user-manager',
+  './controllers/call-log-manager']
 
 yoyo = express!
 yoyo.use express.body-parser!
@@ -44,7 +45,7 @@ do
   (req, res) <-! yoyo.post '/callLogSynchronize'
   (result) <-! detected-is-json req
   if !result
-    (result) <-! call-log-manager.synchronizeCallLog req.body
+    (result) <-! call-log-manager.synchronize-user-call-logs req.body
     res.send result
   else
     res.send result

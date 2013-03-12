@@ -58,7 +58,7 @@ User-manager =
 			return callback response
 		# throw new Error("Can't register a user with exist id") if register-data.uid		
 		(user, info) <-! create-user-and-mining-interesting-info register-data.user
-		<-! call-log-manager.update-user-call-logs user, register-data.call-logs
+		<-! call-log-manager.update-user-call-logs user, register-data.call-logs, register-data.last-call-log-time
 		[response.result-code, response.user, response.interesting-info] = [0, user, info]
 		callback response
 		

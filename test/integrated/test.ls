@@ -31,6 +31,7 @@ describe '测试YoYo REST API' !->
 
   can '注册用户：POST /userRegister 应当返回200' !(done) ->
     post-data = require '../test-data/register-data.json'
+    post-data.last-call-log-time = new Date!.get-time!
     do
       (err, req, res, data) <-! client.post '/userRegister', post-data
       should.not.exist err 
@@ -83,5 +84,17 @@ describe '测试YoYo REST API' !->
       response.should.have.property 'contacts'
 
       response.contacts.length.should.eql 4   
+
+      done!
+
+  can '同步通话记录：POST /callLogSynchronize 应当返还200' !(done) ->
+    new-call-logs = require '../test-data/new-call-logs.json'
+    synchronize-data = {uid: user.uid, call-logs: new-call-logs, last-call-log-time: new Date!.get-time!}
+    do
+      (err, req, res, data) <-! client.post '/callLogSynchronize', synchronize-data
+      should.not.exist err
+      res.statusCode.should.eql 200
+      response =  eval '(' + res.body + ')'
+      response.should.have.property 'resultCode'
 
       done!
