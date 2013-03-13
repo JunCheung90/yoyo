@@ -5,6 +5,7 @@
 require! [fs, express, 
   './controllers/contact-manager', 
   './controllers/user-manager',
+  './controllers/sn-update-manager',
   './controllers/call-log-manager']
 
 yoyo = express!
@@ -55,7 +56,7 @@ do
   (req, res) <-! yoyo.post '/snUpdate'
   (result) <-! detected-is-json req
   if !result
-    (result) <-! sn-manager.get-sn-update req.body
+    (result) <-! sn-update-manager.client-get-sn-update req.body
     res.send result
   else
     res.send result
