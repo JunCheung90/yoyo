@@ -5,7 +5,7 @@
 # 客户端的接口格式和请求参数见client-sn-update.ls
 social-network-update = # yoyo server端数据
   owner-id: 'uid-of-zhangsan'
-  type: '豆瓣'
+  type: 'weibo'
   account-name: '张三豆'
   account-id: '1213213' # acount-name和account-id两者必须有一个
   api-key: 'xxxx' # 社交平台端授权后得到的key，用以从SN获取信息，由手机客户端上传

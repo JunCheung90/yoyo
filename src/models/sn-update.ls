@@ -31,16 +31,17 @@ Sn =
     content = []
     count = 0
     (err) <-! async.each since-id-configs, !(since-id-config, next) ->
-      (sn-update-result) <-! client-get-one-type-sn-update uid, since-id-config, max-update-amount
+      (err, sn-update-result) <-! client-get-one-type-sn-update uid, since-id-config, max-update-amount
+      callback err if err
       if sn-update-result != null
         updates = sn-update-result.updates.reverse!
         sn-update-result.updates = updates
         content.push sn-update-result
         count += updates.length
       next!
-    throw new Error err if err
+    callback err if err
     client-sn-update = {} <<< {content, count}
-    callback client-sn-update    
+    callback null, client-sn-update   
 
 client-get-one-type-sn-update = !(uid, config, max-update-amount, callback) ->
   (db) <-! database.get-db
@@ -54,8 +55,8 @@ client-get-one-type-sn-update = !(uid, config, max-update-amount, callback) ->
     since-id: 1
     updates: {$slice: -max-update-amount}  # 只返回最新的条目
   (err, sn-update-result) <-! db.sn-update.find-one(query, projection)
-  throw new Error err if err
-  callback sn-update-result
+  callback err if err
+  callback null, sn-update-result
 
 create-sn-update-for-one-user = !(sn-update-doc) ->
   sn-link = initialize-link sn-update-doc
