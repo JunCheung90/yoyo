@@ -1,17 +1,22 @@
 require! ['../database','yoyo-sn', '../config/sn-config', '../util', async]
 
 Sn =
-  # 第一次启动时或有新的有sn用户注册时创建sn-update文档
+  # 第一次启动时为已存在sn的用户创建sn-update文档
   initialize: !(callback) -> 
+    self = this
     (users) <-! get-user-has-sn
     (err) <-! async.each-limit users, sn-config.batch-limit, !(user-data, next) ->
-      for sn, i in user-data.sns
-        sn-update-doc = create-sn-base-info user-data, sn 
-        # 第一次更新
-        create-sn-update-for-one-user sn-update-doc
+      self.register-new-user user-data
       next!  
     throw new Error err if err
     callback!
+
+  # 有新的有sn用户注册时创建sn-update文档
+  register-new-user: !(user-data) ->
+    for sn, i in user-data.sns
+      sn-update-doc = create-sn-base-info user-data, sn 
+      # 第一次更新
+      create-sn-update-for-one-user sn-update-doc
 
   # 定时更新已经存在的sn-update文档
   get-sn-update-regular: !->
@@ -25,6 +30,7 @@ Sn =
 
   # 返回客户端接口，请求参数（？uid & since-id-configs & count），数据模型见client-sn-update-sample.ls
   client-get-sn-update: !(req-parms, callback) ->
+    # TODO: 应该加入参数合法检测
     uid = req-parms.uid
     max-update-amount = req-parms.count || sn-config.max-update-amount
     since-id-configs = req-parms.since-id-configs || sn-config.since-id-default-configs;  # 第一次请求返回全部
