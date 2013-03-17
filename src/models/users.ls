@@ -85,6 +85,18 @@ Users =
     <-! persist-all-users to-create-users, to-update-users, contacts-owner, null
     callback contacts-owner
 
+  update-user-sn-api-key: !(uid, new-sn, callback) ->
+    (user) <-! @get-user-by-uid uid
+    if !user
+      callback new Error 3, '无法找到uid对应user'
+    for sn in user.sns
+      if sn.type == new-sn.type
+        sn = new-sn
+        callback!
+    user.sns.push new-sn
+    callback!
+
+
 get-user-with-phone-number = !(phone-number, callback) ->
   #TODO: 
   user = {}

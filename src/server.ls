@@ -2,7 +2,7 @@
  * Created by Wang, Qing. All rights reserved.
  */
 
-require! [fs, express, 
+require! [fs, express, formidable, fs, util
   './controllers/contact-manager', 
   './controllers/user-manager',
   './controllers/sn-update-manager',
@@ -13,9 +13,10 @@ yoyo.use express.body-parser!
 
 # 注册用户
 do
-  (req, res) <-! yoyo.post '/userRegister'  
-  (result) <-! detected-is-json req
-  if !result
+  (req, res) <-! yoyo.post '/userRegister'
+  necessary-params = ['user', 'callLogs', 'lastCallLogTime']
+  result = detected-json-data-integrity req, necessary-params
+  if !result.result-code?
     (result) <-! user-manager.register-user req.body
     res.send result
   else
@@ -24,8 +25,9 @@ do
 # 更新用户profile
 do
   (req, res) <-! yoyo.post '/userUpdate'
-  (result) <-! detected-is-json req
-  if !result
+  necessary-params = ['uid']
+  result = detected-json-data-integrity req, necessary-params
+  if !result.result-code?
     (result) <-! user-manager.update-user req.body
     res.send result
   else
@@ -34,8 +36,9 @@ do
 # 同步联系人
 do
   (req, res) <-! yoyo.post '/contactSynchronize'
-  (result) <-! detected-is-json req
-  if !result
+  necessary-params = ['uid', 'contacts']
+  result = detected-json-data-integrity req, necessary-params
+  if !result.result-code?
     (result) <-! contact-manager.synchronize-user-contacts req.body
     res.send result
   else
@@ -44,8 +47,9 @@ do
 # 同步通话记录
 do
   (req, res) <-! yoyo.post '/callLogSynchronize'
-  (result) <-! detected-is-json req
-  if !result
+  necessary-params = ['uid', 'callLogs', 'lastCallLogTime']
+  result = detected-json-data-integrity req, necessary-params
+  if !result.result-code
     (result) <-! call-log-manager.synchronize-user-call-logs req.body
     res.send result
   else
@@ -54,9 +58,21 @@ do
 # 获取社交更新
 do
   (req, res) <-! yoyo.post '/snUpdate'
-  (result) <-! detected-is-json req
-  if !result
-    (result) <-! sn-update-manager.client-get-sn-update req.body
+  necessary-params = ['uid']
+  result = detected-json-data-integrity req, necessary-params
+  if !result.result-code?
+    (result) <-! user-manager. req.body
+    res.send result
+  else
+    res.send result
+
+# 上传社交网络token
+do
+  (req, result) <-! yoyo.post './snApiKeyUpload'
+  necessary-params = ['sn']
+  result = detected-json-data-integrity req, necessary-params
+  if !result.result-code?
+    (result) <-! user-manager.update-user-sn-api-key req.body
     res.send result
   else
     res.send result
@@ -75,13 +91,43 @@ do
   res.write-head 200, {'Content-Type': 'image/png'}
   res.end data, 'binary'
 
-detected-is-json = !(req, callback) ->
-  if req.headers.'content-type' != "application/json"
-    result = {}
-    [result.result-code, result.error-message] = [1, 'request data is not json']
-    callback result
+# 上传头像
+
+do
+  (req, res) <-! yoyo.post '/avatarUpload'
+  uid = req.body.uid
+  cid = req.body.cid
+  source-path = req.files.img.path
+  file-name = cid ? cid : uid 
+  dest-path = "./avatars/#{uid}/"
+  (exists) <-! fs.exists dest-path
+  if !exists
+    (err) <-! fs.mkdir dest-path
+    throw new Error err if err
+    <-! copy-avatar-to-dest file-name, source-path, dest-path    
+    res.send 'hello'
   else
-    callback null
+    <-! copy-avatar-to-dest file-name, source-path, dest-path
+    res.send 'hello'
+
+detected-json-data-integrity = (req, necessary-params) ->
+  result = {}
+  if req.headers.'content-type' != "application/json"    
+    [result.result-code, result.error-message] = [1, 'request data is not json']
+  else
+    for param in necessary-params
+      if !req.body[param]
+        [result.result-code, result.error-message] = [2, "missing necessary param: #param"]
+        break
+  result
+
+copy-avatar-to-dest = !(file-name, source-path, dest-path, callback) ->
+  in-stream = fs.create-read-stream source-path
+  out-stream = fs.create-write-stream dest-path + file-name + '.png'
+
+  <-! util.pump in-stream, out-stream
+  <-! fs.unlink source-path
+  callback!
 
 
 yoyo.listen 8888 

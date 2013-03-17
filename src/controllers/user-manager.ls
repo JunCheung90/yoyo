@@ -72,6 +72,13 @@ User-manager =
 		(user) <- Users.update-user-profile update-data
 		[response.result-code, response.user] = [0, user]
 		callback response
+
+	update-user-sn-api-key: !(update-data, callback) ->
+		(err) <-! Users.update-user-sn-api-key update-data.uid, update-data.sn
+		response = {result-code: 0, error-message: null}
+		[response.result-code, response.error-message] = [err.number, err.descrition] if err
+
+		callback response
 	
 create-user-and-mining-interesting-info = !(user-data, callback) ->
 	(user) <-! Users.create-user-with-contacts user-data
