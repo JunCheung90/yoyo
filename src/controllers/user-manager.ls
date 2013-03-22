@@ -36,27 +36,8 @@ require! ['../models/Users'
 
 User-manager = 
 	register-user: !(register-data, callback) ->
-		response = {}
-		if !register-data.user?
-			[response.result-code, response.error-message] = [2, "miss necessary argument: user"]
-			return callback response
-
-		if !register-data.user?.phones?
-			[response.result-code, response.error-message] = [2, "miss necessary argument: user's phones"]
-			return callback response
-
-		if !register-data.user?.contacts?
-			[response.result-code, response.error-message] = [2, "miss necessary argument: user's contacts"]
-			return callback response
-
-		if !register-data.call-logs?
-			[response.result-code, response.error-message] = [2, "miss necessary argument: user's callLogs"]
-			return callback response
-
-		if register-data.user.uid
-			[response.result-code, response.error-message] = [3, "Can't register a user with exist id"]
-			return callback response
-		# throw new Error("Can't register a user with exist id") if register-data.uid		
+		response = {}		
+		throw new Error("Can't register a user with exist id") if register-data.uid		
 		(user, info) <-! create-user-and-mining-interesting-info register-data.user
 		<-! call-log-manager.update-user-call-logs user, register-data.call-logs, register-data.last-call-log-time
 		[response.result-code, response.user, response.interesting-info] = [0, user, info]

@@ -92,7 +92,6 @@ do
   res.end data, 'binary'
 
 # 上传头像
-
 do
   (req, res) <-! yoyo.post '/avatarUpload'
   uid = req.body.uid
@@ -112,7 +111,7 @@ do
 
 detected-json-data-integrity = (req, necessary-params) ->
   result = {}
-  if req.headers.'content-type' != "application/json"    
+  if req.headers.'content-time-quantum'.index-of("json") < 0  
     [result.result-code, result.error-message] = [1, 'request data is not json']
   else
     for param in necessary-params

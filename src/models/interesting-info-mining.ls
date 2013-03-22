@@ -3,9 +3,9 @@
  * All rights reserved.
  */
 
-interesting-info =
+interesting-info-mining =
 	mining-user-interesting-info: !(user, callback) ->
 		interesting-info = {}
 		callback interesting-info
 
-module.exports <<< interesting-info
+module.exports <<< interesting-info-mining
