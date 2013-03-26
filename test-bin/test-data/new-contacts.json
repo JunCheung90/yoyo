@@ -48,5 +48,26 @@
     "ims": [],
     "sns": [],
     "tags": []
+  },
+  {
+    "cidInClient": 6,
+    "names": [
+      "Jun"
+    ],
+    "phones": [
+      "51561321"
+    ],
+    "emails": [
+      "Jun@fake.com"
+    ],
+    "ims": [
+      {
+        "type": "QQ",
+        "account": "JunQQ"
+      }
+    ],
+    "sns": [],
+    "tags": []
   }
+
 ]

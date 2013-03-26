@@ -4,47 +4,48 @@
  */
 
 interesting-info-mining-strategy = 
-  never-contact:
-    'roles': ['fromUid', 'toUid']
-    'fields': []
-    'time-quantum': 'TOTAL'
-    'type': 'never-contact'
-  call-out:
-    'roles': ['fromUid']
-    'fields': ['count']
-    'time-quantum': 'MONTH'
-    'type': 'most-call-out'
-    'checker': 
-  call-in:
-    'roles': ['toUid']
-    'fields': ['count']
-    'time-quantum': 'MONTH'
-    'type': 'most-call-in'
-  most-contact:
-    'roles': ['fromUid', 'toUid']
-    'fields': ['count']
-    'time-quantum': 'MONTH'
-    'type': 'most-contact'
-  call-out-miss:
-    'roles': ['fromUid']
-    'fields': ['missCount']
-    'time-quantum': 'MONTH'
-    'type': 'most-call-out-miss'
-  call-in-miss:
-    'roles': ['toUid']
-    'fields': ['missCount']
-    'time-quantum': 'MONTH'
-    'type': 'most-call-in-miss'
-  call-out-time:
-    'roles': ['fromUid']
-    'fields': ['duration']
-    'time-quantum': 'MONTH'
-    'type': 'most-call-out-time'
-  call-in-time:
-    'roles': ['toUid']
-    'fields': ['duration']
-    'time-quantum': 'MONTH'
-    'type': 'most-call-in-time'
+  strategys:
+    * roles: ['fromUid', 'toUid']
+      fields: []
+      time-quantum: 'TOTAL'
+      type: 'never-contact'
+      checker: 'not-exist-node'
+      rank-score: 0
+    * roles: ['fromUid']
+      fields: ['count']
+      time-quantum: 'MONTH'
+      type: 'most-call-out'
+      checker: 'field-largest'
+    * roles: ['toUid']
+      fields: ['count']
+      time-quantum: 'MONTH'
+      type: 'most-call-in'
+      checker: 'field-largest'
+    * roles: ['fromUid', 'toUid']
+      fields: ['count']
+      time-quantum: 'MONTH'
+      type: 'most-contact'
+      checker: 'field-largest'
+    * roles: ['fromUid']
+      fields: ['missCount']
+      time-quantum: 'MONTH'
+      type: 'most-call-out-miss'
+      checker: 'field-largest'
+    * roles: ['toUid']
+      fields: ['missCount']
+      time-quantum: 'MONTH'
+      type: 'most-call-in-miss'
+      checker: 'field-largest'
+    * roles: ['fromUid']
+      fields: ['duration']
+      time-quantum: 'MONTH'
+      type: 'most-call-out-time'
+      checker: 'field-largest'
+    * roles: ['toUid']
+      fields: ['duration']
+      time-quantum: 'MONTH'
+      type: 'most-call-in-time'
+      checker: 'field-largest'
 
 
 

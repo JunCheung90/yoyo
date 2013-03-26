@@ -16,23 +16,23 @@ Call-log-statistic =
     callback!
 
 get-data-with-statistic-key = (user, call-logs-array-with-uid) ->
-  node-types = ['TOTAL', 'YEAR', 'MONTH', 'DAY', 'HOUR']
+  time-quantums = ['TOTAL', 'YEAR', 'MONTH', 'DAY', 'HOUR']
   result-array = []
   md5-array = []
   for call-log-with-uid in call-logs-array-with-uid
     connected-user = get-connected-user user, call-log-with-uid
-    for node-type in node-types
-      time = get-start-time-and-end-time node-type, connected-user.time
-      text = connected-user.from-uid + connected-user.to-uid + node-type + time.start-time + time.end-time
+    for time-quantum in time-quantums
+      time = get-start-time-and-end-time time-quantum, connected-user.time
+      text = connected-user.from-uid + connected-user.to-uid + time-quantum + time.start-time + time.end-time
       md5 = crypto.create-hash('md5').update text .digest 'hex'
 
       index = _.index-of md5-array, md5
 
       if index == -1
         md5-array.push md5
-        result-array.push init-data-with-statistic-key node-type, time, connected-user
+        result-array.push init-data-with-statistic-key time-quantum, time, connected-user
       else
-        result-array[index].call-log-datas.push {duration: connected-user.duration, type: connected-user.type, time: connected-user.time}
+        result-array[index].call-log-datas.push {duration: connected-user.duration, time-quantum: connected-user.time-quantum, time: connected-user.time}
   result-array
 
 create-or-update-statistic-nodes = !(call-log-datas-with-statistic-key-array, callback) ->
@@ -44,31 +44,31 @@ create-or-update-statistic-nodes = !(call-log-datas-with-statistic-key-array, ca
   throw new Error err if err
   callback!
 
-init-data-with-statistic-key = (node-type, time, connected-user) ->
+init-data-with-statistic-key = (time-quantum, time, connected-user) ->
   {
     statistic-key:
-      type: node-type
+      time-quantum: time-quantum
       start-time: time.start-time
       end-time: time.end-time
       from-uid: connected-user.from-uid
       to-uid: connected-user.to-uid
     call-log-datas: 
       * duration: connected-user.duration
-        type: connected-user.type
+        time-quantum: connected-user.time-quantum
         time: connected-user.time
       ...      
   }
 
 get-connected-user = (user, call-log-with-uid) ->
-  if call-log-with-uid.type === 'OUT'
+  if call-log-with-uid.time-quantum === 'OUT'
     from-uid = user.uid
     to-uid = call-log-with-uid.uid
   else
     from-uid = call-log-with-uid.uid
     to-uid = user.uid
-  {from-uid: from-uid, to-uid: to-uid, time: call-log-with-uid.time, duration: call-log-with-uid.duration, type: call-log-with-uid.type}
+  {from-uid: from-uid, to-uid: to-uid, time: call-log-with-uid.time, duration: call-log-with-uid.duration, time-quantum: call-log-with-uid.time-quantum}
 
-get-start-time-and-end-time = (node-type, call-log-time) ->
+get-start-time-and-end-time = (time-quantum, call-log-time) ->
   call-log-date = new Date!
   call-log-date.set-time call-log-time
   year = call-log-date.get-full-year!
@@ -77,7 +77,7 @@ get-start-time-and-end-time = (node-type, call-log-time) ->
   hour = call-log-date.get-hours!
   start-date = null
   end-date = null
-  switch node-type
+  switch time-quantum
     case 'YEAR' then
       start-date = get-date year, 0, 1, 0, 0, 0
       end-date = get-date year, 11, 31, 23, 59, 59
@@ -154,7 +154,7 @@ update-statistic = (statistic, data-with-statistic-key) ->
   for call-log-data in data-with-statistic-key.call-log-datas
     statistic.data = update-statistic-data statistic.data, call-log-data
 
-    if data-with-statistic-key.statistic-key.type != 'HOUR'
+    if data-with-statistic-key.statistic-key.time-quantum != 'HOUR'
       hour = get-hour-by-time call-log-data.time
       statistic.data.distribution-in-hour[hour] = update-statistic-data statistic.data.distribution-in-hour[hour], call-log-data    
   statistic
@@ -162,7 +162,7 @@ update-statistic = (statistic, data-with-statistic-key) ->
 update-statistic-data = (statistic-data, call-log-data) ->
   statistic-data.count++
   statistic-data.duration += call-log-data.duration
-  if call-log-data.type == 'MISS'
+  if call-log-data.time-quantum == 'MISS'
     statistic-data.miss-count++
   statistic-data
 

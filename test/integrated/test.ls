@@ -83,7 +83,7 @@ describe '测试YoYo REST API' !->
 
       response.should.have.property 'contacts'
 
-      response.contacts.length.should.eql 4   
+      response.contacts.length.should.eql 5  
 
       done!
 

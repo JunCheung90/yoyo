@@ -111,7 +111,7 @@ do
 
 detected-json-data-integrity = (req, necessary-params) ->
   result = {}
-  if req.headers.'content-time-quantum'.index-of("json") < 0  
+  if req.headers.'content-type'.index-of("json") < 0  
     [result.result-code, result.error-message] = [1, 'request data is not json']
   else
     for param in necessary-params
