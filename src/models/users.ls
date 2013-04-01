@@ -26,16 +26,15 @@ Users =
 
   update-user-profile: !(user-new-profile, callback) ->
     (user) <-! @get-user-by-uid user-new-profile.uid
-    for key, value of user-new-profile
-      user[key] = value
-    user.last-modified-date = new Date!.get-time!
-    (err, result) <-! util.update-multiple-docs 'users', [user]
+    (err) <-! update-each-new-profile user, user-new-profile
+    throw new Error err if err
+    (err) <-! update-each-as-contacts user, user-new-profile
     throw new Error err if err
     callback user
 
   get-user-by-uid: !(uid, callback) ->
     (users) <-! qh.get-users-by-uids [uid]
-    callbak null if users.length == 0
+    callback null if users.length == 0
     callback users[0]    
 
   mining-interesting-info: !(user, callback) ->
@@ -96,6 +95,28 @@ Users =
     user.sns.push new-sn
     callback!
 
+
+update-each-new-profile = !(user, user-new-profile, callback) ->
+  for key, value of user-new-profile
+    user[key] = value
+  user.last-modified-date = new Date!.get-time!
+  (err, result) <-! util.update-multiple-docs 'users', [user]  
+  callback err
+
+update-each-as-contacts = !(user, user-new-profile, callback) ->
+  as-contacts = user.as-contact-of
+  relative-users = []
+  (err) <-! async.for-each as-contacts, !(as-contact, next) ->
+    (user-has-contact) <-! Users.get-user-by-uid as-contact
+    for contact in user-has-contact.contacts
+      if contact.act-by-user == user.uid
+        Contacts.update-contact contact, user-new-profile
+        break
+    relative-users.push user-has-contact
+    next!
+  throw new Error err if err
+  (err, result) <-! util.update-multiple-docs 'users', relative-users
+  callback err
 
 get-user-with-phone-number = !(phone-number, callback) ->
   #TODO: 

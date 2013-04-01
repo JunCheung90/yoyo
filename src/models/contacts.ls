@@ -38,6 +38,15 @@ Contacts =
   create-cid: (uid, seq-no) ->
     uid + '-c-' + new Date!.get-time! + '-' + seq-no
 
+  update-contact: (old-contact, new-profile) ->
+    for key, value of new-profile
+      if key in profile-filter!
+        old-contact[key] = value
+    old-contact
+
+profile-filter = ->
+  ['phones', 'emails', 'ims', 'sns', 'tags', 'addresses']
+
 
 async-create-unsaved-contacts-users = !(owner, callback) ->
   to-create-contact-users = []

@@ -29,7 +29,7 @@ describe '测试YoYo REST API' !->
   #     res.statusCode.should.eql 200
   #     done!
 
-  can '注册用户：POST /userRegister 应当返回200' !(done) ->
+  can '注册用户zhangsan：POST /userRegister 应当返回200' !(done) ->
     post-data = require '../test-data/register-data.json'
     post-data.last-call-log-time = new Date!.get-time!
     do
@@ -46,10 +46,26 @@ describe '测试YoYo REST API' !->
       user := response.user
       done!
 
+  can '注册用户lisi：POST /userRegister 应当返回200' !(done) ->
+    lisi-data = require '../test-data/register-lisi.json'
+    lisi-data.last-call-log-time = new Date!.get-time!
+    do
+      (err, req, res, data) <-! client.post '/userRegister', lisi-data
+      should.not.exist err 
+      res.statusCode.should.eql 200
+      response =  eval '(' + res.body + ')'
+      response.should.have.property 'resultCode'
+
+      # 正常应答
+      response.result-code.should.eql 0
+      response.should.have.property 'user'
+      response.user.should.have.property 'uid'
+      done!
+
   can '更新用户profile：POST /userUpdate 应当返还200' !(done) ->
     post-data = require '../test-data/update-profile-data.json'
     post-data.uid = user.uid
-    do
+    do      
       (err, req, res, data) <-! client.post '/userUpdate', post-data
       should.not.exist err
       res.statusCode.should.eql 200

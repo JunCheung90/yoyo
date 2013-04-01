@@ -1,0 +1,77 @@
+{
+  "user": {
+    "name": "李四",
+    "phones": [
+        {
+            "phoneNumber": "12345678",
+            "isActive": true
+        }
+    ],
+    "emails": [
+        "lisi@fake.com"
+    ],
+    "ims": [
+        {
+            "type": "QQ",
+            "account": "lisi111",
+            "isActive": true
+        },
+        {
+            "type": "AOL",
+            "account": "lisi222",
+            "isActive": true
+        }
+    ],
+    "sns": [
+        {
+            "type": "weibo",
+            "accountName": "周吴文",
+            "accountId": "3120116101",
+            "apiKey": "2.00PjgJ6DCybyeCa778dcf76308i8r6"
+        }
+    ],
+    "addresses": [
+        "广州 大学城 中山大学 至善园 408"
+    ],
+    "tags": [
+        "程序员"
+    ],
+    "contacts": [
+        {
+            "names": [
+                "张大三"
+            ],
+            "phones": [
+                "34567890"
+            ],
+            "emails": [],
+            "ims": [
+                {
+                    "type": "QQ",
+                    "account": "zhangsan111"
+                }
+            ],
+            "sns": [],
+            "tags": []
+        },
+        {
+            "names": [
+                "赵小五"
+            ],
+            "emails": [
+                "zhaowu@fake.com"
+            ],
+            "ims": [
+                {
+                    "type": "QQ",
+                    "account": "zhaowu111"
+                }
+            ],
+            "sns": [],
+            "tags": []
+        }
+    ]
+  },
+  "callLogs": [],
+  "lastCallLogTime": 1360820331679
+}
