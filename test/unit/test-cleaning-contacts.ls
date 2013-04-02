@@ -3,7 +3,7 @@
  */
  
 require! ['should', 
-          '../../bin/models/Users', '../../bin/models/User-Merger', '../../bin/util', '../../bin/database']
+          '../../bin/models/Users', '../../bin/mergence/User-Merger', '../../bin/util', '../../bin/db/database']
 _ = require 'underscore'
 _(global).extend require './test-merging-helper'
 

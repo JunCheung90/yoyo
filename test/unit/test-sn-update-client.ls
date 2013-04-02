@@ -1,5 +1,5 @@
 require! ['should', 'async', 
-          '../../bin/database', '../../bin/config/sn-config', '../test-helper', '../../bin/util']
+          '../../bin/db/database', '../../bin/config/sn-config', '../test-helper', '../../bin/util']
 require! Sn: '../../bin/models/sn-update'
 _ = require 'underscore'
 

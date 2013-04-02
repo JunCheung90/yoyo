@@ -1,4 +1,4 @@
-require! ['./config/config'.mongo, 'mongodb'.MongoClient, 'mongodb'.Server]
+require! ['../config/config'.mongo, 'mongodb'.MongoClient, 'mongodb'.Server]
 
 database =
   db: null

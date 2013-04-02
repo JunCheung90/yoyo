@@ -2,8 +2,8 @@
  * Created by Wang, Qing. All rights reserved.
  */
  
-require! [async, '../util', './Contact-Merger', './Users']
-require! common: './user-contact-common', Validator: './helpers/communication-channel-validator'
+require! [async, '../util', '../mergence/Contact-Merger', './Users']
+require! common: '../mergence/user-contact-common', Validator: './helpers/communication-channel-validator'
 
 Contacts =
   # ！！！注意，在async-create-unsaved-contacts-users和save-contacts-users之间，有可能新的User来create contacts，

@@ -2,11 +2,11 @@
  * Created by Wang, Qing. All rights reserved.
  */
 
-require! [fs, express, formidable, fs, util
-  './controllers/contact-manager', 
-  './controllers/user-manager',
-  './controllers/sn-update-manager',
-  './controllers/call-log-manager']
+require! [fs, express, util
+  './manager/contact-manager', 
+  './manager/user-manager',
+  './manager/sn-update-manager',
+  './manager/call-log-manager']
 
 yoyo = express!
 yoyo.use express.body-parser!

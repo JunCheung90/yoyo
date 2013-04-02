@@ -2,9 +2,9 @@
  * Created by Wang, Qing. All rights reserved.
  */
  
-require! [async, '../util', '../database', './Contacts', './User-Merger']
-require! common: './user-contact-common'
-require! qh: './helpers/query-helper'
+require! [async, '../util', '../db/database', './Contacts', '../mergence/User-Merger']
+require! common: '../mergence/user-contact-common'
+require! qh: '../db/query-helper'
 
 Users =
   create-user-with-contacts: !(user-data, callback)->
@@ -112,7 +112,7 @@ update-each-as-contacts = !(user, user-new-profile, callback) ->
       if contact.act-by-user == user.uid
         Contacts.update-contact contact, user-new-profile
         break
-    relative-users.push user-has-contact
+    relative-users.push user-has-contact  
     next!
   throw new Error err if err
   (err, result) <-! util.update-multiple-docs 'users', relative-users

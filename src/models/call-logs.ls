@@ -3,8 +3,8 @@
  * All rights reserved.
  */
  
-require! [async, '../database', '../util',
-    './Users', './Contacts', './call-log-statistic', './interesting-info-mining']
+require! [async, '../db/database', '../util',
+    './Users', './Contacts', '../data-mining/call-log-statistic', '../data-mining/interesting-info/interesting-info-mining']
 
 Call-logs =
   update-user-call-log-and-related-statistic: !(user, call-logs, last-call-log-time, callback) ->

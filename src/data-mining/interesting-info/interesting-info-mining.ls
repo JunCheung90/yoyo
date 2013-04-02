@@ -3,9 +3,9 @@
  * All rights reserved.
  */
 
-require! [async, '../Interesting-info-mining-strategy', '../util']
+require! [async, './Interesting-info-mining-strategy', '../../util']
 _ = require 'underscore'
-Checkers = require './helpers/interesting-info-checkers'
+Checkers = require './interesting-info-checkers'
 
 interesting-info-mining =
   mining-user-interesting-info: !(user, callback) ->

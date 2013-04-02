@@ -2,7 +2,7 @@
  * Created by Wang, Qing. All rights reserved.
  */
 
-require! [restify, should, '../../bin/database']
+require! [restify, should, '../../bin/db/database']
 
 yoyo-config =
   url: 'http://localhost:8888'

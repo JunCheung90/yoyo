@@ -1,4 +1,4 @@
-require! ['should', '../../bin/database'
+require! ['should', '../../bin/db/database'
           '../test-helper']
 
 db = null

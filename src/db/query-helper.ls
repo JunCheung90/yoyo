@@ -1,7 +1,7 @@
 # 这里的map以相应的phone、email、sns、im为key，uid为value。用于快速判断和查找某种通讯方式是否已经使用。
 # 服务器启动时，先从mongoDB中读取并初始化这些map，在程序执行中，需要在新建user（contact）时，更新这部分的内容。
 _ = require 'underscore'
-require! '../../database'
+require! './database'
 
 qh =
   get-existed-repeat-user: !(user, callback) ->

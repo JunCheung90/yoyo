@@ -2,7 +2,7 @@
  * Author: Zhang, JieJun. Email: JunCheung90@gmail.com
  * All rights reserved.
  */
-require! ['../../database']
+require! ['../../db/database']
 
 
 Interesting-info-checkers =

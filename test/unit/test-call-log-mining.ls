@@ -5,7 +5,7 @@
 
 require! ['should', 
           '../../bin/models/call-logs'
-          '../../bin/models/Users', '../../bin/database']
+          '../../bin/models/Users', '../../bin/db/database']
 _ = require 'underscore'
 _(global).extend require './test-merging-helper'
 

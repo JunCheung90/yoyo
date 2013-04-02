@@ -3,9 +3,9 @@
  */
  
 require! ['should', 'async', 
-          '../../bin/util', '../../bin/database', '../test-helper']
+          '../../bin/util', '../../bin/db/database', '../test-helper']
 
-qh = require '../../bin/models/helpers/query-helper'
+qh = require '../../bin/db/query-helper'
 
 multiple-times = 10 
 repeat-rate = 0.2 

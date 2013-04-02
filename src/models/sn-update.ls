@@ -1,4 +1,4 @@
-require! ['../database','yoyo-sn', '../config/sn-config', '../util', async]
+require! ['../db/database','yoyo-sn', '../config/sn-config', '../util', async]
 
 Sn =
   # 第一次启动时为已存在sn的用户创建sn-update文档

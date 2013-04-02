@@ -1,6 +1,6 @@
 # # TODO: 完善yoyo-mock模块，模拟sn平台的接口，进行sn更新功能的大规模测试（性能）
 require! ['should', 'async', 
-          '../../bin/database', '../../bin/config/sn-config', '../test-helper', '../../bin/util']
+          '../../bin/db/database', '../../bin/config/sn-config', '../test-helper', '../../bin/util']
 require! Sn: '../../bin/models/sn-update'
 _ = require 'underscore'
 

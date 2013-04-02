@@ -2,7 +2,7 @@
  * Author: Zhang, JieJun. Email: JunCheung90@gmail.com
  * All rights reserved.
  */
-require! [async, crypto, '../database']
+require! [async, crypto, '../db/database']
 
 _ = require 'underscore'
 

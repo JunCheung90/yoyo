@@ -2,10 +2,10 @@
  * Created by Wang, Qing. All rights reserved.
  */
 
-Merge-Strategy = require '../contacts-merging-strategy'
+Merge-Strategy = require './strategy/contacts-merging-strategy'
 _ = require 'underscore' 
-require! ['./helpers/Info-Combiner', './User-Merger', './Contacts']
-require! common: './user-contact-common', Checkers: './helpers/merge-checkers'
+require! ['../models/helpers/Info-Combiner', './User-Merger', '../models/Contacts']
+require! common: './user-contact-common', Checkers: './checker/merge-checkers'
 
 contact-merger =
  # 算法参见 http://my.ss.sysu.edu.cn/wiki/pages/viewpage.action?pageId=113049608
