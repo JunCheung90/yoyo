@@ -1,0 +1,59 @@
+{
+  "callLogs": [
+    {
+      "phoneNumber": "15018749416",
+      "type": "IN",
+      "duration": 24,
+      "time": "1360820331679"
+    },
+    {
+      "phoneNumber": "18502096930",
+      "type": "MISS",
+      "duration": 0,
+      "time": "1362320331679"
+    },
+    {
+      "phoneNumber": "15018749416",
+      "type": "IN",
+      "duration": 15,
+      "time": "1362520331679"
+    },
+    {
+      "phoneNumber": "15018749416",
+      "type": "OUT",
+      "duration": 48,
+      "time": "1362720331679"
+    },
+    {
+      "phoneNumber": "15018749416",
+      "type": "OUT",
+      "duration": 1,
+      "time": "1362830331679"
+    },
+    {
+      "phoneNumber": "18502096930",
+      "type": "IN",
+      "duration": 100,
+      "time": "1362850331679"
+    },
+    {
+      "phoneNumber": "18502096930",
+      "type": "OUT",
+      "duration": 600,
+      "time": "1362870331679"
+    },
+    {
+      "phoneNumber": "15018749416",
+      "type": "IN",
+      "duration": 67,
+      "time": "1362880031679"
+    },
+    {
+      "phoneNumber": "15018749416",
+      "type": "MISS",
+      "duration": 0,
+      "time": "1362890331679"
+    }
+  ],
+  "lastCallLogTime": "1362890331679"
+}

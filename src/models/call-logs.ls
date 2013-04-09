@@ -16,7 +16,7 @@ Call-logs =
       <-! update-user-call-logs-with-uid user-call-logs, call-logs-with-uid, last-call-log-time  
       <-! call-log-statistic.update-user-call-log-statistic user, call-logs-with-uid
       <-! interesting-info-mining.mining-user-interesting-info user
-      callback! 
+      callback call-logs-with-uid
 
 add-uid-to-each-call-log = !(user, call-logs, callback)->
   (call-logs-with-uid) <-! async-add-uid-to-each-call-log user, call-logs
@@ -24,21 +24,35 @@ add-uid-to-each-call-log = !(user, call-logs, callback)->
 
 async-add-uid-to-each-call-log = !(user, call-logs, callback) ->
   call-logs-with-uid = []
-  (err) <-! async.for-each call-logs, !(call-log, next) ->    
+  stranger-map = {}
+  stranger-datas = []
+  for call-log in call-logs
     contact = get-user-contact-with-phone-number user, call-log.phone-number
     if contact
       call-log.uid = contact.act-by-user
       #TODO: 判断通话记录是否已经被提交过，避免重复保存
       call-logs-with-uid ++= call-log
-      next!
     else
-      (call-log-target-user) <-! Users.get-or-create-user-with-phone-number call-log.phone-number
-      call-log.uid = call-log-target-user.uid      
-      #TODO: 判断通话记录是否已经被提交过，避免重复保存
-      call-logs-with-uid ++= call-log
-      next!
-  throw new Error err if err
+      if stranger-map[call-log.phone-number]
+        index = stranger-map[call-log.phone-number] - 1
+        stranger-datas[index].call-logs ++= call-log        
+      else
+        stranger-map[call-log.phone-number] = stranger-datas.length + 1
+        stranger-datas.push {phone-number: call-log.phone-number, call-logs: [call-log]}
+
+  <-! add-uid-for-stranger-call-log stranger-datas, call-logs-with-uid
   callback call-logs-with-uid
+
+add-uid-for-stranger-call-log = !(stranger-datas, call-logs-with-uid, callback) ->
+  (err) <-! async.for-each stranger-datas, !(stranger, next) ->
+    (call-log-target-user) <-! Users.get-or-create-user-with-phone-number stranger.phone-number
+    for call-log in stranger.call-logs
+      call-log.uid = call-log-target-user.uid
+      call-logs-with-uid ++= call-log
+    next!
+  throw new Error err if err
+  callback!
+
 
 get-user-contact-with-phone-number = (user, phone-number) ->
   for contact in user.contacts

@@ -32,6 +32,10 @@ qh =
     (users) <-! query-users-on-phone-and-email phones, emails
     callback users
 
+  get-existed-users-on-phones: !(phones, callback) ->
+    (users) <-! query-users-on-phone-and-email phones, []
+    callback users
+
 query-users-on-phone-and-email = !(phones, emails, callback) ->
   query-statement = 
     $or:

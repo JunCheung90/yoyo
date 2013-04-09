@@ -120,13 +120,26 @@ update-each-as-contacts = !(user, user-new-profile, callback) ->
 
 get-user-with-phone-number = !(phone-number, callback) ->
   #TODO: 
-  user = {}
-  callback user
+  (users) <-! qh.get-existed-users-on-phones [phone-number]
+  if users.length > 0
+    callback user[0]
+  else
+    callback null
 
 create-user-with-phone-number = !(phone-number, callback) ->
-  #TODO:
-  user = {}
-  callback user
+  #TODO:  
+  user = {
+    phones: {
+      phone-number: phone-number
+      is-active: true
+      start-using-time: new Date!.get-time!
+    }
+  }
+  Users.build-user-basic-info user
+  user.is-registered = false
+  user.uid = util.get-UUid!
+  (result) <-! util.save-new-data 'users', user
+  callback result
 
 create-default-system-avatar = (user) ->
   #TODO:

@@ -2,7 +2,7 @@
  * Created by Wang, Qing. All rights reserved.
  */
 
-require! [fs, 'node-uuid', async, './database']
+require! [fs, 'node-uuid', async, './db/database']
 _ = require 'underscore'
 
 util =
@@ -60,6 +60,12 @@ util =
       callback!
     else
       callback! 
+
+  save-new-data: !(collection, new-data, callback) ->
+    (db) <-! database.get-db
+    (err, result) <-! db[collection].save new-data
+    throw new Error err if err
+    callback result
 
   union: (set-a, set-b) ->
     set-a = set-a or []

@@ -1,0 +1,59 @@
+{
+  "callLogs": [
+    {
+      "phoneNumber": "12345678",
+      "type": "IN",
+      "duration": 24,
+      "time": "1359648000000"
+    },
+    {
+      "phoneNumber": "12345678",
+      "type": "MISS",
+      "duration": 0,
+      "time": "1360037484000"
+    },
+    {
+      "phoneNumber": "12345678",
+      "type": "IN",
+      "duration": 15,
+      "time": "1361765484000"
+    },
+    {
+      "phoneNumber": "12345678",
+      "type": "OUT",
+      "duration": 48,
+      "time": "1361779884000"
+    },
+    {
+      "phoneNumber": "12345678",
+      "type": "OUT",
+      "duration": 1,
+      "time": "1362103200000"
+    },
+    {
+      "phoneNumber": "12345678",
+      "type": "IN",
+      "duration": 100,
+      "time": "1362103200000"
+    },
+    {
+      "phoneNumber": "12345678",
+      "type": "OUT",
+      "duration": 600,
+      "time": "1362103200000"
+    },
+    {
+      "phoneNumber": "12345678",
+      "type": "IN",
+      "duration": 67,
+      "time": "1362103200000"
+    },
+    {
+      "phoneNumber": "12345678",
+      "type": "MISS",
+      "duration": 0,
+      "time": "1362103200000"
+    }
+  ],
+  "lastCallLogTime": "1362820331679"
+}

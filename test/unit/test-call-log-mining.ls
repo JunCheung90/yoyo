@@ -3,100 +3,147 @@
  * All rights reserved.
  */
 
-require! ['should', 
-          '../../bin/models/call-logs'
+require! ['should', 'async'
+          '../../bin/models/Call-logs'
           '../../bin/models/Users', '../../bin/db/database']
-_ = require 'underscore'
-_(global).extend require './test-merging-helper'
+qh = require '../../bin/db/query-helper'
 
 user-data = null
 user = null
+lisi = null
 
 can = it # it在LiveScript中被作为缺省的参数，因此我们先置换为can
 
-describe '保存通话记录: ' !->
-  do
-    (done) <-! before
-    <-! database.init-mongo-client
-    <-! database.db.drop-collection 'users'
-    <-! database.db.drop-collection 'call-logs'
-    <-! database.db.drop-collection 'call-log-statistic'
-    done!
+describe '有趣信息挖掘:', !->
+  describe '识别通话对象，保存记录', !->
+    do
+      (done) <-! before
+      <-! database.init-mongo-client
+      <-! database.db.drop-collection 'users'
+      <-! database.db.drop-collection 'call-logs'
+      <-! database.db.drop-collection 'call-log-statistic'
+      (zhangsan, call-logs) <-! create-user-zhangsan-with-contacts
+      user := zhangsan   
+      done!
 
-  can "保存张三的通话记录，一共9个记录，并增加通话对象uid\n" !(done) ->    
-    (zhangsan) <-! create-user-zhangsan
-    <-! check-zhangsan-call-log zhangsan, 9
-    done!
+    can "保存通话记录，能识别出已经是YoYo用户的通话对象\n" !(done) ->
+      call-logs = require '../test-data/zhangsan-call-logs-data.json'
+      (call-logs-with-uid) <-! update-user-call-logs user, call-logs
+      <-! check-if-recognize-call-log-number-as-yoyo-user call-logs-with-uid
+      done!
 
-# describe '通话历史记录统计：', !->
-#   do
-#     (done) <-! before
-#     <-! database.init-mongo-client
-#     <-! database.db.drop-collection 'users'
-#     <-! database.db.drop-collection 'call-logs'
-#     <-! database.db.drop-collection 'call-log-statistic'
-#     (zhangsan) <-! create-user-zhangsan
-#     user = zhangsan
-#     done!
+    can "还不是YoYo用户的对象，能够新建为YoYo用户\n" !(done) ->
+      call-logs = require '../test-data/zhangsan-stranger-call-logs-data.json'
+      <-! check-if-call-log-user-not-exist call-logs
+      (call-logs-with-uid) <-! update-user-call-logs user, call-logs
+      <-! check-if-recognize-as-new-user call-logs-with-uid
+      done!
 
-#   can "张三通话次数统计，有4个打进，3个打出，2个未接\n" !(done) ->
-#     check-total-call-log-count '', 4, 3, 2, done
+  describe '更新自身与通话对象之间的通话统计', !->
+    do
+      (done) <-! before
+      <-! database.init-mongo-client
+      <-! database.db.drop-collection 'users'
+      <-! database.db.drop-collection 'call-logs'
+      <-! database.db.drop-collection 'call-log-statistic' 
+      (zhangsan) <-! create-user-zhangsan-with-contacts
+      call-logs = require '../test-data/zhangsan-call-logs-data.json'
+      (call-logs-with-uid) <-! update-user-call-logs zhangsan, call-logs
+      user := zhangsan   
+      (contacted-user) <-! get-user-with-phone "12345678"
+      lisi := contacted-user
+      done!
 
-#   can "张三通话时间统计，打进（206s），打出（649s）\n" !(done) ->
-#     check-total-call-log-duration '', 206, 649, done
+    can "李四呼叫张三通话次数统计，2013年，6次，206s，2未接\n" !(done) ->   
+      check-statistic lisi, user, "YEAR", 1356969600000, 6, 206, 2, done
 
-#   can "张三对李四通话次数统计，有3个打进，2个打出，1个未接\n" !(done) ->
-#     check-total-call-log-count '李四', 3, 2, 1, done
+    can "张三呼叫李四通话次数统计，2013年，3次，649s，0未接\n" !(done) ->
+      check-statistic user, lisi, "YEAR", 1356969600000, 3, 649, 0, done
 
-#   can "张三对李四通话时间统计，打进106s，打出49s\n" !(done) ->
-#     check-total-call-log-duration '李四', 106, 46, done
+    can "李四呼叫张三通话次数统计，2013年2月，3次，39s，1未接\n" !(done) ->
+      check-statistic lisi, user, "MONTH", 1359648000000, 3, 39, 1, done
 
-#   can "张三对赵五通话次数统计，有1个打进，1个打出，1个未接\n" !(done) ->
-#     check-total-call-log-count '赵五', 1, 2, 1, done
+    can "张三呼叫李四通话次数统计，2013年2月，1次，48s，0未接\n" !(done) ->
+      check-statistic user, lisi, "MONTH", 1359648000000, 1, 48, 0, done
 
-#   can "张三对赵五通话时间统计，打进100s，打出600s\n" !(done) ->
-#     check-total-call-log-duration '赵五', 100, 600, done
+    can "李四呼叫张三通话次数统计，2013年3月，3次，167s，1未接\n" !(done) ->
+      check-statistic lisi, user, "MONTH", 1362067200000, 3, 167, 1, done
 
-initial-test-environment = !(callback) ->
-  (data) <- initial-environment
-  user-data := data  
-  callback!
+    can "张三呼叫李四通话次数统计，2013年3月，2次，601s，0未接\n" !(done) ->
+      check-statistic user, lisi, "MONTH", 1362067200000, 2, 601, 0, done
 
-check-zhangsan-call-log = !(user, call-log-count, callback) ->
-  (err, zhangsan-call-logs) <-! database.db.call-logs.find-one({uid: user.uid})
-  zhangsan-call-logs.call-logs.length.should.eql call-log-count
-  for call-log in zhangsan-call-logs.call-logs
-    call-log.should.have.property 'uid'
-  callback!
+    can "李四呼叫张三通话次数统计，2013年2月25，1次，15s，0未接\n" !(done) ->
+      check-statistic lisi, user, "DAY", 1361721600000, 1, 15, 0, done
 
-create-user-zhangsan = !(callback) ->
+    can "张三呼叫李四通话次数统计，2013年2月25，1次，48s，0未接\n" !(done) ->
+      check-statistic user, lisi, "DAY", 1361721600000, 1, 48, 0, done
+
+
+  describe '有趣信息挖掘', !->
+    do
+      (done) <-! before
+      <-! database.init-mongo-client
+      <-! database.db.drop-collection 'users'
+      <-! database.db.drop-collection 'call-logs'
+      <-! database.db.drop-collection 'call-log-statistic'
+      done!
+
+    can "根据联系人列表的通话统计，挖掘出联系人中的有趣信息\n" !(done) ->
+      done!
+
+create-user-zhangsan-with-contacts = !(callback) ->
   user-data = require '../test-data/zhangsan.json'
-  (zhangsan) <-! Users.create-user-with-contacts user-data
-  <-! call-logs.update-user-call-log-and-related-statistic zhangsan, user-data.calllogs, '2012-11-10 21:32:12'
+  (zhangsan) <-! Users.create-user-with-contacts user-data 
   callback zhangsan
 
-check-total-call-log-count = !(user-name, in-count, out-count, miss-count, callback) ->
-  query-statement = {}
-  if user-name is not ''
-    query-statement <<< {name: user-name}
-  (err, call-log-statistic-infos) <-! database.db.call-logs.find(query-statement).to-array
-  call-log-statistic-infos.length.should.eql 1
-  call-log-statistic-info = call-log-statistic-infos[0]
+update-user-call-logs = !(user, call-logs,callback) ->
+  (call-logs-with-uid) <-! Call-logs.update-user-call-log-and-related-statistic user, call-logs.call-logs, new Date!.get-time!
+  callback call-logs-with-uid
 
-  call-log-statistic-info.in-count.should.eql in-count
-  call-log-statistic-info.out-count.should.eql out-count
-  call-log-statistic-info.miss-count.should.eql miss-count
+check-if-recognize-call-log-number-as-yoyo-user = !(call-logs, callback) ->
+  (err) <-! async.for-each call-logs, !(call-log, next) ->
+    (user) <-! get-user-with-phone call-log.phone-number    
+    user.should.have.property 'uid'
+    call-log.should.have.property 'uid'
+    user.uid.should.eql call-log.uid
+    next!
+  throw new Error err if err
   callback!
 
-check-total-call-log-duration = !(user-name, in-count, out-count, miss-count, callback) ->
-  query-statement = {}
-  if user-name is not ''
-    query-statement <<< {name: user-name}
-  (err, call-log-statistic-infos) <-! database.db.call-logs.find(query-statement).to-array
-  call-log-statistic-infos.length.should.eql 1
-  call-log-statistic-info = call-log-statistic-infos[0]
+get-user-with-phone = !(phone-number, callback) ->
+  (users) <-! qh.get-existed-users-on-phones [phone-number]  
+  callback users[0]
 
-  call-log-statistic-info.in-count.should.eql in-count
-  call-log-statistic-info.out-count.should.eql out-count
-  call-log-statistic-info.miss-count.should.eql miss-count
+check-if-call-log-user-not-exist = !(call-logs, callback) ->
+  (err) <-! async.for-each call-logs, !(call-log, next) ->
+    (users) <-! qh.get-existed-users-on-phones [call-log.phone-number]
+    users.length.should.eql 0
+    next!
+  throw new Error err if err
   callback!
+
+check-if-recognize-as-new-user = !(call-logs, callback) ->
+  (err) <-! async.for-each call-logs, !(call-log, next) ->
+    (users) <-! qh.get-existed-users-on-phones [call-log.phone-number]
+    users.length.should.eql 1
+    users[0].is-registered.should.eql false
+    next!
+  throw new Error err if err
+  callback!
+
+check-statistic = !(from-user, to-user, type, start-time, count, duration, miss-count, callback) ->
+  (statistic) <-! query-statistic from-user, to-user, type, start-time
+  statistic.data.count.should.eql count
+  statistic.data.duration.should.eql duration
+  statistic.data.miss-count.should.eql miss-count
+  callback!
+
+query-statistic = !(from-user, to-user, type, start-time, callback) ->
+  query-statement = {}
+  query-statement.from-uid = from-user.uid
+  query-statement.to-uid = to-user.uid
+  query-statement.time-quantum = type
+  query-statement.start-time = start-time
+  (db) <-! database.get-db!
+  (err, statistic) <-! db.call-log-statistic.find-one query-statement
+  callback statistic
