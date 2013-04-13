@@ -9,11 +9,11 @@ Checkers = require './interesting-info-checkers'
 
 interesting-info-mining =
   mining-user-interesting-info: !(user, callback) ->
-    <-! async-check-each-interesting-info user
+    <-! async-check-each-interesting-info-strategy user
     <-! util.update-multiple-docs 'users', [user]
     callback!
 
-async-check-each-interesting-info = !(user, callback) ->
+async-check-each-interesting-info-strategy = !(user, callback) ->
   (err) <-! async.for-each Interesting-info-mining-strategy.strategys, !(strategy, next) ->
     checker = util.to-camel-case strategy.checker
     <-! Checkers[checker] user, strategy.roles, strategy.time-quantum, strategy.fields

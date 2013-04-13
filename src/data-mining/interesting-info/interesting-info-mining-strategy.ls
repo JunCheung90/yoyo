@@ -54,7 +54,7 @@ interesting-info-mining-strategy =
     * roles: ['fromUid', 'toUid']
       fields: ['maximumDuration']
       time-quantum: 'MONTH'
-      type: 'largest single duration'
+      type: 'largest-single-duration'
       checker: 'field-largest'
 
 
