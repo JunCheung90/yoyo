@@ -104,5 +104,4 @@ get-query-params = (user, contact, roles, time-quantum) ->
         time-quantum: time-quantum
       }
   results
-
 module.exports <<< Interesting-info-checkers
