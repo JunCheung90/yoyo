@@ -5,7 +5,7 @@ user-call-logs-statistic =
   quantum: 'TOTAL' #  'YEAR' | 'MONTH' | 'DAY' | 'HOUR'
   start-time: '2013-01-01 13:00:00'
   end-time: '2013-01-01 13:00:00'
-  statistic:
+  data:
     count: 15
     miss-count: 1
     duration: 1245
