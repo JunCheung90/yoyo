@@ -7,10 +7,10 @@ _ = require 'underscore'
 
 
 Interesting-info-checkers =
-  not-exist-node: (user, roles, time-quantum, fields, callback) ->
+  not-exist-node: (user, strategy, callback) ->
     contacts = user.contacts
     (err) <-! async.for-each contacts, !(contact, next) ->
-      (nodes) <-! get-statistic-nodes user, contact, roles, time-quantum
+      (nodes) <-! get-statistic-nodes user, contact, strategy.roles, strategy.time-quantum
       if nodes.length == 0
         user.interesting-infos ?= []
         user.interesting-infos ++= new-interesting-info 'never-contact', user, contact, nodes
@@ -18,8 +18,25 @@ Interesting-info-checkers =
     throw new Error err if err
     callback!
 
-  field-largest: (user, roles, time-quantum, fields, callback) ->
-    callback true
+  field-largest: (user, strategy, callback) ->
+    # contacts = user.contacts
+    # contact-nodes = []
+    # (err) <-! async.for-each contacts, !(contact, next) ->
+    #   (nodes) <-! get-statistic-nodes user, contact, strategy.roles, strategy.time-quantum
+    #   contact-nodes ++= nodes
+    #   next!
+    # throw new Error err if err
+
+    # console.log contact-nodes
+
+    # sorted-nodes = _.sort-by contact-nodes, !(node) ->
+    #   node.statistic[strategy.fields[0]]
+
+    # fit-count = Math.ceil contacts.length / 10 
+    # fit-nodes = sorted-nodes.slice sorted-nodes.length - fit-count - 1
+
+    # update-iis user, fit-nodes
+    callback!
 
 get-statistic-nodes = !(user, contact, roles, time-quantum, callback) ->
   (db) <-! database.get-db!
@@ -33,9 +50,7 @@ new-interesting-info = (type, user, contact, nodes) ->
   ii = {
     iiid: get-iiid user
     type: type 
-    info: '#{data.related-contact.name}坑电话费啊, #{data.time-frame}我竟然打了#{calling-out-times}电话给他，\
-          说了#{data.calling-out-amount-time}，至少花了我#{data.fee}。这笔帐不能不算！<a href=#{data.related-contact.cid}>#{data.related-contact.name}</a>\
-          还我小钱钱来！'
+    info: type
     data: 
       related-contact:
         name: contact.names[0]
@@ -70,25 +85,7 @@ fill-ii-data = (user, ii, nodes) ->
       ii.calling-in-times = node.statistic.count
       ii.calling-in-amount-time = ndoe.statistic.duration
       ii.time-frame.start-time = node.start-time
-      ii.time-frame.end-time = node.end-time
-
-interesting-info-creator = (user, nodes, ii-type) ->
-  {
-    iiid: user.uid + '-ii-' + new Date!.get-time!
-    type: ii-type
-    info: null
-    data:
-      time-frame:
-        quantum: null
-        start-time: null
-        end-time: null
-      in-count: 0
-      out-count: 0
-      miss-count: 0
-      in-duration: 0
-      out-duration: 0
-  }
-    
+      ii.time-frame.end-time = node.end-time    
 
 get-query-params = (user, contact, roles, time-quantum) ->
   results = []
@@ -107,5 +104,4 @@ get-query-params = (user, contact, roles, time-quantum) ->
         time-quantum: time-quantum
       }
   results
-
 module.exports <<< Interesting-info-checkers

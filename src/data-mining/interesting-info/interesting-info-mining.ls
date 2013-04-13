@@ -16,7 +16,7 @@ interesting-info-mining =
 async-check-each-interesting-info-strategy = !(user, callback) ->
   (err) <-! async.for-each Interesting-info-mining-strategy.strategys, !(strategy, next) ->
     checker = util.to-camel-case strategy.checker
-    <-! Checkers[checker] user, strategy.roles, strategy.time-quantum, strategy.fields
+    <-! Checkers[checker] user, strategy
     next!
   throw new Error err if err
   callback!

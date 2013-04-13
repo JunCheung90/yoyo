@@ -4,6 +4,7 @@
  */
 require! [async, crypto, '../db/database']
 
+Sh = require './helpers/statistic-helper'
 _ = require 'underscore'
 
 Call-log-statistic = 
@@ -22,7 +23,7 @@ get-data-with-statistic-key = (user, call-logs-array-with-uid) ->
   for call-log-with-uid in call-logs-array-with-uid
     contacted-user = get-contacted-user user, call-log-with-uid
     for time-quantum in time-quantums
-      time = get-start-time-and-end-time time-quantum, contacted-user.time
+      time = Sh.get-start-time-and-end-time time-quantum, contacted-user.time
       text = contacted-user.from-uid + contacted-user.to-uid + time-quantum + time.start-time + time.end-time
       md5 = crypto.create-hash('md5').update text .digest 'hex'
 
