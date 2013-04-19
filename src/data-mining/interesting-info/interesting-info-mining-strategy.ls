@@ -51,11 +51,11 @@ interesting-info-mining-strategy =
     #   time-quantum: 'MONTH'
     #   type: 'average-duration'
     #   checker: 'average-largest'
-    * roles: ['fromUid', 'toUid']
-      fields: ['maximumDuration']
-      time-quantum: 'MONTH'
-      type: 'largest-single-duration'
-      checker: 'field-largest'
+    # * roles: ['fromUid', 'toUid']
+    #   fields: ['maximumDuration']
+    #   time-quantum: 'MONTH'
+    #   type: 'largest-single-duration'
+    #   checker: 'field-largest'
 
 
 
