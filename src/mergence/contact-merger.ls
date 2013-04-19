@@ -4,7 +4,7 @@
 
 Merge-Strategy = require './strategy/contacts-merging-strategy'
 _ = require 'underscore' 
-require! ['../models/helpers/Info-Combiner', './User-Merger', '../models/Contacts']
+require! Info-Combiner: '../models/helpers/info-combiner', User-Merger: './user-merger', Contacts: '../models/contacts'
 require! common: './user-contact-common', Checkers: './checker/merge-checkers'
 
 contact-merger =

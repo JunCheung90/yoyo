@@ -101,7 +101,7 @@ user = # yoyo server端数据
         calling-out-amount-time: 0 
         calling-in-times: 0
         calling-in-amount-time: 0
-      created-time: '2013-01-01 23-10-11'
+      created-time: '2013-01-01 23-10-11' #timestamp
 
 require! fs
 

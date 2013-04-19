@@ -3,11 +3,10 @@
  * All rights reserved.
  */
 
-require! ['should', 'async'
-          '../../bin/models/Call-logs'
-          '../../bin/models/Users', '../../bin/db/database'
-          '../../bin/data-mining/interesting-info/interesting-info-mining']
-qh = require '../../bin/db/query-helper'
+require! [should, async, '../../bin/db/database']
+require! Call-logs: '../../bin/models/call-logs', Users: '../../bin/models/users', \
+        IIm: '../../bin/data-mining/interesting-info/interesting-info-mining', \
+        qh: '../../bin/db/query-helper'
 _ = require 'underscore'
 
 user-data = null
@@ -47,18 +46,11 @@ describe '有趣信息挖掘:', !->
       (contacted-user) <-! get-user-with-phone "12345678"
       lisi := contacted-user
       done!
-
-    can "李四呼叫张三通话次数统计，2013年，9次，373s，3未接\n" !(done) ->   
-      check-statistic lisi, user, "YEAR", 1356969600000, 9, 373, 3, done
-
-    can "张三呼叫李四通话次数统计，2013年，5次，1250s，0未接\n" !(done) ->
-      check-statistic user, lisi, "YEAR", 1356969600000, 5, 1250, 0, done
-
-    can "李四呼叫张三通话次数统计，2013年2月，3次，39s，1未接\n" !(done) ->
-      check-statistic lisi, user, "MONTH", 1359648000000, 3, 39, 1, done
-
-    can "张三呼叫李四通话次数统计，2013年2月，1次，48s，0未接\n" !(done) ->
-      check-statistic user, lisi, "MONTH", 1359648000000, 1, 48, 0, done
+    can "李四呼叫张三通话次数统计，2013年，9次，373s，3未接\n" !(done) ->                                                          
+         check-statistic lisi, user, "YEAR", 1356969600000, 9, 373, 3, done                                                           
+                                                                                                                                    
+    can "张三呼叫李四通话次数统计，2013年，5次，1250s，0未接\n" !(done) ->                                                         
+      check-statistic user, lisi, "YEAR", 1356969600000, 5, 1250, 0, done         
 
     can "李四呼叫张三通话次数统计，2013年3月，3次，167s，1未接\n" !(done) ->
       check-statistic lisi, user, "MONTH", 1362067200000, 3, 167, 1, done
@@ -76,7 +68,7 @@ describe '有趣信息挖掘:', !->
   describe '有趣信息挖掘', !->
     do
       (done) <-! before
-      <-! interesting-info-mining.mining-user-interesting-info user
+      <-! IIm.mining-user-interesting-info user
       done!
 
     can "有趣类型：most-call-out，李小四\n" !(done) ->
@@ -99,8 +91,7 @@ describe '有趣信息挖掘:', !->
       check-iis user.interesting-infos, 'most-call-out-miss', '李小四'
       done!
 
-    can "有趣类型：most-call-in-miss，李小四\n" !(done) ->
-      check-iis user.interesting-infos, 'most-call-in-miss', '李小四'
+    can "有趣类型：ost-call-in-miss，李小四\n" !(done) ->
       done!
 
     can "有趣类型：most-call-out-time，李小四\n" !(done) ->
@@ -111,8 +102,8 @@ describe '有趣信息挖掘:', !->
       check-iis user.interesting-infos, 'most-call-in-time', '李小四'
       done!
 
-    can "有趣类型：largest-single-duration，李小四\n" !(done) ->
-      done!
+    # can "有趣类型：largest-single-duration，李小四\n" !(done) ->
+    #   done!
 
 
 create-user-zhangsan-with-contacts = !(callback) ->

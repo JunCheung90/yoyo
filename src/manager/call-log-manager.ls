@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-require! ['../models/Call-logs', '../models/Users']
+require! Call-logs: '../models/call-logs', Users: '../models/users'
 require! ['../util']
 
 Call-log-manager =

@@ -2,9 +2,8 @@
  * Created by Wang, Qing. All rights reserved.
  */
  
-require! [async, '../util', '../db/database', './Contacts', '../mergence/User-Merger']
-require! common: '../mergence/user-contact-common'
-require! qh: '../db/query-helper'
+require! [async, '../util', '../db/database']
+require! common: '../mergence/user-contact-common', qh: '../db/query-helper', Contacts: './contacts', User-Merger: '../mergence/user-merger'
 
 Users =
   create-user-with-contacts: !(user-data, callback)->

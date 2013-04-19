@@ -3,8 +3,9 @@
  * All rights reserved.
  */
  
-require! [async, '../db/database', '../util',
-    './Users', './Contacts', '../data-mining/call-log-statistic', '../data-mining/interesting-info/interesting-info-mining']
+require! [async, '../db/database', '../util']
+require! Users: './users', Contacts: './contacts', Call-log-statistic: '../data-mining/call-log-statistic', \
+          II-mining:  '../data-mining/interesting-info/interesting-info-mining'
 
 Call-logs =
   update-user-call-log-and-related-statistic: !(user, call-logs, last-call-log-time, callback) ->
@@ -14,7 +15,7 @@ Call-logs =
     else
       (call-logs-with-uid) <-! add-uid-to-each-call-log user, call-logs    
       <-! update-user-call-logs-with-uid user-call-logs, call-logs-with-uid, last-call-log-time  
-      <-! call-log-statistic.update-user-call-log-statistic user, call-logs-with-uid
+      <-! Call-log-statistic.update-user-call-log-statistic user, call-logs-with-uid
       callback call-logs-with-uid
 
 add-uid-to-each-call-log = !(user, call-logs, callback)->
