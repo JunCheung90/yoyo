@@ -3,12 +3,22 @@
  * All rights reserved.
  */
 
+<<<<<<< HEAD
 require! [should, async, '../../bin/db/database']
 require! Call-logs: '../../bin/models/call-logs', Users: '../../bin/models/users', \
         IIm: '../../bin/data-mining/interesting-info/interesting-info-mining', \
         qh: '../../bin/db/query-helper'
+=======
+require! ['should', 'async'
+          '../../bin/models/call-logs'
+          '../../bin/models/users', '../../bin/db/database'
+          '../../bin/data-mining/interesting-info/interesting-info-mining']
+qh = require '../../bin/db/query-helper'
+>>>>>>> ef8218cb0344408e8ee145e870d7fa11bfd0f627
 _ = require 'underscore'
 
+Call-logs = call-logs
+Users = users
 user-data = null
 user = null
 lisi = null
