@@ -2,7 +2,7 @@
  * Author: Zhang, JieJun. Email: JunCheung90@gmail.com
  * All rights reserved.
  */
-require! ['../models/Contacts', '../models/Users']
+require! Contacts: '../models/contacts', Users: '../models/users'
 require! ['../util']
 require! async
 

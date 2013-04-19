@@ -1,4 +1,5 @@
-require! ['../bin/util', '../bin/db/database', '../bin/models/Users']
+require! ['../bin/util', '../bin/db/database']
+require! Users: '../bin/models/Users'
 _ = require 'underscore'
 
 helper =

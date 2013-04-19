@@ -2,8 +2,8 @@
  * Created by Wang, Qing. All rights reserved.
  */
  
-require! ['should', 
-          '../../bin/models/Users', '../../bin/mergence/User-Merger', '../../bin/util', '../../bin/db/database']
+require! [should, '../../bin/util', '../../bin/db/database']
+require! Users: '../../bin/models/Users', User-Merger: '../../bin/mergence/User-Merger'
 _ = require 'underscore'
 _(global).extend require './test-merging-helper'
 

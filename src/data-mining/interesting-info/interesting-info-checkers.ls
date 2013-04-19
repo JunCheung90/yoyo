@@ -86,11 +86,11 @@ new-interesting-info = (type, user, contact, statistic-nodes) ->
   ii
 
 get-iiid = (user) ->
-  user.uid + '-ii-' + new Date!.get-time! + get-user-ii-seqno user
+  user.uid + '-ii-' + new Date!.get-time! + get-user-iis-seq user
 
-get-user-ii-seqno = (user) ->
-  user.ii-seqno ?= 0
-  user.ii-seqno++
+get-user-iis-seq = (user) ->
+  user.iis-seq ?= 0
+  user.iis-seq++
 
 fill-ii-data = !(user, ii, statistic-nodes) ->
   for node in statistic-nodes
