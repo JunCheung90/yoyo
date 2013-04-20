@@ -2,7 +2,7 @@
  * Created by Wang, Qing. All rights reserved.
  */
 
-require! [fs, express, util
+require! [fs, express, util,
   './manager/contact-manager', 
   './manager/user-manager',
   './manager/sn-update-manager',

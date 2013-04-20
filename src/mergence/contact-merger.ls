@@ -4,8 +4,11 @@
 
 Merge-Strategy = require './strategy/contacts-merging-strategy'
 _ = require 'underscore' 
-require! Info-Combiner: '../models/helpers/info-combiner', User-Merger: './user-merger', Contacts: '../models/contacts'
-require! common: './user-contact-common', Checkers: './checker/merge-checkers'
+require! Info-Combiner: '../models/helpers/info-combiner'
+require! User-Merger: './user-merger'
+require! Contacts: '../models/contacts'
+require! common: './user-contact-common'
+require! Checkers: './checker/merge-checkers'
 
 contact-merger =
  # 算法参见 http://my.ss.sysu.edu.cn/wiki/pages/viewpage.action?pageId=113049608

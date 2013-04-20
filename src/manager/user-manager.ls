@@ -31,7 +31,8 @@
 ============== Registration JSON Example End=================
 '''
 
-require! Users: '../models/users', './call-log-manager'
+require! Users: '../models/users'
+require! './call-log-manager'
 
 User-manager = 
 	register-user: !(register-data, callback) ->

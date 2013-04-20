@@ -1,5 +1,7 @@
 require! qh: '../db/query-helper'
-require! Info-Combiner: '../models/helpers/Info-Combiner', '../util', Contact-Merger: './Contact-Merger'
+require! Info-Combiner: '../models/helpers/info-combiner'
+require! '../util'
+require! Contact-Merger: './contact-merger'
 require! common: './user-contact-common'
 
 user-merger =
