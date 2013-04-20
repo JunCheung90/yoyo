@@ -76,6 +76,7 @@ describe '有趣信息挖掘:', !->
     do
       (done) <-! before
       <-! IIm.mining-user-interesting-info user
+      console.log user.interesting-infos
       done!
 
     can "有趣类型：most-call-out，李小四\n" !(done) ->
@@ -110,7 +111,12 @@ describe '有趣信息挖掘:', !->
       check-iis user.interesting-infos, 'most-call-in-time', '李小四'
       done!
 
+    can "有趣类型：average-duration，李小四\n" !(done) ->
+      check-iis user.interesting-infos, 'average-duration', '李小四'
+      done!
+
     can "有趣类型：largest-single-duration，李小四\n" !(done) ->
+      check-iis user.interesting-infos, 'largest-single-duration', '李小四'
       done!
 
 

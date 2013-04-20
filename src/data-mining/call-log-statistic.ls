@@ -84,6 +84,7 @@ init-statistic-data = ->
     count: 0
     duration: 0
     miss-count: 0
+    max-duration: 0
     distribution-in-hour:
       init-distribution-in-hour!
   }
@@ -102,7 +103,6 @@ init-distribution-in-hour = ->
 update-statistic = (statistic, data-with-statistic-key) ->
   for call-log-data in data-with-statistic-key.call-log-datas
     statistic.data = update-statistic-data statistic.data, call-log-data
-
     if data-with-statistic-key.statistic-key.time-quantum != 'HOUR'
       hour = get-hour-by-time call-log-data.time
       statistic.data.distribution-in-hour[hour] = update-statistic-data statistic.data.distribution-in-hour[hour], call-log-data    
@@ -111,6 +111,7 @@ update-statistic = (statistic, data-with-statistic-key) ->
 update-statistic-data = (statistic-data, call-log-data) ->
   statistic-data.count++
   statistic-data.duration += call-log-data.duration
+  statistic-data.max-duration = statistic-data.max-duration >? call-log-data.duration
   if call-log-data.type == 'MISS'
     statistic-data.miss-count++
   statistic-data

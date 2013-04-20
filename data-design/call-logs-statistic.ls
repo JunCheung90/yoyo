@@ -9,6 +9,7 @@ user-call-logs-statistic =
     count: 15
     miss-count: 1
     duration: 1245
+    max-duration: 0
     distribution-in-hour:
       * hour: 0 # 0 to 23
         count: 12

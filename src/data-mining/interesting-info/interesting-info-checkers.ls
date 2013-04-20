@@ -32,11 +32,35 @@ Interesting-info-checkers =
     sorted-nodes = _.sort-by contact-nodes, (node) ->
       node.total-count.[strategy.fields[0]]
 
-    fit-count = Math.ceil contacts.length / 10 
-    fit-nodes = sorted-nodes.slice sorted-nodes.length - fit-count - 1
+    rate = 0.1
+    fit-start = Math.floor sorted-nodes.length * (1 - rate)
+    fit-nodes = sorted-nodes.slice fit-start
 
     update-iis user, strategy, fit-nodes
     callback!
+
+
+  average-largest: (user, strategy, callback) ->
+    contacts = user.contacts
+    contact-nodes = []
+    (err) <-! async.for-each contacts, !(contact, next) ->
+          (statistic-nodes) <-! get-statistic-nodes user, contact, strategy.roles, strategy.time-quantum
+          contact-node = conver-to-contact-nodes contact, statistic-nodes
+          if statistic-nodes.length > 0 && contact-node.total-count.[strategy.fields[1]] > 0
+             contact-nodes.push contact-node
+          next!
+    throw new Error err if err          
+    
+    sorted-nodes = _.sort-by contact-nodes, (node) ->
+      node.total-count.[strategy.fields[0]] / node.total-count.[strategy.fields[1]]
+
+    rate = 0.1
+    fit-start = Math.floor sorted-nodes.length * (1 - rate)
+    fit-nodes = sorted-nodes.slice fit-start
+
+    update-iis user, strategy, fit-nodes
+    callback!
+
 
 update-iis = !(user, strategy, contact-nodes) ->
   for contact-node in contact-nodes
@@ -48,15 +72,20 @@ conver-to-contact-nodes = (contact, statistic-nodes) ->
   contact-node = 
     contact: contact
     statistic-nodes: statistic-nodes
+    now-month-max-duration: 0
     total-count:
       count: 0
       duration: 0
       miss-count:0
   
+  now-month-start-time-and-end-time = Sh.get-start-time-and-end-time 'MONTH', new Date!
+
   for statistic in statistic-nodes
     contact-node.total-count.count += statistic.data.count
     contact-node.total-count.duration += statistic.data.duration
     contact-node.total-count.miss-count += statistic.data.miss-count
+    if statistic-nodes.start-time == now-month-start-time-and-end-time.start-time && statistic-nodes.end-time == now-month-start-time-and-end-time.end-time
+       now-month-max-duration = now-month-max-duration >? statistic.data.duration        
 
   contact-node
 
