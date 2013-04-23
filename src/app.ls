@@ -6,7 +6,8 @@ require! [fs, express, util
   './manager/contact-manager', 
   './manager/user-manager',
   './manager/sn-update-manager',
-  './manager/call-log-manager']
+  './manager/call-log-manager',
+  './db/query-helper']
 
 yoyo = express!
 yoyo.use express.body-parser!
@@ -108,6 +109,24 @@ do
   else
     <-! copy-avatar-to-dest file-name, source-path, dest-path
     res.send 'hello'
+
+#获取有趣信息
+do
+  (req, res) <-! yoyo.post '/interestingInfos'
+  necessary-params = ['uid']
+  result = detected-json-data-integrity req, necessary-params
+  if !result.result-code
+    uid = req.body.uid
+    (users) <-! query-helper.get-users-by-uids uid
+    if users.length > 0
+      result.interestingInfos = users[0].interestingInfos
+    else
+      result.interestingInfos = []
+    res.send result
+  else
+    res.send result
+    
+
 
 detected-json-data-integrity = (req, necessary-params) ->
   result = {}
