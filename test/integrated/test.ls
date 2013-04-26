@@ -62,7 +62,7 @@ describe '测试YoYo REST API' !->
       response.user.should.have.property 'uid'
       done!
 
-  can '更新用户profile：POST /userUpdate 应当返还200' !(done) ->
+  can '更新用户profile：POST /userUpdate 应当返回200' !(done) ->
     post-data = require '../test-data/update-profile-data.json'
     post-data.uid = user.uid
     do      
@@ -83,7 +83,7 @@ describe '测试YoYo REST API' !->
 
       done!
 
-  can '同步联系人：POST /contactSynchronize 应当返还200' !(done) ->
+  can '同步联系人：POST /contactSynchronize 应当返回200' !(done) ->
     user.contacts[0].cid-in-client = -1
     new-contacts = require '../test-data/new-contacts.json'
     for new-contact in new-contacts
@@ -103,7 +103,7 @@ describe '测试YoYo REST API' !->
 
       done!
 
-  can '同步通话记录：POST /callLogSynchronize 应当返还200' !(done) ->
+  can '同步通话记录：POST /callLogSynchronize 应当返回200' !(done) ->
     new-call-logs = require '../test-data/new-call-logs.json'
     synchronize-data = {uid: user.uid, call-logs: new-call-logs, last-call-log-time: new Date!.get-time!}
     do
@@ -112,5 +112,16 @@ describe '测试YoYo REST API' !->
       res.statusCode.should.eql 200
       response =  eval '(' + res.body + ')'
       response.should.have.property 'resultCode'
+
+      done!
+
+  can '获取有趣信息：POST /interestingInfos 应当返回200' !(done) ->
+    query-data = {uid:user.uid}
+    do
+      (err, req, res, data) <-! client.post '/interestingInfos', query-data
+      should.not.exist err
+      res.status-code.should.eql 200
+      response = eval '(' + res.body + ')'
+      response.should.have.property 'interestingInfos'
 
       done!

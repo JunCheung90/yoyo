@@ -117,13 +117,14 @@ do
   result = detected-json-data-integrity req, necessary-params
   if !result.result-code
     uid = req.body.uid
-    (users) <-! query-helper.get-users-by-uids uid
-    if users.length > 0
-      result.interestingInfos = users[0].interestingInfos
+    (users) <-! query-helper.get-users-by-uids [uid]
+    if users.length > 0 and users[0].interesting-infos
+      result.interesting-infos = users[0].interesting-infos
     else
-      result.interestingInfos = []
+      result.interesting-infos = []
     res.send result
   else
+    result.interesting-infos = []
     res.send result
     
 
