@@ -68,8 +68,8 @@ do
 
 # 上传社交网络token
 do
-  (req, result) <-! yoyo.post './snApiKeyUpload'
-  necessary-params = ['sn']
+  (req, res) <-! yoyo.post '/snApiKeyUpload'
+  necessary-params = ['uid' ,'sn']
   result = detected-json-data-integrity req, necessary-params
   if !result.result-code?
     (result) <-! user-manager.update-user-sn-api-key req.body

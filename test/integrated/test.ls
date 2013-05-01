@@ -114,3 +114,16 @@ describe '测试YoYo REST API' !->
       response.should.have.property 'resultCode'
 
       done!
+
+  can '上传社交ApiKey：POST /snApiKeyUpload 应当返还200' !(done) ->
+    sn-token = require '../test-data/sn-token.json'
+    upload-data = {uid: user.uid, sn: sn-token}
+    do
+      (err, req, res, data) <-! client.post '/snApiKeyUpload', upload-data
+      should.not.exist err
+      res.statusCode.should.eql 200
+      response =  eval '(' + res.body + ')'
+      response.should.have.property 'resultCode'
+      response.result-code.should.eql 0
+
+      done!

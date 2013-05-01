@@ -92,6 +92,7 @@ Users =
         sn = new-sn
         callback!
     user.sns.push new-sn
+    (err, result) <-! util.update-multiple-docs 'users', [user]
     callback!
 
 
