@@ -32,17 +32,43 @@ Statistic-helper =
         end-date = start-date        
     {start-time: start-date.get-time!, end-time: end-date.get-time!}
 
-get-end-date = (year, month) ->
-  if month == '02'
-    year = parse-int year
-    if (year % 4 == 0 && year % 100 != 0) || year % 400 == 0
-      return '29'
-    else
-      return '28'
-  else if month in ['01', '03', '05', '07', '08', '10', '12']
-    return '31'
+  get-pre-time: (time-quantum, call-log-time) ->
+    switch time-quantum
+      case 'YEAR' then
+        call-log-time -= 24 * 60 * 60 * 1000 * get-pre-year-day-count call-log-time
+      case 'MONTH' then
+        call-log-time -= 24 * 60 * 60 * 1000 * get-pre-month-day-count call-log-time
+      case 'DAY' then
+        call-log-time -= 24 * 60 * 60 * 1000
+      case 'HOUR' then
+        call-log-time -=  60 * 60 * 1000
+    @get-start-time-and-end-time time-quantum, call-log-time
+
+get-pre-year-day-count = (current-year-start-time) ->
+  current-year-start-date = new Date current-year-start-time
+  year = current-year-start-date.get-full-year!
+  if (year % 4 == 0 && year % 100 != 0) || year % 400 == 0
+    return 366
   else
-    return '30'
+    return 365
+
+get-pre-month-day-count = (current-month-start-time) ->
+  current-year-start-date = new Date current-month-start-time
+  month = current-year-start-date.get-month!
+  year = current-year-start-date.get-full-year!
+  get-end-date year, month
+
+
+get-end-date = (year, month) ->
+  if month == 1
+    if (year % 4 == 0 && year % 100 != 0) || year % 400 == 0
+      return 29
+    else
+      return 28
+  else if month in [0, 2, 4, 6, 7, 9, 11]
+    return 31
+  else
+    return 30
 
 get-date = (year, month, day, hour, minute, second) ->
   date = new Date!

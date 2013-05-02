@@ -1,3 +1,4 @@
+
 /**
  * Author: Zhang, JieJun. Email: JunCheung90@gmail.com
  * All rights reserved.
@@ -47,8 +48,8 @@ describe '有趣信息挖掘:', !->
       lisi := contacted-user
       done!
 
-    can "李四呼叫张三通话次数统计，2013年，9次，373s，3未接\n" !(done) ->   
-      check-statistic lisi, user, "YEAR", 1356969600000, 9, 373, 3, done
+    can "李四呼叫张三通话次数统计，2013年，10次，373s，3未接\n" !(done) ->   
+      check-statistic lisi, user, "YEAR", 1356969600000, 10, 473, 3, done
 
     can "张三呼叫李四通话次数统计，2013年，5次，1250s，0未接\n" !(done) ->
       check-statistic user, lisi, "YEAR", 1356969600000, 5, 1250, 0, done
@@ -76,7 +77,6 @@ describe '有趣信息挖掘:', !->
     do
       (done) <-! before
       <-! IIm.mining-user-interesting-info user
-      console.log user.interesting-infos
       done!
 
     can "有趣类型：most-call-out，李小四\n" !(done) ->

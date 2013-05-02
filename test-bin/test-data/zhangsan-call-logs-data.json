@@ -47,7 +47,7 @@
       "type": "IN",
       "duration": 67,
       "time": "1362103200000"
-    },
+    },    
     {
       "phoneNumber": "12345678",
       "type": "MISS",
@@ -56,34 +56,40 @@
     },
     {
       "phoneNumber": "12345678",
+      "type": "IN",
+      "duration": 100,
+      "time": "1365479297666"
+    },
+    {
+      "phoneNumber": "12345678",
       "type": "OUT",
       "duration": 1,
-      "time": "1365876389297"
+      "time": "1367479297666"
     },
     {
       "phoneNumber": "12345678",
       "type": "IN",
       "duration": 100,
-      "time": "1365876389297"
+      "time": "1367479297666"
     },
     {
       "phoneNumber": "12345678",
       "type": "OUT",
       "duration": 600,
-      "time": "1365876389297"
+      "time": "1367479297666"
     },
     {
       "phoneNumber": "12345678",
       "type": "IN",
       "duration": 67,
-      "time": "1365876389297"
+      "time": "1367479297666"
     },
     {
       "phoneNumber": "12345678",
       "type": "MISS",
       "duration": 0,
-      "time": "1365876389297"
+      "time": "1367479297666"
     }
   ],
-  "lastCallLogTime": "1365876389297"
+  "lastCallLogTime": "1367479297666"
 }

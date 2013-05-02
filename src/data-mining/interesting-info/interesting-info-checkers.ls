@@ -8,7 +8,7 @@ _ = require 'underscore'
 
 
 Interesting-info-checkers =
-  not-exist-node: (user, strategy, callback) ->
+  not-exist-node: !(user, strategy, callback) ->
     contacts = user.contacts
     (err) <-! async.for-each contacts, !(contact, next) ->
       (statistic-nodes) <-! get-statistic-nodes user, contact, strategy.roles, strategy.time-quantum
@@ -19,7 +19,7 @@ Interesting-info-checkers =
     throw new Error err if err
     callback!
 
-  field-largest: (user, strategy, callback) ->
+  field-largest: !(user, strategy, callback) ->
     contacts = user.contacts
     contact-nodes = []
     (err) <-! async.for-each contacts, !(contact, next) ->
@@ -40,15 +40,15 @@ Interesting-info-checkers =
     callback!
 
 
-  average-largest: (user, strategy, callback) ->
+  average-largest: !(user, strategy, callback) ->
     contacts = user.contacts
     contact-nodes = []
     (err) <-! async.for-each contacts, !(contact, next) ->
-          (statistic-nodes) <-! get-statistic-nodes user, contact, strategy.roles, strategy.time-quantum
-          contact-node = conver-to-contact-nodes contact, statistic-nodes
-          if statistic-nodes.length > 0 && contact-node.total-count.[strategy.fields[1]] > 0
-             contact-nodes.push contact-node
-          next!
+      (statistic-nodes) <-! get-statistic-nodes user, contact, strategy.roles, strategy.time-quantum
+      contact-node = conver-to-contact-nodes contact, statistic-nodes
+      if statistic-nodes.length > 0 && contact-node.total-count.[strategy.fields[1]] > 0
+        contact-nodes.push contact-node
+      next!
     throw new Error err if err          
     
     sorted-nodes = _.sort-by contact-nodes, (node) ->
@@ -85,7 +85,7 @@ conver-to-contact-nodes = (contact, statistic-nodes) ->
     contact-node.total-count.duration += statistic.data.duration
     contact-node.total-count.miss-count += statistic.data.miss-count
     if statistic-nodes.start-time == now-month-start-time-and-end-time.start-time && statistic-nodes.end-time == now-month-start-time-and-end-time.end-time
-       now-month-max-duration = now-month-max-duration >? statistic.data.duration        
+      now-month-max-duration = now-month-max-duration >? statistic.data.duration
 
   contact-node
 
@@ -124,21 +124,28 @@ get-user-iis-seq = (user) ->
 fill-ii-data = !(user, ii, statistic-nodes) ->
   for node in statistic-nodes
     if user.uid == node.from-uid
-      ii.data.calling-out-times = node.data.count
-      ii.data.calling-out-amount-time = node.data.duration
-      ii.data.calling-out-miss-times = node.data.miss-count
-      ii.data.time-frame.start-time = node.start-time
-      ii.data.time-frame.end-time = node.end-time
+      ii.data.calling-out-times ?= 0
+      ii.data.calling-out-amount-time ?= 0
+      ii.data.calling-out-miss-times ?= 0
+      ii.data.calling-out-times += node.data.count
+      ii.data.calling-out-amount-time += node.data.duration
+      ii.data.calling-out-miss-times += node.data.miss-count
+      ii.data.time-frame.start-time = node.start-time if ii.data.time-frame.start-time == 0 || ii.data.time-frame.start-time > node.start-time
+      ii.data.time-frame.end-time = node.end-time if ii.data.time-frame.end-time < node.end-time
     else
-      ii.data.calling-in-times = node.data.count
-      ii.data.calling-in-amount-time = node.data.duration
-      ii.data.calling-in-miss-times = node.data.miss-count
-      ii.data.time-frame.start-time = node.start-time
-      ii.data.time-frame.end-time = node.end-time    
+      ii.data.calling-in-times ?= 0
+      ii.data.calling-in-amount-time ?= 0
+      ii.data.calling-in-miss-times ?= 0
+      ii.data.calling-in-times += node.data.count
+      ii.data.calling-in-amount-time += node.data.duration
+      ii.data.calling-in-miss-times += node.data.miss-count
+      ii.data.time-frame.start-time = node.start-time if ii.data.time-frame.start-time == 0 || ii.data.time-frame.start-time > node.start-time
+      ii.data.time-frame.end-time = node.end-time if ii.data.time-frame.end-time < node.end-time   
 
 get-query-params = (user, contact, roles, time-quantum) ->
   results = []
   time = Sh.get-start-time-and-end-time time-quantum, new Date!.get-time!
+  pre-time = Sh.get-pre-time time-quantum, new Date!.get-time!
   for role in roles
     switch role
     case 'fromUid'
@@ -149,6 +156,14 @@ get-query-params = (user, contact, roles, time-quantum) ->
         start-time: time.start-time
         end-time: time.end-time
       }
+      if pre-time
+        results.push {
+          from-uid: user.uid
+          to-uid: contact.act-by-user
+          time-quantum: time-quantum
+          start-time: pre-time.start-time
+          end-time: pre-time.end-time
+        }
     case 'toUid'
       results.push {
         from-uid: contact.act-by-user
@@ -157,5 +172,13 @@ get-query-params = (user, contact, roles, time-quantum) ->
         start-time: time.start-time
         end-time: time.end-time
       }
+      if pre-time
+        results.push {
+          from-uid: contact.act-by-user
+          to-uid: user.uid
+          time-quantum: time-quantum
+          start-time: pre-time.start-time
+          end-time: pre-time.end-time
+        }
   results
 module.exports <<< Interesting-info-checkers
