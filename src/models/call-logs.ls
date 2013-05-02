@@ -56,6 +56,7 @@ add-uid-for-stranger-call-log = !(stranger-datas, call-logs-with-uid, callback) 
 
 get-user-contact-with-phone-number = (user, phone-number) ->
   for contact in user.contacts
+    contact.phones ?= []
     return contact if phone-number in contact.phones
   null
 
