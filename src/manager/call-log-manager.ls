@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-require! Call-logs: '../models/call-logs', Users: '../models/users'
+require! Call-logs: '../models/call-logs', Users: '../models/users', IIm: '../data-mining/interesting-info/interesting-info-mining'
 require! ['../util']
 
 Call-log-manager =
@@ -16,6 +16,7 @@ Call-log-manager =
   update-user-call-logs: !(user, call-logs, last-call-log-time, callback) ->
     last-call-log-time ?= new Date!.get-time!
     <-! Call-logs.update-user-call-log-and-related-statistic user, call-logs, last-call-log-time
+    <-! IIm.mining-user-interesting-info user
     callback!
 
 module.exports <<< Call-log-manager

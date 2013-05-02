@@ -105,6 +105,7 @@ update-each-new-profile = !(user, user-new-profile, callback) ->
 
 update-each-as-contacts = !(user, user-new-profile, callback) ->
   as-contacts = user.as-contact-of
+  as-contacts ?= []
   relative-users = []
   (err) <-! async.for-each as-contacts, !(as-contact, next) ->
     (user-has-contact) <-! Users.get-user-by-uid as-contact
@@ -122,7 +123,7 @@ get-user-with-phone-number = !(phone-number, callback) ->
   #TODO: 
   (users) <-! qh.get-existed-users-on-phones [phone-number]
   if users.length > 0
-    callback user[0]
+    callback users[0]
   else
     callback null
 
