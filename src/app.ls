@@ -61,7 +61,7 @@ do
   necessary-params = ['uid']
   result = detected-json-data-integrity req, necessary-params
   if !result.result-code?
-    (result) <-! Sn-update-manager.client-get-sn-update req.body
+    (result) <-! sn-update-manager.client-get-sn-update req.body
     res.send result
   else
     res.send result
