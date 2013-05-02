@@ -87,11 +87,11 @@ Users =
     (user) <-! @get-user-by-uid uid
     if !user
       callback new Error 3, '无法找到uid对应user'
-    if user.sns
-      for sn in user.sns
-        if sn.type == new-sn.type
-          sn = new-sn
-          callback!
+    user.sns ?= []
+    for sn in user.sns
+      if sn.type == new-sn.type
+        sn = new-sn
+        callback!
     user.sns.push new-sn
     (err, result) <-! util.update-multiple-docs 'users', [user]
     callback!
