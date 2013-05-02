@@ -98,7 +98,7 @@ Users =
 
 update-each-new-profile = !(user, user-new-profile, callback) ->
   for key, value of user-new-profile
-    user[key] = value
+    user[key] = value if value is not null
   user.last-modified-date = new Date!.get-time!
   (err, result) <-! util.update-multiple-docs 'users', [user]  
   callback err
