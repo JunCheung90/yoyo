@@ -54,9 +54,13 @@ interesting-info-mining-strategy =
     * roles: ['fromUid', 'toUid']
       fields: ['nowMonthMaxDuration']
       time-quantum: 'MONTH'
-      type: 'largest-single-duration'
+      type: 'largest-month-duration'
       checker: 'field-largest'
-
+    * roles: ['fromUid', 'toUid']
+      fields: ['nowHourScore']
+      time-quantum: 'MONTH'
+      type: 'recommended-users'
+      checker: 'field-largest'
 
   cost-most: (user) ->
     {

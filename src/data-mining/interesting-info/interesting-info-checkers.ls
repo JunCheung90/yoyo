@@ -25,12 +25,17 @@ Interesting-info-checkers =
     (err) <-! async.for-each contacts, !(contact, next) ->
       (statistic-nodes) <-! get-statistic-nodes user, contact, strategy.roles, strategy.time-quantum
       if statistic-nodes.length > 0
-        contact-nodes.push conver-to-contact-nodes contact, statistic-nodes 
+        contact-nodes.push conver-to-contact-nodes contact, statistic-nodes, get-now-hour!
       next!
     throw new Error err if err
 
-    sorted-nodes = _.sort-by contact-nodes, (node) ->
-      node.total-count.[strategy.fields[0]]
+    sorted-nodes = []
+    if strategy.type == 'recommended-users' or strategy.type == 'largest-month-duration'
+        sorted-nodes = _.sort-by contact-nodes, (node) ->
+          node[strategy.fields[0]]
+    else
+        sorted-nodes = _.sort-by contact-nodes, (node) ->
+          node.total-count.[strategy.fields[0]]
 
     rate = 0.1
     fit-start = Math.floor sorted-nodes.length * (1 - rate)
@@ -45,7 +50,7 @@ Interesting-info-checkers =
     contact-nodes = []
     (err) <-! async.for-each contacts, !(contact, next) ->
       (statistic-nodes) <-! get-statistic-nodes user, contact, strategy.roles, strategy.time-quantum
-      contact-node = conver-to-contact-nodes contact, statistic-nodes
+      contact-node = conver-to-contact-nodes contact, statistic-nodes, get-now-hour!
       if statistic-nodes.length > 0 && contact-node.total-count.[strategy.fields[1]] > 0
         contact-nodes.push contact-node
       next!
@@ -61,18 +66,18 @@ Interesting-info-checkers =
     update-iis user, strategy, fit-nodes
     callback!
 
-
 update-iis = !(user, strategy, contact-nodes) ->
   for contact-node in contact-nodes
     ii = new-interesting-info strategy.type, user, contact-node.contact, contact-node.statistic-nodes
     user.interesting-infos ?= [] 
     user.interesting-infos.push ii
 
-conver-to-contact-nodes = (contact, statistic-nodes) ->
+conver-to-contact-nodes = (contact, statistic-nodes, hour) ->
   contact-node = 
     contact: contact
     statistic-nodes: statistic-nodes
     now-month-max-duration: 0
+    now-hour-score: 0
     total-count:
       count: 0
       duration: 0
@@ -84,8 +89,13 @@ conver-to-contact-nodes = (contact, statistic-nodes) ->
     contact-node.total-count.count += statistic.data.count
     contact-node.total-count.duration += statistic.data.duration
     contact-node.total-count.miss-count += statistic.data.miss-count
-    if statistic-nodes.start-time == now-month-start-time-and-end-time.start-time && statistic-nodes.end-time == now-month-start-time-and-end-time.end-time
+    #update now-month-max-duration
+    if statistic.start-time == now-month-start-time-and-end-time.start-time && statistic.end-time == now-month-start-time-and-end-time.end-time
       now-month-max-duration = now-month-max-duration >? statistic.data.duration
+    #update now-hour-score
+    if hour < 24 && hour >= 0
+       dis-data = statistic.data.distribution-in-hour[hour]
+       contact-node.now-hour-score += dis-data.count * 300 + dis-data.duration
 
   contact-node
 
@@ -181,4 +191,8 @@ get-query-params = (user, contact, roles, time-quantum) ->
           end-time: pre-time.end-time
         }
   results
+
+get-now-hour = ->
+  date = new Date!
+  date.getHours!
 module.exports <<< Interesting-info-checkers
