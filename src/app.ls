@@ -16,9 +16,28 @@ yoyo.use express.body-parser!
 do
   (req, res) <-! yoyo.post '/userRegister'
   necessary-params = ['user', 'callLogs', 'lastCallLogTime']
+  necessary-return-properties =
+    result-code: null
+    error-message: null
+    user: 
+      uid: null
+      cidInClient: null
+      cid: null
+      names: null
+      phones: null
+      birthday: null
+      emails: null
+      ims: null
+      sns: null
+      tags: null
+      mergedTo: null
+      mergedFrom: null
+      pendingMerges: null
+
   result = detected-json-data-integrity req, necessary-params
   if !result.result-code?
     (result) <-! user-manager.register-user req.body
+    result = clean-json result, necessary-return-properties
     res.send result
   else
     res.send result
@@ -27,20 +46,43 @@ do
 do
   (req, res) <-! yoyo.post '/userUpdate'
   necessary-params = ['uid']
+  necessary-return-properties =
+    result-code: null
+    error-message: null
+    user: 
+      uid: null
+      name: null
+      gender: null
+      contacts: null
+      birthday: null
+      phones: null
+      emails: null
+      ims: null
+      sns: null
+      addresses: null
+      tags: null
+      
   result = detected-json-data-integrity req, necessary-params
   if !result.result-code?
     (result) <-! user-manager.update-user req.body
+    result = clean-json result, necessary-return-properties
     res.send result
   else
+    result = clean-json result, necessary-return-properties
     res.send result
 
 # 同步联系人
 do
   (req, res) <-! yoyo.post '/contactSynchronize'
   necessary-params = ['uid', 'contacts']
+  necessary-return-properties =
+    result-code: null
+    error-message: null
+    contacts: null
   result = detected-json-data-integrity req, necessary-params
   if !result.result-code?
     (result) <-! contact-manager.synchronize-user-contacts req.body
+    #result = clean-json result,necessary-return-properties
     res.send result
   else
     res.send result
@@ -49,9 +91,13 @@ do
 do
   (req, res) <-! yoyo.post '/callLogSynchronize'
   necessary-params = ['uid', 'callLogs', 'lastCallLogTime']
+  necessary-return-properties =
+    result-code: null
+    error-message: null
   result = detected-json-data-integrity req, necessary-params
   if !result.result-code
     (result) <-! call-log-manager.synchronize-user-call-logs req.body
+    result = clean-json result, necessary-return-properties
     res.send result
   else
     res.send result
@@ -60,9 +106,15 @@ do
 do
   (req, res) <-! yoyo.post '/snUpdate'
   necessary-params = ['uid']
+  necessary-return-properties =
+    result-code: null
+    error-message: null
+    client-sn-update: 
+      content: null
   result = detected-json-data-integrity req, necessary-params
   if !result.result-code?
     (result) <-! user-manager. req.body
+    clean-json result, necessary-return-properties
     res.send result
   else
     res.send result
@@ -71,9 +123,13 @@ do
 do
   (req, result) <-! yoyo.post './snApiKeyUpload'
   necessary-params = ['sn']
+  necessary-return-properties =
+    result-code: null
+    error-message: null
   result = detected-json-data-integrity req, necessary-params
   if !result.result-code?
     (result) <-! user-manager.update-user-sn-api-key req.body
+    result = clean-json result, necessary-return-properties
     res.send result
   else
     res.send result
@@ -114,6 +170,9 @@ do
 do
   (req, res) <-! yoyo.post '/interestingInfos'
   necessary-params = ['uid']
+  necessary-return-properties =
+    result-code: null
+    error-message: null
   result = detected-json-data-integrity req, necessary-params
   if !result.result-code
     uid = req.body.uid
@@ -122,13 +181,13 @@ do
       result.interesting-infos = users[0].interesting-infos
     else
       result.interesting-infos = []
+    clean-json result, necessary-return-properties
     res.send result
   else
     result.interesting-infos = []
+    clean-json result, necessary-return-properties
     res.send result
     
-
-
 detected-json-data-integrity = (req, necessary-params) ->
   result = {}
   if req.headers.'content-type'.index-of("json") < 0  
@@ -148,6 +207,22 @@ copy-avatar-to-dest = !(file-name, source-path, dest-path, callback) ->
   <-! fs.unlink source-path
   callback!
 
+#从util中复制来，util无法导入使用
+function clean-json full-json, clean-format
+  if clean-format == null || typeof clean-format != "object"
+    return full-json 
+  if (clean-format instanceof Array)
+    copy = []
+    for elem, i in clean-format
+      copy[i] = clean-json full-json[i], clean-format[i]
+    return copy  
+  if (clean-format instanceof Object)
+    copy = {}
+    for key, val of clean-format
+      if clean-format.hasOwnProperty(key) && full-json.hasOwnProperty(key)
+        copy[key] = clean-json full-json[key], clean-format[key]
+    return copy;  
+  throw new Error "type isn't supported."  
 
 yoyo.listen 8888 
 console.log 'yoyo is listening on port 8888'

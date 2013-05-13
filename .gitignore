@@ -1,5 +1,5 @@
 *.js
-dev-start.bat
+*.bat
 node_modules/
 !/node-modules/node-mock/
 !/node-modules/node-sns-oauth/
