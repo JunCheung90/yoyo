@@ -7,6 +7,7 @@ require! [fs, express, util,
   './manager/user-manager',
   './manager/sn-update-manager',
   './manager/call-log-manager',
+  './manager/sns-manager',
   './db/query-helper']
 
 yoyo = express!
@@ -58,11 +59,23 @@ do
 
 # 获取社交更新
 do
-  (req, res) <-! yoyo.post '/snUpdate'
+  (req, res) <-! yoyo.post '/snsUpdate'
   necessary-params = ['uid']
   result = detected-json-data-integrity req, necessary-params
   if !result.result-code?
-    (result) <-! sn-update-manager.client-get-sn-update req.body
+    (result) <-! sns-manager.user-get-sns-updates req.body.uid, req.body.count
+    res.send result
+  else
+    res.send result
+
+# 获取单个联系人社交更新
+do
+  (req, res) <-! yoyo.post '/contactSnsUpdate'
+  console.log 1
+  necessary-params = ['uid', 'cid', 'sinceIdConfig']
+  result = detected-json-data-integrity req, necessary-params
+  if !result.result-code?
+    (result) <-! sns-manager.user-get-contact-sns-updates req.body.uid, req.body.cid, req.body.since-id-configs, req.body.count
     res.send result
   else
     res.send result
