@@ -71,8 +71,7 @@ do
 # 获取单个联系人社交更新
 do
   (req, res) <-! yoyo.post '/contactSnsUpdate'
-  console.log 1
-  necessary-params = ['uid', 'cid', 'sinceIdConfig']
+  necessary-params = ['uid', 'cid', 'sinceIdConfigs']
   result = detected-json-data-integrity req, necessary-params
   if !result.result-code?
     (result) <-! sns-manager.user-get-contact-sns-updates req.body.uid, req.body.cid, req.body.since-id-configs, req.body.count
