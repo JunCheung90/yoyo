@@ -7,8 +7,7 @@ Sns-manager =
   user-get-contact-sns-updates: !(uid, cid, since-id-configs, count, callback) ->
     (user) <-! Users.get-user-by-uid uid
     contact = _.find-where user.contacts, {cid: cid}
-    callback {result-code: 3, error-message: "can not find contact with cid: #cid"} if !contact 
-    (err, contact-sns-updates, count) <-! Sns.get-user-sns-updates contact.act-by-user,since-id-configs, count
+    callback {result-code: 3, error-message: "can not find contact with cid: #cid"} if !contact     (err, contact-sns-updates, count) <-! Sns.get-user-sns-updates contact.act-by-user,since-id-configs, count
     callback {result-code: -1, error-message: err} if err
     callback {result-code: 0, contact-sns-updates: contact-sns-updates, count: count}
   
