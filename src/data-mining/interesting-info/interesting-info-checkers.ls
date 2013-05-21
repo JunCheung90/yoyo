@@ -93,6 +93,7 @@ conver-to-contact-nodes = (contact, statistic-nodes, hour) ->
     if statistic.start-time == now-month-start-time-and-end-time.start-time && statistic.end-time == now-month-start-time-and-end-time.end-time
       now-month-max-duration = now-month-max-duration >? statistic.data.duration
     #update now-hour-score
+    contact-node.now-hour-score += statistic.data.count * 60
     if hour < 24 && hour >= 0
        dis-data = statistic.data.distribution-in-hour[hour]
        contact-node.now-hour-score += dis-data.count * 300 + dis-data.duration
