@@ -44,6 +44,28 @@ Statistic-helper =
         call-log-time -=  60 * 60 * 1000
     @get-start-time-and-end-time time-quantum, call-log-time
 
+  get-now-month-shift-time: (shift-num) ->
+    shift-month-date = new Date!
+
+    if shift-num < 0
+        while shift-month-date + shift-num < 0
+          shift-num += shift-month-date.get-month! + 1
+          shift-month-date.set-full-year (shift-month-date.get-full-year! - 1)
+          shift-month-date.set-month 11
+    else
+        while shift-month-date + shift-num > 11
+          shift-num -= 12 - shift-month-date.get-month!
+          shift-month-date.set-full-year (shift-month-date.get-full-year! + 1)
+          shift-month-date.set-month 0
+
+    shift-month-date.set-month (shift-month-date.get-month! + shift-num)
+
+    @get-start-time-and-end-time 'MONTH', shift-month-date
+
+  get-now-hour: ->
+    date = new Date!
+    date.getHours!
+
 get-pre-year-day-count = (current-year-start-time) ->
   current-year-start-date = new Date current-year-start-time
   year = current-year-start-date.get-full-year!

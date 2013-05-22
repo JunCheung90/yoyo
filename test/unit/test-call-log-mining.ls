@@ -77,7 +77,6 @@ describe '有趣信息挖掘:', !->
     do
       (done) <-! before
       <-! IIm.mining-user-interesting-info user
-      console.log(user.interesting-infos)
       done!
 
     can "有趣类型：most-call-out，李小四\n" !(done) ->

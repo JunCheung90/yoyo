@@ -57,10 +57,10 @@ interesting-info-mining-strategy =
       type: 'largest-month-duration'
       checker: 'field-largest'
     * roles: ['fromUid', 'toUid']
-      fields: ['nowHourScore']
+      fields: ['recommendedScore']
       time-quantum: 'MONTH'
       type: 'recommended-users'
-      checker: 'field-largest'
+      checker: 'recommended-users'
 
   cost-most: (user) ->
     {
