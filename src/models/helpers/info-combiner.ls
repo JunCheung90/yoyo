@@ -24,6 +24,7 @@ info-combiner =
     combine-emails old-contact, new-contact
     combine-sns old-contact, new-contact
     combine-ims old-contact, new-contact
+    combine-local-photo old-contact, new-contact
 
   combine-contacts-merge: !(old-contact, new-contact) ->
     combine-mergences old-contact, new-contact, 'cid'
@@ -145,6 +146,9 @@ add-pending-merges = !(old, _new, id-name) ->
 
 combine-contacts-names = !(old-contact, new-contact) ->
   old-contact.names = util.union old-contact.names, new-contact.names
+
+combine-local-photo = !(old-contact, new-contact) ->
+  old-contact.names = util.union old-contact.local-photos, new-contact.local-photos
 
 combine-contacts-phones = !(old-contact, new-contact) ->
   old-contact.phones = util.union old-contact.phones, new-contact.phones
