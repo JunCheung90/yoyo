@@ -148,7 +148,7 @@ combine-contacts-names = !(old-contact, new-contact) ->
   old-contact.names = util.union old-contact.names, new-contact.names
 
 combine-local-photo = !(old-contact, new-contact) ->
-  old-contact.names = util.union old-contact.local-photos, new-contact.local-photos
+  old-contact.local-photos = util.union old-contact.local-photos, new-contact.local-photos
 
 combine-contacts-phones = !(old-contact, new-contact) ->
   old-contact.phones = util.union old-contact.phones, new-contact.phones
