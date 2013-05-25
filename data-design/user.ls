@@ -56,7 +56,11 @@ user = # yoyo server端数据
       local-photos: ['1131']
       act-by-user: 'uid_lisi'
       names: ['李小四']
-      rank-score: 399 # yoyo服务器计算得出的联系人推荐排名分数，越大排名越靠前
+      rank-scores: 
+        * 399 
+          233
+          123# yoyo服务器计算得出的联系人推荐排名分数，越大排名越靠
+             # 前,total length 24, 0-23
       avatars: ['s-aid', 'u-aid-1', 'u-aid-2'] # s-aid是系统根据通信时间计算出的avatar，u-aid是用户给这个联系人设定的。在用户手机上显示时，this.u-aid > act-by-user.current-avatar > this.s-aid
       phones: ['123456']
       emails: ['lisi@fake.com']

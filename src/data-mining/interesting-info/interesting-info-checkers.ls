@@ -66,28 +66,37 @@ Interesting-info-checkers =
     update-iis user, strategy, fit-nodes
     callback!
 
-  recommended-users: !(user, strategy, callback) ->
-    contacts = user.contacts
-    contact-nodes = []
-    now-hour = Sh.get-now-hour!
-    (err) <-! async.for-each contacts, !(contact,next) ->
-      (statistic-nodes) <-! get-statistic-nodes user, contact, strategy.roles, strategy.time-quantum
-      if statistic-nodes.length > 0
-         contact-nodes.push conver-to-recommended-nodes contact, statistic-nodes, now-hour
-      next!
-    throw new Error err if err
+get-statistic-nodes =  !(user, contact, roles, time-quantum, callback) ->
+  (db) <-! database.get-db!
+  params =
+    $or: get-query-params user, contact, roles, time-quantum
+  (err, statistic-nodes) <-! db.call-log-statistic.find(params).to-array!
+  throw new Error err if err
+  callback statistic-nodes
+
+
+  ## recommended-users: !(user, strategy, callback) ->
+  ##   contacts = user.contacts
+  ##   contact-nodes = []
+  ##   now-hour = Sh.get-now-hour!
+  ##   (err) <-! async.for-each contacts, !(contact,next) ->
+  ##     (statistic-nodes) <-! get-statistic-nodes user, contact, strategy.roles, strategy.time-quantum
+  ##     if statistic-nodes.length > 0
+  ##        contact-nodes.push conver-to-recommended-nodes contact, statistic-nodes, now-hour
+  ##     next!
+  ##   throw new Error err if err
     
-    sorted-nodes = []
-    sorted-nodes = _.sort-by contact-nodes, (node) ->
-      node[strategy.fields[0]]
+  ##   sorted-nodes = []
+  ##   sorted-nodes = _.sort-by contact-nodes, (node) ->
+  ##     node[strategy.fields[0]]
 
-    if sorted-nodes.length >= 9
-       fit-nodes = sorted-nodes.slice sorted-nodes.length - 10
-    else
-       fit-nodes = sorted-nodes
+  ##   if sorted-nodes.length >= 9
+  ##      fit-nodes = sorted-nodes.slice sorted-nodes.length - 10
+  ##   else
+  ##      fit-nodes = sorted-nodes
 
-    update-iis user, strategy, fit-nodes
-    callback!
+  ##   update-iis user, strategy, fit-nodes
+  ##   callback!
 
 update-iis = !(user, strategy, contact-nodes) ->
   for contact-node in contact-nodes
@@ -118,32 +127,23 @@ conver-to-contact-nodes = (contact, statistic-nodes) ->
   contact-node
 
 
-conver-to-recommended-nodes = (contact, statistic-nodes, hour) ->
-  recommended-node = 
-    contact: contact
-    statistic-nodes: statistic-nodes
-    recommended-score: 0
+## conver-to-recommended-nodes = (contact, statistic-nodes, hour) ->
+##   recommended-node = 
+##     contact: contact
+##     statistic-nodes: statistic-nodes
+##     recommended-score: 0
   
-  shift-month-start-time-and-end-time = []
-  for i til 3
-      shift-month-start-time-and-end-time.push Sh.get-now-month-shift-time (i * -1)
+##   shift-month-start-time-and-end-time = []
+##   for i til 3
+##       shift-month-start-time-and-end-time.push Sh.get-now-month-shift-time (i * -1)
+##   for statistic in statistic-nodes
+##       for i til 3
+##           if statistic.start-time = shift-month-start-time-and-end-time[i].start-time and statistic.end-time == shift-month-start-time-and-end-time[i].end-time
+##              data = statistic.data.distribution-in-hour[hour]
+##              recommended-node.recommended-score += ( data.count + data.miss-count * 5 + Math.log(data.duration)/Math.log(10) ) / (i + 1)
 
-  for statistic in statistic-nodes
-      for i til 3
-          if statistic.start-time = shift-month-start-time-and-end-time[i].start-time and statistic.end-time == shift-month-start-time-and-end-time[i].end-time
-             data = statistic.data.distribution-in-hour[hour]
-             recommended-node.recommended-score += ( data.count + data.miss-count * 5 + Math.log(data.duration)/Math.log(10) ) / (i + 1)
+##   recommended-node
 
-  recommended-node
-
-
-get-statistic-nodes = !(user, contact, roles, time-quantum, callback) ->
-  (db) <-! database.get-db!
-  params =
-    $or: get-query-params user, contact, roles, time-quantum
-  (err, statistic-nodes) <-! db.call-log-statistic.find(params).to-array!
-  throw new Error err if err
-  callback statistic-nodes
 
 new-interesting-info = (type, user, contact, statistic-nodes) ->
   ii = {
@@ -229,5 +229,8 @@ get-query-params = (user, contact, roles, time-quantum) ->
           end-time: pre-time.end-time
         }
   results
+
+
+Interesting-info-checkers.get-statistic-nodes = get-statistic-nodes
 
 module.exports <<< Interesting-info-checkers

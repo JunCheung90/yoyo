@@ -5,11 +5,12 @@
  */
 
 require! [should, async, '../../bin/db/database']
-require! Call-logs: '../../bin/models/call-logs', Users: '../../bin/models/users', \
-        IIm: '../../bin/data-mining/interesting-info/interesting-info-mining', \
-        qh: '../../bin/db/query-helper'
+require! Call-logs: '../../bin/models/call-logs'
+require! Users: '../../bin/models/users'
+require! IIm: '../../bin/data-mining/interesting-info/interesting-info-mining'
+require! qh: '../../bin/db/query-helper'
 _ = require 'underscore'
-
+require! RC: '../../bin/data-mining/recommend-contact/recommend-contact'
 user-data = null
 user = null
 lisi = null
@@ -119,8 +120,18 @@ describe '有趣信息挖掘:', !->
       check-iis user.interesting-infos, 'largest-month-duration', '李小四'
       done!
 
-    can "有趣类型：recommended-users，李小四\n" !(done) ->
-      check-iis user.interesting-infos, 'recommended-users', '李小四'
+    ## can "有趣类型：recommended-users，李小四\n" !(done) ->
+    ##   check-iis user.interesting-infos, 'recommended-users', '李小四'
+    ##   done!
+
+  describe 'Recommend-users:Test', !->
+    do
+      (done) <-! before
+      <-! RC.update-user-recommend-info user
+      done!
+
+    can "Test for simple algorithm" !(done) ->
+      console.log "I can't test it. See line 34 in recommend-contact-checker.ls"
       done!
 
 
