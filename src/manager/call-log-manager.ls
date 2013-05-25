@@ -9,7 +9,8 @@ require! ['../util']
 Call-log-manager =
   synchronize-user-call-logs: !(synchronize-data, callback) ->
     self = this
-    (user) <-! Users.get-user-by-uid synchronize-data.uid
+    (err, user) <-! Users.get-user-by-uid synchronize-data.uid
+    callback {result-code: -1, error-message: err.message} if err
     <-! self.update-user-call-logs user, synchronize-data.call-logs, synchronize-data.last-call-log-time
     callback {result-code: 0}
 

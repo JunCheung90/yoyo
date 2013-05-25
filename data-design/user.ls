@@ -53,6 +53,7 @@ user = # yoyo server端数据
   contacts: # 当前用户的联系人
     * cid: 'owner-uid-c-timestamp_of_add-seqno'
       cid-in-client: 124
+      local-photos: ['1131']
       act-by-user: 'uid_lisi'
       names: ['李小四']
       rank-score: 399 # yoyo服务器计算得出的联系人推荐排名分数，越大排名越靠前

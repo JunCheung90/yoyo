@@ -24,17 +24,19 @@ Users =
     callback contacts-owner
 
   update-user-profile: !(user-new-profile, callback) ->
-    (user) <-! @get-user-by-uid user-new-profile.uid
+    (err, user) <-! @get-user-by-uid user-new-profile.uid
+    callback err, null if err
     (err) <-! update-each-new-profile user, user-new-profile
-    throw new Error err if err
+    callback err, null if err
     (err) <-! update-each-as-contacts user, user-new-profile
-    throw new Error err if err
-    callback user
+    callback err, null if err
+    callback null, user
 
   get-user-by-uid: !(uid, callback) ->
+    err = null
     (users) <-! qh.get-users-by-uids [uid]
-    callback null if users.length == 0
-    callback users[0]    
+    err = new Error "can not find user with uid: #user-new-profile.uid" if users.length == 0
+    callback err, users[0]    
 
   mining-interesting-info: !(user, callback) ->
     callback!
@@ -53,7 +55,7 @@ Users =
   get-or-create-user-with-phone-number: !(phone-number, callback) ->
     (user) <-! get-user-with-phone-number phone-number
     if user
-      callback user
+      callback user 
     else
       (user) <-! create-user-with-phone-number phone-number
       callback user
@@ -84,9 +86,8 @@ Users =
     callback contacts-owner
 
   update-user-sn-api-key: !(uid, new-sn, callback) ->
-    (user) <-! @get-user-by-uid uid
-    if !user
-      callback new Error 3, '无法找到uid对应user'
+    (err, user) <-! @get-user-by-uid uid
+    callback err if err
     user.sns ?= []
     for sn in user.sns
       if sn.type == new-sn.type
@@ -109,7 +110,7 @@ update-each-as-contacts = !(user, user-new-profile, callback) ->
   as-contacts ?= []
   relative-users = []
   (err) <-! async.for-each as-contacts, !(as-contact, next) ->
-    (user-has-contact) <-! Users.get-user-by-uid as-contact
+    (err, user-has-contact) <-! Users.get-user-by-uid as-contact
     for contact in user-has-contact.contacts
       if contact.act-by-user == user.uid
         Contacts.update-contact contact, user-new-profile

@@ -8,9 +8,10 @@ require! async
 
 contact-manager = 
   synchronize-user-contacts: !(synchronize-data, callback) ->    
-    (user) <-! Users.get-user-by-uid synchronize-data.uid    
+    (err, user) <-! Users.get-user-by-uid synchronize-data.uid 
+    callback {result-code: -1, error-message: err.message, contacts: []} if err
     (err) <-! async.for-each synchronize-data.contacts, !(contact, next) ->
-      if !contact.cid? || contact.cid == 0
+      if !contact.cid? || contact.cid == 0 || !contact.cid == ""
         user.contacts.push contact
         next!
       else

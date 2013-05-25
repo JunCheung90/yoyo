@@ -127,3 +127,36 @@ describe '测试YoYo REST API' !->
       response.result-code.should.eql 0
 
       done!
+
+  can '获取有趣信息：POST /interestingInfos 应当返回200' !(done) ->
+    query-data = {uid:user.uid}
+    do
+      (err, req, res, data) <-! client.post '/interestingInfos', query-data
+      should.not.exist err
+      res.status-code.should.eql 200
+      response = eval '(' + res.body + ')'
+      response.should.have.property 'interestingInfos'
+
+      done!
+
+  can '获取社交更新：POST /snsUpdate 应答返回200' !(done) ->
+    query-data = {uid: user.uid}
+    do
+      (err, req, res, data) <-! client.post '/snsUpdate', query-data
+      should.not.exist err
+      res.status-code.should.eql 200
+      response =  eval '(' + res.body + ')'
+      response.should.have.property 'resultCode'
+      response.result-code.should.eql 0
+      done!
+
+  can '获取联系人社交更新：POST /contactSnsUpdate 应答返回200' !(done) ->
+    query-data = {uid: user.uid, cid: user.contacts[1].cid, since-id-configs: [{type: "weibo", since-id: 0}]}
+    do
+      (err, req, res, data) <-! client.post '/contactSnsUpdate', query-data
+      should.not.exist err
+      res.status-code.should.eql 200
+      response =  eval '(' + res.body + ')'
+      response.should.have.property 'resultCode'
+      response.result-code.should.eql 0
+      done!

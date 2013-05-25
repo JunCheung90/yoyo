@@ -6,7 +6,9 @@ require! [fs, express, util,
   './manager/contact-manager', 
   './manager/user-manager',
   './manager/sn-update-manager',
-  './manager/call-log-manager']
+  './manager/call-log-manager',
+  './manager/sns-manager',
+  './db/query-helper']
 
 yoyo = express!
 yoyo.use express.body-parser!
@@ -57,11 +59,22 @@ do
 
 # 获取社交更新
 do
-  (req, res) <-! yoyo.post '/snUpdate'
+  (req, res) <-! yoyo.post '/snsUpdate'
   necessary-params = ['uid']
   result = detected-json-data-integrity req, necessary-params
   if !result.result-code?
-    (result) <-! sn-update-manager.client-get-sn-update req.body
+    (result) <-! sns-manager.user-get-sns-updates req.body.uid, req.body.count
+    res.send result
+  else
+    res.send result
+
+# 获取单个联系人社交更新
+do
+  (req, res) <-! yoyo.post '/contactSnsUpdate'
+  necessary-params = ['uid', 'cid', 'sinceIdConfigs']
+  result = detected-json-data-integrity req, necessary-params
+  if !result.result-code?
+    (result) <-! sns-manager.user-get-contact-sns-updates req.body.uid, req.body.cid, req.body.since-id-configs, req.body.count
     res.send result
   else
     res.send result
@@ -108,6 +121,21 @@ do
   else
     <-! copy-avatar-to-dest file-name, source-path, dest-path
     res.send 'hello'
+
+#获取有趣信息
+do
+  (req, res) <-! yoyo.post '/interestingInfos'
+  necessary-params = ['uid']
+  result = detected-json-data-integrity req, necessary-params
+  if !result.result-code
+    uid = req.body.uid
+    (result) <-! user-manager.get-user-interesting-infos uid
+    res.send result
+  else
+    result.interesting-infos = []
+    res.send result
+    
+
 
 detected-json-data-integrity = (req, necessary-params) ->
   result = {}

@@ -50,8 +50,10 @@ User-manager =
 			[response.result-code, response.error-message] = [2, "miss necessary argument: uid"]
 			return callback response
 
-		(user) <- Users.update-user-profile update-data
-		[response.result-code, response.user] = [0, user]
+		(err, user) <- Users.update-user-profile update-data
+		[response.result-code, response.error-message, response.user] = if err
+			then [-1, err.message, user]
+			else [0, "", user]
 		callback response
 
 	update-user-sn-api-key: !(update-data, callback) ->
@@ -60,6 +62,12 @@ User-manager =
 		[response.result-code, response.error-message] = [err.number, err.descrition] if err
 
 		callback response
+
+	get-user-interesting-infos: !(uid, callback) ->
+		response = {}
+		(err, user) <-! Users.get-user-by-uid uid
+		callback {result-code: -1, error-message: err.message} if err
+		callback {result-code: 0, interesting-infos: user.interesting-infos}
 	
 create-user-and-mining-interesting-info = !(user-data, callback) ->
 	(user) <-! Users.create-user-with-contacts user-data
