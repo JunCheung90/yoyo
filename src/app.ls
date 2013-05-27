@@ -2,90 +2,50 @@
  * Created by Wang, Qing. All rights reserved.
  */
 
-require! [fs, express, util
+require! [fs, express, './util'
   './manager/contact-manager', 
   './manager/user-manager',
   './manager/sn-update-manager',
   './manager/call-log-manager',
-  './db/query-helper']
+  './db/query-helper',
+  './filter/filter']
 
 yoyo = express!
 yoyo.use express.body-parser!
-
+yoyo.use filter.filter-request
+console.log filter
 # 注册用户
 do
   (req, res) <-! yoyo.post '/userRegister'
-  necessary-params = ['user', 'callLogs', 'lastCallLogTime']
-  necessary-return-properties =
-    result-code: null
-    error-message: null
-    user: 
-      uid: null
-      cidInClient: null
-      cid: null
-      names: null
-      phones: null
-      birthday: null
-      emails: null
-      ims: null
-      sns: null
-      tags: null
-      mergedTo: null
-      mergedFrom: null
-      pendingMerges: null
-
-  result = detected-json-data-integrity req, necessary-params
-  if !result.result-code?
-    (result) <-! user-manager.register-user req.body
-    result = clean-json result, necessary-return-properties
-    res.send result
-  else
-    res.send result
+  #result = detected-json-data-integrity req, necessary-params
+  #if !result.result-code?
+  (result) <-! user-manager.register-user req.body
+  #result = clean-json result, necessary-return-properties
+  res.send result
+  #else
+    #res.send result
 
 # 更新用户profile
 do
   (req, res) <-! yoyo.post '/userUpdate'
-  necessary-params = ['uid']
-  necessary-return-properties =
-    result-code: null
-    error-message: null
-    user: 
-      uid: null
-      name: null
-      gender: null
-      contacts: null
-      birthday: null
-      phones: null
-      emails: null
-      ims: null
-      sns: null
-      addresses: null
-      tags: null
-      
-  result = detected-json-data-integrity req, necessary-params
-  if !result.result-code?
-    (result) <-! user-manager.update-user req.body
-    result = clean-json result, necessary-return-properties
-    res.send result
-  else
-    result = clean-json result, necessary-return-properties
-    res.send result
+  #if !result.result-code?
+  (result) <-! user-manager.update-user req.body
+  #result = clean-json result, necessary-return-properties
+  res.send result
+  #else
+    #result = clean-json result, necessary-return-properties
+    #res.send result
 
 # 同步联系人
 do
   (req, res) <-! yoyo.post '/contactSynchronize'
-  necessary-params = ['uid', 'contacts']
-  necessary-return-properties =
-    result-code: null
-    error-message: null
-    contacts: null
-  result = detected-json-data-integrity req, necessary-params
-  if !result.result-code?
-    (result) <-! contact-manager.synchronize-user-contacts req.body
+  #result = detected-json-data-integrity req, necessary-params
+  #if !result.result-code?
+  (result) <-! contact-manager.synchronize-user-contacts req.body
     #result = clean-json result,necessary-return-properties
-    res.send result
-  else
-    res.send result
+  res.send result
+  #else
+    #res.send result
 
 # 同步通话记录
 do
@@ -94,13 +54,13 @@ do
   necessary-return-properties =
     result-code: null
     error-message: null
-  result = detected-json-data-integrity req, necessary-params
-  if !result.result-code
-    (result) <-! call-log-manager.synchronize-user-call-logs req.body
-    result = clean-json result, necessary-return-properties
-    res.send result
-  else
-    res.send result
+  #result = detected-json-data-integrity req, necessary-params
+  #if !result.result-code
+  (result) <-! call-log-manager.synchronize-user-call-logs req.body
+    #result = clean-json result, necessary-return-properties
+  res.send result
+  #else
+    #res.send result
 
 # 获取社交更新
 do
@@ -111,13 +71,13 @@ do
     error-message: null
     client-sn-update: 
       content: null
-  result = detected-json-data-integrity req, necessary-params
-  if !result.result-code?
-    (result) <-! user-manager. req.body
-    clean-json result, necessary-return-properties
-    res.send result
-  else
-    res.send result
+  #result = detected-json-data-integrity req, necessary-params
+  #if !result.result-code?
+  (result) <-! user-manager. req.body
+    #clean-json result, necessary-return-properties
+  res.send result
+  #else
+    #res.send result
 
 # 上传社交网络token
 do
@@ -126,13 +86,13 @@ do
   necessary-return-properties =
     result-code: null
     error-message: null
-  result = detected-json-data-integrity req, necessary-params
-  if !result.result-code?
-    (result) <-! user-manager.update-user-sn-api-key req.body
-    result = clean-json result, necessary-return-properties
-    res.send result
-  else
-    res.send result
+  #result = detected-json-data-integrity req, necessary-params
+  #if !result.result-code?
+  (result) <-! user-manager.update-user-sn-api-key req.body
+    #result = clean-json result, necessary-return-properties
+  res.send result
+  #else
+    #res.send result
 
 # 查询某个联系人情况。（实际中使用较少，可能在未来移除）
 do
@@ -173,20 +133,21 @@ do
   necessary-return-properties =
     result-code: null
     error-message: null
-  result = detected-json-data-integrity req, necessary-params
-  if !result.result-code
-    uid = req.body.uid
-    (users) <-! query-helper.get-users-by-uids [uid]
-    if users.length > 0 and users[0].interesting-infos
-      result.interesting-infos = users[0].interesting-infos
-    else
-      result.interesting-infos = []
-    clean-json result, necessary-return-properties
-    res.send result
+  #esult = detected-json-data-integrity req, necessary-params
+  #if !result.result-code
+  uid = req.body.uid
+  (users) <-! query-helper.get-users-by-uids [uid]
+  result = {}
+  if users.length > 0 and users[0].interesting-infos
+    result.interesting-infos = users[0].interesting-infos
   else
     result.interesting-infos = []
-    clean-json result, necessary-return-properties
-    res.send result
+    #clean-json result, necessary-return-properties
+  res.send result
+  #else
+    #result.interesting-infos = []
+    #clean-json result, necessary-return-properties
+    #res.send result
     
 detected-json-data-integrity = (req, necessary-params) ->
   result = {}
